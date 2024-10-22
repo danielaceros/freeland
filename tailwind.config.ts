@@ -8,6 +8,7 @@ const config = {
   theme: {
     extend: {
       colors: {
+        freeland: '#19E207',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -63,7 +64,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/forms')],
 } satisfies Config;
 
 export default config;
