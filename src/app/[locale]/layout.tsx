@@ -3,8 +3,10 @@ import '@/styles/global.css';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AllLocales } from '@/utils/AppConfig';
+import AuthListener from '../../components/AuthListener'; 
 
 export const metadata: Metadata = {
   icons: [
@@ -50,7 +52,8 @@ export default function RootLayout(props: {
         <NextIntlClientProvider
           locale={props.params.locale}
           messages={messages}
-        >
+        ><ToastContainer />
+        <AuthListener />
           {props.children}
         </NextIntlClientProvider>
       </body>
