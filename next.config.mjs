@@ -18,7 +18,18 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 export default withSentryConfig(
-
+  bundleAnalyzer(
+    withNextIntlConfig({
+      eslint: {
+        dirs: ['.'],
+      },
+      poweredByHeader: false,
+      reactStrictMode: true,
+      experimental: {
+        serverComponentsExternalPackages: ['@electric-sql/pglite'],
+      },
+    }),
+  ),
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
