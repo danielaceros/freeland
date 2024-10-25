@@ -52,7 +52,17 @@ export default function RootLayout(props: {
         <NextIntlClientProvider
           locale={props.params.locale}
           messages={messages}
-        ><ToastContainer />
+        ><ToastContainer
+        position="bottom-right"
+        autoClose={5000} // Optional: Duration to auto close the toast
+        hideProgressBar={false} // Optional: Show or hide the progress bar
+        newestOnTop={false} // Optional: Show newest toast on top
+        closeOnClick
+        rtl={false} // Optional: Enable RTL support
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
         <AuthListener />
           {props.children}
         </NextIntlClientProvider>

@@ -15,8 +15,6 @@ const AuthListener = () => {
         if (router) {
           router.push('');
         }
-      } else {
-        router.push('/dashboard')
       }
     });
 
