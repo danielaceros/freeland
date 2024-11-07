@@ -8,11 +8,11 @@ const localePrefix: LocalePrefix = 'as-needed';
 export const AppConfig = {
   name: 'SaaS Template',
   locales: [
+    { id: 'es', name: 'Español' },
     {
       id: 'en',
       name: 'English',
     },
-    { id: 'es', name: 'Español' },
   ],
   defaultLocale: 'es',
   localePrefix,

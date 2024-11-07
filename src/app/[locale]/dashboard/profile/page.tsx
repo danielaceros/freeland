@@ -1,33 +1,43 @@
-"use client";
-import { useEffect, useState } from 'react';
-import { auth, db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
-import { onAuthStateChanged, User } from 'firebase/auth';
+'use client';
+
+import type { User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import Firebase Storage functions
-import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
-import { signOut } from 'firebase/auth'; // Import signOut method
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'; // Import Firebase Storage functions
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify'; // Import toast for notifications
+
+import Menu from '@/components/common/Menu';
+
+import { auth, db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [profileData, setProfileData] = useState<{
-    name: string | null;
+    name: string;
     surname: string | null;
     email: string | null;
     nick: string | null;
     profilePicture: string | null;
+    position: string;
+    phone: string;
+    skills: string[];
   }>({
     name: '',
     surname: '',
     email: '',
     nick: '',
     profilePicture: null,
+    position: '',
+    phone: '',
+    skills: [],
   });
   const [isEditing, setIsEditing] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  
-  const router = useRouter(); // Get router instance
+
+  const [skills, setSkills] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
 
   // Fetch profile data
   useEffect(() => {
@@ -45,6 +55,9 @@ export default function Profile() {
               email: data.email || currentUser.email,
               nick: data.nick || '',
               profilePicture: data.profilePicture || null,
+              position: data.position || '',
+              phone: data.phone || '',
+              skills: data.skills || null,
             });
           } else {
             await setDoc(userDocRef, { email: currentUser.email });
@@ -54,11 +67,14 @@ export default function Profile() {
               email: currentUser.email,
               nick: '',
               profilePicture: null,
+              position: '',
+              phone: '',
+              skills: [],
             });
           }
         } catch (error) {
-          console.error("Error fetching profile data:", error);
-          toast.error("Failed to load profile data."); // Notify on error
+          console.error('Error fetching profile data:', error);
+          toast.error('Failed to load profile data.'); // Notify on error
         }
         setHasLoaded(true);
       } else {
@@ -74,147 +90,254 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
+    setProfileData({ ...profileData, skills });
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
       try {
         if (profilePicture) {
-          const storageRef = ref(storage, `profilePictures/${user.uid}/${profilePicture.name}`);
+          const storageRef = ref(
+            storage,
+            `profilePictures/${user.uid}/${profilePicture.name}`,
+          );
           await uploadBytes(storageRef, profilePicture);
           const downloadURL = await getDownloadURL(storageRef);
-          await setDoc(userDocRef, {
-            ...profileData,
-            profilePicture: downloadURL
-          }, { merge: true });
+          await setDoc(
+            userDocRef,
+            {
+              ...profileData,
+              profilePicture: downloadURL,
+            },
+            { merge: true },
+          );
         } else {
           await setDoc(userDocRef, profileData, { merge: true });
         }
 
-        toast.success("Profile updated successfully!"); // Notify on successful profile update
+        toast.success('Profile updated successfully!'); // Notify on successful profile update
         setIsEditing(false);
       } catch (error) {
-        console.error("Error updating profile data:", error);
-        toast.error("Failed to update profile."); // Notify on error
+        console.error('Error updating profile data:', error);
+        toast.error('Failed to update profile.'); // Notify on error
       }
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      toast.success("Logged out successfully!"); // Notify on successful logout
-      router.push('/'); // Redirect to home page after logout
-    } catch (error) {
-      console.error("Logout error:", error);
     }
   };
 
   if (!user || !hasLoaded) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="loader"></div> {/* Add your loader here */}
+      <div className="flex h-screen items-center justify-center">
+        <div className="loader" /> {/* Add your loader here */}
       </div>
     );
   }
 
+  const handleKeyDown = (event: any) => {
+    // Detecta la tecla Enter y añade la habilidad si no está vacía y no existe en el array
+    if (inputValue !== '' && event.key === 'Enter' && inputValue.trim()) {
+      event.preventDefault();
+      if (inputValue !== '' && !skills.includes(inputValue.trim())) {
+        setSkills([...skills, inputValue.trim()]);
+        setInputValue(''); // Limpia el campo de entrada
+      }
+    }
+  };
+
+  const removeSkill = (skillToRemove: any) => {
+    // Elimina la habilidad seleccionada del array
+    setSkills(skills.filter((skill) => skill !== skillToRemove));
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
-      <aside className="w-64 bg-green-800 text-white p-4">
-        <h1 className="text-xl font-bold mb-6">¡Welcome, {user.email?.split("@")[0]}!</h1> {/* Display user's email here */}
-        <nav>
-        <ul>
-            <li className="px-4 py-2 hover:bg-green-700 cursor-pointer" onClick={() => router.push('/en/dashboard')}>
-              Dashboard
-            </li>
-            <li className="px-4 py-2 hover:bg-green-700 cursor-pointer" onClick={() => router.push('/en/dashboard/hire')}>
-              Hire
-            </li>
-            <li className="px-4 py-2 hover:bg-green-700 cursor-pointer" onClick={() => router.push('/en/dashboard/work')}>
-              Work
-            </li>
-            <li className="px-4 py-2 hover:bg-green-700 cursor-pointer bg-green-600" onClick={() => router.push('/en/dashboard/profile')}>
-              Profile
-            </li>
-            <li className="px-4 py-2 hover:bg-green-700 cursor-pointer" onClick={handleLogout}>
-              Logout
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      <Menu />
 
-      <div className="flex-1 p-6">
-        <header className="flex justify-between items-center bg-white p-4 shadow">
-          <h2 className="text-3xl font-semibold">Profile</h2>
+      <div className="flex-1">
+        <div className="flex w-full justify-end bg-white p-2">
           <button
+            type="button"
             onClick={() => setIsEditing(!isEditing)}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+            className="rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
           >
-            {isEditing ? "Cancel" : "Edit"}
+            {isEditing ? 'Cancel' : 'Edit'}
           </button>
-        </header>
-
-        <main className="p-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">User Profile</h3>
-
+        </div>
+        <main className="px-16 py-6">
+          <div className="w-full rounded-lg bg-white p-6 shadow-md">
             {/* Display Profile Picture */}
-            <div className="mb-4 flex justify-center">
-              {profileData.profilePicture ? (
-                <img
-                  src={profileData.profilePicture}
-                  alt="Profile"
-                  className="h-24 w-24 rounded-full border-2 border-green-600"
-                />
-              ) : (
-                <p className="text-gray-900">No profile picture set</p>
-              )}
+            <div className="mb-4 flex w-full">
+              <div className="flex w-2/12 items-center">
+                {profileData.profilePicture ? (
+                  <img
+                    src={profileData.profilePicture}
+                    alt="Profile"
+                    className="h-4/6 w-full rounded-full border-2 border-green-600"
+                  />
+                ) : (
+                  <p className="text-gray-900">No profile picture set</p>
+                )}
+              </div>
+              <div
+                className={`ml-4 w-10/12 ${isEditing ? 'flex' : 'flex'} items-center`}
+              >
+                {isEditing ? (
+                  <div className="w-full">
+                    <input
+                      type="text"
+                      value={profileData.name || ''}
+                      onChange={(e) =>
+                        handleInputChange('name', e.target.value)
+                      }
+                      className="w-96 rounded border border-gray-300 p-2"
+                      placeholder={`Enter ${'name'}`}
+                    />
+                    <input
+                      type="text"
+                      value={profileData.surname || ''}
+                      onChange={(e) =>
+                        handleInputChange('surname', e.target.value)
+                      }
+                      className="ml-1 w-96 rounded border border-gray-300 p-2"
+                      placeholder={`Enter ${'surname'}`}
+                    />
+                    <div className="mt-5 w-full">
+                      <p className="block text-gray-700">
+                        Editar imagen de usuario
+                      </p>
+                      <input
+                        id="picture"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setProfilePicture(file);
+                          }
+                        }}
+                        className="w-full rounded border border-gray-300 p-2"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {profileData.name || `No ${'name'} set`}{' '}
+                    {profileData.surname || `No ${'surname'} set`}
+                  </h2>
+                )}
+              </div>
             </div>
 
-            {/* Editable Fields */}
-            {(['name', 'surname', 'email', 'nick'] as Array<keyof typeof profileData>).map((field) => (
-              <div key={field} className="mb-4">
-                <label className="block text-gray-700 capitalize">{field}</label>
+            <div className="flex w-full">
+              <div className="mb-4 w-4/12">
+                <p>Email: </p>
                 {isEditing ? (
                   <input
                     type="text"
-                    value={profileData[field] || ''}
-                    onChange={(e) => handleInputChange(field, e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    placeholder={`Enter ${field}`}
+                    value={profileData.email || ''}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className="w-full rounded border border-gray-300 p-2"
+                    placeholder={`Enter ${'name'}`}
                   />
                 ) : (
-                  <p className="text-gray-900">{profileData[field] || `No ${field} set`}</p>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {profileData.email}
+                  </h2>
                 )}
               </div>
-            ))}
-
-            {/* File Input for Profile Picture */}
-            {isEditing && (
-              <div className="mb-4">
-                <label className="block text-gray-700">Profile Picture</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setProfilePicture(file);
+              <div className="mb-4 ml-5  w-4/12">
+                <p>Puesto: </p>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={profileData.position || ''}
+                    onChange={(e) =>
+                      handleInputChange('position', e.target.value)
                     }
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
+                    className="w-full rounded border border-gray-300 p-2"
+                    placeholder={`Enter ${'position'}`}
+                  />
+                ) : (
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {profileData.position}
+                  </h2>
+                )}
               </div>
-            )}
+              <div className="mb-4 ml-5  w-4/12">
+                <p>Teléfono: </p>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={profileData.phone || ''}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    className="w-full rounded border border-gray-300 p-2"
+                    placeholder={`Enter ${'phone'}`}
+                  />
+                ) : (
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {profileData.phone}
+                  </h2>
+                )}
+              </div>
+            </div>
 
-            {/* Save Button */}
-            {isEditing && (
-              <button
-                onClick={handleSave}
-                className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
-              >
-                Save
-              </button>
-            )}
+            <div className="w-full">
+              <div className="mb-4">
+                <p>Habilidades: </p>
+                {isEditing ? (
+                  <>
+                    <div className="w-full">
+                      <input
+                        type="text"
+                        id="skills"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Escribe una habilidad y presiona Enter"
+                        className="w-full rounded border border-gray-300 p-2"
+                      />
+                    </div>
+                    <div className="flex pt-3">
+                      {skills.map((skill) => (
+                        <div
+                          key={skill}
+                          className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                        >
+                          {skill.toUpperCase()}
+                          <button
+                            type="button"
+                            onClick={() => removeSkill(skill)}
+                            className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex pt-3">
+                    {profileData.skills &&
+                      profileData.skills.map((skill: string) => (
+                        <div
+                          key={skill}
+                          className="mb-2 mr-2 rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                        >
+                          {skill.toUpperCase()}
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={handleSave}
+              className="mt-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
+            >
+              Save
+            </button>
+          )}
         </main>
       </div>
     </div>

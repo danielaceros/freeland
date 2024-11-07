@@ -1,12 +1,14 @@
 import '@/styles/global.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import { AllLocales } from '@/utils/AppConfig';
-import AuthListener from '../../components/AuthListener'; 
+
+import AuthListener from '../../components/AuthListener';
 
 export const metadata: Metadata = {
   icons: [
@@ -52,18 +54,21 @@ export default function RootLayout(props: {
         <NextIntlClientProvider
           locale={props.params.locale}
           messages={messages}
+          // eslint-disable-next-line prettier/prettier
         ><ToastContainer
-        position="bottom-right"
-        autoClose={5000} // Optional: Duration to auto close the toast
-        hideProgressBar={false} // Optional: Show or hide the progress bar
-        newestOnTop={false} // Optional: Show newest toast on top
+            position="bottom-right"
+            autoClose={5000} // Optional: Duration to auto close the toast
+            hideProgressBar={false} // Optional: Show or hide the progress bar
+            newestOnTop={false} // Optional: Show newest toast on top
+            // eslint-disable-next-line prettier/prettier
         closeOnClick
-        rtl={false} // Optional: Enable RTL support
-        pauseOnFocusLoss
+            rtl={false} // Optional: Enable RTL support
+            pauseOnFocusLoss
+            // eslint-disable-next-line prettier/prettier
         draggable
-        pauseOnHover
-      />
-        <AuthListener />
+            pauseOnHover
+          />
+          <AuthListener />
           {props.children}
         </NextIntlClientProvider>
       </body>
