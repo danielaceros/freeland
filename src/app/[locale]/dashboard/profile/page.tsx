@@ -10,34 +10,62 @@ import { toast } from 'react-toastify'; // Import toast for notifications
 import Menu from '@/components/common/Menu';
 
 import { auth, db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
+import HeaderProfile from './headerProfile/HeaderProfile';
+import FormEditHistory from './historyProfile/formEditHistory/FormEditHistory';
+import HistoryProfile, {
+  type HistoryUserProps,
+} from './historyProfile/HistoryProfile';
+import SkillsProfile from './skillsProfile/SkillsProfile';
+
+interface HistoyProfile {
+  id: number;
+  rol: string;
+  company: string;
+  fromDate: Date;
+  toDate: Date;
+  description: string;
+}
+
+export interface ProfileDataInterface {
+  name: string;
+  surname: string | null;
+  email: string | null;
+  nick: string | null;
+  profilePicture: string | null;
+  profilePictureBackground: string | null;
+  position: string;
+  phone: string;
+  skills: string[];
+  history: HistoyProfile[];
+}
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
-  const [profileData, setProfileData] = useState<{
-    name: string;
-    surname: string | null;
-    email: string | null;
-    nick: string | null;
-    profilePicture: string | null;
-    position: string;
-    phone: string;
-    skills: string[];
-  }>({
+  const [profileData, setProfileData] = useState<ProfileDataInterface>({
     name: '',
     surname: '',
     email: '',
     nick: '',
     profilePicture: null,
+    profilePictureBackground: null,
     position: '',
     phone: '',
     skills: [],
+    history: [],
   });
   const [isEditing, setIsEditing] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-
-  const [skills, setSkills] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [profilePictureBackground, setProfilePictureBackground] =
+    useState<File | null>(null);
+  const [newHistory, setNewHistory] = useState<boolean>(false);
+  const [newHistoryUser, setNewHistoryUser] = useState<HistoryUserProps>({
+    rol: '',
+    company: '',
+    fromDate: new Date(),
+    toDate: new Date(),
+    description: '',
+  } as HistoryUserProps);
 
   // Fetch profile data
   useEffect(() => {
@@ -55,9 +83,11 @@ export default function Profile() {
               email: data.email || currentUser.email,
               nick: data.nick || '',
               profilePicture: data.profilePicture || null,
+              profilePictureBackground: data.profilePictureBackground || null,
               position: data.position || '',
               phone: data.phone || '',
               skills: data.skills || null,
+              history: data.history || null,
             });
           } else {
             await setDoc(userDocRef, { email: currentUser.email });
@@ -67,9 +97,11 @@ export default function Profile() {
               email: currentUser.email,
               nick: '',
               profilePicture: null,
+              profilePictureBackground: null,
               position: '',
               phone: '',
               skills: [],
+              history: [],
             });
           }
         } catch (error) {
@@ -85,27 +117,45 @@ export default function Profile() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    profileData.history.push(newHistoryUser);
+  }, [newHistoryUser]);
+
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
   };
 
   const handleSave = async () => {
-    setProfileData({ ...profileData, skills });
+    console.log('profilePictureBackground', profilePictureBackground);
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
       try {
-        if (profilePicture) {
-          const storageRef = ref(
-            storage,
-            `profilePictures/${user.uid}/${profilePicture.name}`,
-          );
-          await uploadBytes(storageRef, profilePicture);
-          const downloadURL = await getDownloadURL(storageRef);
+        if (profilePicture || profilePictureBackground) {
+          let downloadURL = null;
+          let downloadURLB = null;
+          if (profilePicture) {
+            const storageRef = ref(
+              storage,
+              `profilePictures/${user.uid}/${profilePicture.name}`,
+            );
+            await uploadBytes(storageRef, profilePicture);
+            downloadURL = await getDownloadURL(storageRef);
+          }
+          if (profilePictureBackground) {
+            const storageRef = ref(
+              storage,
+              `profilePictures/${user.uid}/${profilePictureBackground.name}`,
+            );
+            await uploadBytes(storageRef, profilePictureBackground);
+            downloadURLB = await getDownloadURL(storageRef);
+          }
           await setDoc(
             userDocRef,
             {
               ...profileData,
-              profilePicture: downloadURL,
+              profilePicture: downloadURL || profileData.profilePicture,
+              profilePictureBackground:
+                downloadURLB || profileData.profilePictureBackground,
             },
             { merge: true },
           );
@@ -130,55 +180,49 @@ export default function Profile() {
     );
   }
 
-  const handleKeyDown = (event: any) => {
-    // Detecta la tecla Enter y añade la habilidad si no está vacía y no existe en el array
-    if (inputValue !== '' && event.key === 'Enter' && inputValue.trim()) {
-      event.preventDefault();
-      if (inputValue !== '' && !skills.includes(inputValue.trim())) {
-        setSkills([...skills, inputValue.trim()]);
-        setInputValue(''); // Limpia el campo de entrada
+  const changeHistoryUser = (historyData: HistoryUserProps) => {
+    const updateHistory = profileData.history.map((his) => {
+      if (his.id === historyData.id) {
+        return historyData;
       }
-    }
-  };
-
-  const removeSkill = (skillToRemove: any) => {
-    // Elimina la habilidad seleccionada del array
-    setSkills(skills.filter((skill) => skill !== skillToRemove));
+      return his;
+    });
+    setProfileData({ ...profileData, history: updateHistory });
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-
-      <div className="flex-1">
-        <div className="flex w-full justify-end bg-white p-2">
+      <div className="max-h-screen flex-1 overflow-y-auto ">
+        <div className="fixed right-4 top-0 z-50 flex rounded-md bg-white p-2">
           <button
             type="button"
             onClick={() => setIsEditing(!isEditing)}
-            className="rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
+            className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} rounded  px-4 py-2 font-bold text-white `}
           >
-            {isEditing ? 'Cancel' : 'Edit'}
+            {isEditing ? 'Cancelar' : 'Editar'}
           </button>
+          {isEditing && (
+            <button
+              type="button"
+              onClick={handleSave}
+              className="ml-3 rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
+            >
+              Guardar
+            </button>
+          )}
         </div>
         <main className="px-16 py-6">
-          <div className="w-full rounded-lg bg-white p-6 shadow-md">
-            {/* Display Profile Picture */}
-            <div className="mb-4 flex w-full">
-              <div className="flex w-2/12 items-center">
-                {profileData.profilePicture ? (
-                  <img
-                    src={profileData.profilePicture}
-                    alt="Profile"
-                    className="h-4/6 w-full rounded-full border-2 border-green-600"
-                  />
-                ) : (
-                  <p className="text-gray-900">No profile picture set</p>
-                )}
-              </div>
-              <div
-                className={`ml-4 w-10/12 ${isEditing ? 'flex' : 'flex'} items-center`}
-              >
-                {isEditing ? (
+          <div className="my-3 w-full rounded-lg bg-white shadow-md">
+            <HeaderProfile
+              profileData={profileData}
+              bg={profilePictureBackground}
+            />
+          </div>
+          {isEditing && (
+            <>
+              <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+                <div className="mb-4 flex w-full">
                   <div className="w-full">
                     <input
                       type="text"
@@ -200,7 +244,8 @@ export default function Profile() {
                     />
                     <div className="mt-5 w-full">
                       <p className="block text-gray-700">
-                        Editar imagen de usuario
+                        Subir imagen de usuario. Tamaño recomendado: (300px X
+                        300px)
                       </p>
                       <input
                         id="picture"
@@ -215,129 +260,114 @@ export default function Profile() {
                         className="w-full rounded border border-gray-300 p-2"
                       />
                     </div>
-                  </div>
-                ) : (
-                  <h2 className="mb-4 text-xl font-semibold">
-                    {profileData.name || `No ${'name'} set`}{' '}
-                    {profileData.surname || `No ${'surname'} set`}
-                  </h2>
-                )}
-              </div>
-            </div>
-
-            <div className="flex w-full">
-              <div className="mb-4 w-4/12">
-                <p>Email: </p>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.email || ''}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full rounded border border-gray-300 p-2"
-                    placeholder={`Enter ${'name'}`}
-                  />
-                ) : (
-                  <h2 className="mb-4 text-xl font-semibold">
-                    {profileData.email}
-                  </h2>
-                )}
-              </div>
-              <div className="mb-4 ml-5  w-4/12">
-                <p>Puesto: </p>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.position || ''}
-                    onChange={(e) =>
-                      handleInputChange('position', e.target.value)
-                    }
-                    className="w-full rounded border border-gray-300 p-2"
-                    placeholder={`Enter ${'position'}`}
-                  />
-                ) : (
-                  <h2 className="mb-4 text-xl font-semibold">
-                    {profileData.position}
-                  </h2>
-                )}
-              </div>
-              <div className="mb-4 ml-5  w-4/12">
-                <p>Teléfono: </p>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.phone || ''}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="w-full rounded border border-gray-300 p-2"
-                    placeholder={`Enter ${'phone'}`}
-                  />
-                ) : (
-                  <h2 className="mb-4 text-xl font-semibold">
-                    {profileData.phone}
-                  </h2>
-                )}
-              </div>
-            </div>
-
-            <div className="w-full">
-              <div className="mb-4">
-                <p>Habilidades: </p>
-                {isEditing ? (
-                  <>
-                    <div className="w-full">
+                    <div className="mt-5 w-full">
+                      <p className="block text-gray-700">
+                        Subir imagen de fondo
+                      </p>
                       <input
-                        type="text"
-                        id="skills"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Escribe una habilidad y presiona Enter"
+                        id="picture"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setProfilePictureBackground(file);
+                          }
+                        }}
                         className="w-full rounded border border-gray-300 p-2"
                       />
                     </div>
-                    <div className="flex pt-3">
-                      {skills.map((skill) => (
-                        <div
-                          key={skill}
-                          className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
-                        >
-                          {skill.toUpperCase()}
-                          <button
-                            type="button"
-                            onClick={() => removeSkill(skill)}
-                            className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
-                          >
-                            &times;
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex pt-3">
-                    {profileData.skills &&
-                      profileData.skills.map((skill: string) => (
-                        <div
-                          key={skill}
-                          className="mb-2 mr-2 rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
-                        >
-                          {skill.toUpperCase()}
-                        </div>
-                      ))}
                   </div>
-                )}
+                </div>
               </div>
+              <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+                <div className="flex w-full">
+                  <div className="mb-4 w-4/12">
+                    <p>Email: </p>
+                    <input
+                      type="text"
+                      value={profileData.email || ''}
+                      onChange={(e) =>
+                        handleInputChange('name', e.target.value)
+                      }
+                      className="w-full rounded border border-gray-300 p-2"
+                      placeholder={`Enter ${'name'}`}
+                    />
+                  </div>
+                  <div className="mb-4 ml-5  w-4/12">
+                    <p>Puesto: </p>
+                    <input
+                      type="text"
+                      value={profileData.position || ''}
+                      onChange={(e) =>
+                        handleInputChange('position', e.target.value)
+                      }
+                      className="w-full rounded border border-gray-300 p-2"
+                      placeholder={`Enter ${'position'}`}
+                    />
+                  </div>
+                  <div className="mb-4 ml-5  w-4/12">
+                    <p>Teléfono: </p>
+                    <input
+                      type="text"
+                      value={profileData.phone || ''}
+                      onChange={(e) =>
+                        handleInputChange('phone', e.target.value)
+                      }
+                      className="w-full rounded border border-gray-300 p-2"
+                      placeholder={`Enter ${'phone'}`}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+            <div className="mb-4 w-full">
+              <SkillsProfile
+                isEditing={isEditing}
+                profileData={profileData}
+                onChangeSkills={setProfileData}
+              />
             </div>
           </div>
+          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+            <div className="w-full">
+              <div className="flex w-full justify-between">
+                <h2 className="mb-5 text-xl font-bold">Experiencia</h2>
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={() => setNewHistory(true)}
+                    className="mb-8 mt-4 rounded bg-freeland px-4 py-2 text-white hover:bg-green-500"
+                  >
+                    Añadir Experiencia
+                  </button>
+                )}
+              </div>
 
-          {isEditing && (
-            <button
-              type="button"
-              onClick={handleSave}
-              className="mt-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
-            >
-              Save
-            </button>
-          )}
+              {newHistory && (
+                <FormEditHistory
+                  open={newHistory}
+                  onChangeOpen={setNewHistory}
+                  data={newHistoryUser}
+                  onChangeHistory={setNewHistoryUser}
+                />
+              )}
+
+              {profileData.history &&
+                profileData.history.map((history) => {
+                  return (
+                    <HistoryProfile
+                      key={history.id}
+                      historyUser={history}
+                      edit={isEditing}
+                      onChangeHistoryUser={changeHistoryUser}
+                    />
+                  );
+                })}
+            </div>
+          </div>
         </main>
       </div>
     </div>
