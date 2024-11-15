@@ -8,15 +8,16 @@ export interface HistoryControllerProps {
   historyUser: HistoryUserProps;
   edit: boolean;
   onChangeHistoryUser: (props: HistoryUserProps) => void;
+  deleteHistory: (props: HistoryUserProps) => void;
 }
 
 const HistoryProfileController = (props: HistoryControllerProps) => {
-  const { onChangeHistoryUser, edit } = props;
+  const { onChangeHistoryUser, edit, deleteHistory } = props;
   const [historyUser, setHistoryUser] = useState<HistoryUserProps>(
     props.historyUser,
   );
   const [editHistory, setEditHistory] = useState<boolean>(false);
-  const [deleteHistory, setDeleteHistory] = useState<boolean>(false);
+  // const [isDeleteHistory, setIsDeleteHistory] = useState<boolean>(false);
   const isEdit = edit;
   const fromYear = useFormatDate(historyUser.fromDate);
   const toYear = useFormatDate(historyUser.toDate);
@@ -25,25 +26,24 @@ const HistoryProfileController = (props: HistoryControllerProps) => {
     setEditHistory(true);
   };
 
-  const isDeleteHistory = () => {
-    setDeleteHistory(true);
-  };
-
   useEffect(() => {
     onChangeHistoryUser(historyUser);
   }, [historyUser]);
 
+  const onDeleteHistory = () => {
+    deleteHistory(historyUser);
+  };
+
   return {
     historyUser,
     editHistory,
-    deleteHistory,
     isEdit,
     fromYear,
     toYear,
     setEditHistory,
-    isDeleteHistory,
     isEditHistory,
     setHistoryUser,
+    onDeleteHistory,
   } as const;
 };
 

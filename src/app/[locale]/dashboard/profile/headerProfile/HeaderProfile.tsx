@@ -6,7 +6,6 @@ import headerProfileController, {
 
 const HeaderProfile = (props: HeaderProfileControllerProps) => {
   const { profileData } = headerProfileController(props);
-  console.log('dsf', profileData);
   return (
     <>
       <div
