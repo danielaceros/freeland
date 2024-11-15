@@ -118,7 +118,11 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    profileData.history.push(newHistoryUser);
+    if (profileData.history && profileData.history.length > 0) {
+      profileData.history.push(newHistoryUser);
+    } else {
+      profileData.history = [newHistoryUser];
+    }
   }, [newHistoryUser]);
 
   const handleInputChange = (field: string, value: string) => {
@@ -126,7 +130,6 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
-    console.log('profilePictureBackground', profilePictureBackground);
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
       try {
@@ -190,11 +193,18 @@ export default function Profile() {
     setProfileData({ ...profileData, history: updateHistory });
   };
 
+  const deteleHistory = (historyUser: HistoryUserProps) => {
+    const updateHistory = profileData.history.filter(
+      (his) => historyUser.id !== his.id,
+    );
+    setProfileData({ ...profileData, history: updateHistory });
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
       <div className="max-h-screen flex-1 overflow-y-auto ">
-        <div className="fixed right-4 top-0 z-50 flex rounded-md bg-white p-2">
+        <div className="fixed bottom-0 right-0 z-50 flex rounded-md bg-white px-4 py-2">
           <button
             type="button"
             onClick={() => setIsEditing(!isEditing)}
@@ -212,13 +222,13 @@ export default function Profile() {
             </button>
           )}
         </div>
+        <div className="mb-3 w-full rounded-lg bg-white shadow-md">
+          <HeaderProfile
+            profileData={profileData}
+            bg={profilePictureBackground}
+          />
+        </div>
         <main className="px-16 py-6">
-          <div className="my-3 w-full rounded-lg bg-white shadow-md">
-            <HeaderProfile
-              profileData={profileData}
-              bg={profilePictureBackground}
-            />
-          </div>
           {isEditing && (
             <>
               <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
@@ -363,6 +373,7 @@ export default function Profile() {
                       historyUser={history}
                       edit={isEditing}
                       onChangeHistoryUser={changeHistoryUser}
+                      deleteHistory={deteleHistory}
                     />
                   );
                 })}

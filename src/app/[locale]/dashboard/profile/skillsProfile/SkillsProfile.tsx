@@ -31,29 +31,30 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
             />
           </div>
           <div className="flex pt-3">
-            {skillsData.map((skill) => (
-              <div
-                key={skill}
-                className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
-              >
-                {skill.toUpperCase()}
-                <button
-                  type="button"
-                  onClick={() => removeSkill(skill)}
-                  className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+            {skillsData &&
+              skillsData.map((skill: string, i: number) => (
+                <div
+                  key={`${skill}-${i.toString()}`}
+                  className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
                 >
-                  &times;
-                </button>
-              </div>
-            ))}
+                  {skill.toUpperCase()}
+                  <button
+                    type="button"
+                    onClick={() => removeSkill(skill)}
+                    className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
           </div>
         </>
       ) : (
         <div className="flex pt-3">
           {profileData.skills &&
-            profileData.skills.map((skill: string) => (
+            profileData.skills.map((skill: string, i: number) => (
               <div
-                key={skill}
+                key={`${skill}-${i.toString()}`}
                 className="mb-2 mr-2 rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
               >
                 {skill.toUpperCase()}
