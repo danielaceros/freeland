@@ -116,7 +116,31 @@ const Menu = () => {
           onClick={() => router.push('/dashboard/hire')}
         >
           {isOpen ? (
-            'Crear nueva oferta'
+            'Hire'
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+          )}
+        </button>
+        <button
+          type="button"
+          className="cursor-pointer py-2 hover:text-freeland"
+          onClick={() => router.push('/dashboard/work')}
+        >
+          {isOpen ? (
+            'Work'
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
