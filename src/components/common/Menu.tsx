@@ -8,6 +8,7 @@ import { useUser } from '@/hooks/useUser';
 import { auth } from '@/libs/firebase';
 
 import { Logo } from './Logo';
+import { useTranslations } from 'next-intl'; // Import useTranslations hook
 
 const Menu = () => {
   const { profileData } = useUser();
@@ -16,6 +17,7 @@ const Menu = () => {
   const img = profileData.profilePicture;
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter(); // Get router instance
+  const t = useTranslations(); // Initialize useTranslations
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -24,7 +26,7 @@ const Menu = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      toast.success('Logged out successfully!'); // Notify on successful logout
+      toast.success(t('menu.loggedOut')); // Use translation key for logout success message
       router.push('/'); // Redirect to home page after logout
     } catch (error) {
       console.error('Logout error:', error);
@@ -74,7 +76,7 @@ const Menu = () => {
         {img && (
           <img
             src={img}
-            alt="Ver Perfil"
+            alt={t('menu.viewProfile')} // Use translation key for "View Profile"
             className={`${isOpen ? 'size-16' : 'size-12'} rounded-full border-2 border-green-600`}
           />
         )}
@@ -92,7 +94,7 @@ const Menu = () => {
           onClick={() => router.push('/dashboard/')}
         >
           {isOpen ? (
-            'Dashboard'
+            t('menu.dashboard') // Use translation key for "Dashboard"
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +118,7 @@ const Menu = () => {
           onClick={() => router.push('/dashboard/hire')}
         >
           {isOpen ? (
-            'Hire'
+            t('menu.hire') // Use translation key for "Hire"
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +142,7 @@ const Menu = () => {
           onClick={() => router.push('/dashboard/work')}
         >
           {isOpen ? (
-            'Work'
+            t('menu.work') // Use translation key for "Work"
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +166,7 @@ const Menu = () => {
           onClick={handleLogout}
         >
           {isOpen ? (
-            'Logout'
+            t('menu.logout') // Use translation key for "Logout"
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
