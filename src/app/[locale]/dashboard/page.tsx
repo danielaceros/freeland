@@ -2,12 +2,12 @@
 
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useTranslations } from 'next-intl'; // Import useTranslations for translations
 import { useEffect, useState } from 'react';
 
 import Menu from '@/components/common/Menu';
 
 import { auth } from '../../../libs/firebase';
-import { useTranslations } from 'next-intl'; // Import useTranslations for translations
 
 export default function Dashboard() {
   const t = useTranslations(); // Initialize translations
@@ -69,7 +69,9 @@ export default function Dashboard() {
                     {t('dashboard.cards.totalSales.title')}
                   </h3>
                   <p className="text-3xl text-green-600">$10,000</p>
-                  <p className="text-gray-600">{t('dashboard.cards.totalSales.change')}</p>
+                  <p className="text-gray-600">
+                    {t('dashboard.cards.totalSales.change')}
+                  </p>
                 </div>
 
                 {/* Card 2 */}
@@ -78,7 +80,9 @@ export default function Dashboard() {
                     {t('dashboard.cards.activeUsers.title')}
                   </h3>
                   <p className="text-3xl text-green-600">1,250</p>
-                  <p className="text-gray-600">{t('dashboard.cards.activeUsers.change')}</p>
+                  <p className="text-gray-600">
+                    {t('dashboard.cards.activeUsers.change')}
+                  </p>
                 </div>
 
                 {/* Card 3 */}
@@ -87,7 +91,9 @@ export default function Dashboard() {
                     {t('dashboard.cards.newSignups.title')}
                   </h3>
                   <p className="text-3xl text-green-600">300</p>
-                  <p className="text-gray-600">{t('dashboard.cards.newSignups.change')}</p>
+                  <p className="text-gray-600">
+                    {t('dashboard.cards.newSignups.change')}
+                  </p>
                 </div>
               </div>
 
@@ -98,10 +104,18 @@ export default function Dashboard() {
                     {t('dashboard.cards.latestActivity.title')}
                   </h3>
                   <ul className="mt-2">
-                    <li className="text-gray-700">{t('dashboard.cards.latestActivity.items.0')}</li>
-                    <li className="text-gray-700">{t('dashboard.cards.latestActivity.items.1')}</li>
-                    <li className="text-gray-700">{t('dashboard.cards.latestActivity.items.2')}</li>
-                    <li className="text-gray-700">{t('dashboard.cards.latestActivity.items.3')}</li>
+                    <li className="text-gray-700">
+                      {t('dashboard.cards.latestActivity.items.0')}
+                    </li>
+                    <li className="text-gray-700">
+                      {t('dashboard.cards.latestActivity.items.1')}
+                    </li>
+                    <li className="text-gray-700">
+                      {t('dashboard.cards.latestActivity.items.2')}
+                    </li>
+                    <li className="text-gray-700">
+                      {t('dashboard.cards.latestActivity.items.3')}
+                    </li>
                   </ul>
                 </div>
 
@@ -111,7 +125,9 @@ export default function Dashboard() {
                     {t('dashboard.cards.revenueOverview.title')}
                   </h3>
                   <p className="text-3xl text-green-600">$2,500</p>
-                  <p className="text-gray-600">{t('dashboard.cards.revenueOverview.subtitle')}</p>
+                  <p className="text-gray-600">
+                    {t('dashboard.cards.revenueOverview.subtitle')}
+                  </p>
                   <div className="mt-4">
                     <div
                       className="h-4 rounded bg-green-200"

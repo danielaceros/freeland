@@ -1,5 +1,5 @@
 'use client';
-import { v4 as uuidv4 } from 'uuid';
+
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
@@ -12,12 +12,15 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useDropzone } from 'react-dropzone'; // Import the Dropzone hook
-import Menu from '@/components/common/Menu';
-import { auth, db, storage } from '../../../../libs/firebase';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone'; // Import the Dropzone hook
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
+
+import Menu from '@/components/common/Menu';
+
+import { auth, db, storage } from '../../../../libs/firebase';
 
 // Define the types for Offer and User
 interface Offer {
@@ -48,12 +51,12 @@ export default function Hire() {
 
     try {
       const querySnapshot = await getDocs(q);
-      const offersData: Offer[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        description: doc.data().description,
-        createdAt: new Date(doc.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
-        fileUrl: doc.data().fileUrl, // Get the file URL if exists
+      const offersData: Offer[] = querySnapshot.docs.map((docu) => ({
+        id: docu.id,
+        name: docu.data().name,
+        description: docu.data().description,
+        createdAt: new Date(docu.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
+        fileUrl: docu.data().fileUrl, // Get the file URL if exists
       }));
       setOffers(offersData); // Update the offers state
     } catch (error) {
@@ -85,13 +88,16 @@ export default function Hire() {
 
     try {
       // Generate a random offer ID
-      const offerId = uuidv4();  // Generates a unique random ID for the offer
-  
+      const offerId = uuidv4(); // Generates a unique random ID for the offer
+
       // Upload the file to Firebase Storage under the user's UID and offer ID
-      const storageRef = ref(storage, `offers/${user!.uid}/${offerId}/recruiter/${offerFile.name}`); // Include the offerId here
+      const storageRef = ref(
+        storage,
+        `offers/${user!.uid}/${offerId}/recruiter/${offerFile.name}`,
+      ); // Include the offerId here
       await uploadBytes(storageRef, offerFile);
       const fileUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded file
-  
+
       // Add the offer to Firestore under the user's UID and offerId
       await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
         name: offerName,
@@ -99,9 +105,9 @@ export default function Hire() {
         createdAt: new Date(),
         fileUrl, // Store the file URL in Firestore
       });
-  
+
       toast.success(t('success.offerAdded'));
-      
+
       // Reset the form and fetch updated offers
       setOfferName('');
       setOfferDescription('');
@@ -192,9 +198,13 @@ export default function Hire() {
               {user ? (
                 <>
                   <div className="mb-6">
-                    <h3 className="text-xl font-semibold">{t('hire.createNewOffer')}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {t('hire.createNewOffer')}
+                    </h3>
                     <div className="mb-4">
-                      <p className="block text-gray-700">{t('hire.offerName')}</p>
+                      <p className="block text-gray-700">
+                        {t('hire.offerName')}
+                      </p>
                       <input
                         type="text"
                         value={offerName}
@@ -203,7 +213,9 @@ export default function Hire() {
                       />
                     </div>
                     <div className="mb-4">
-                      <p className="block text-gray-700">{t('hire.description')}</p>
+                      <p className="block text-gray-700">
+                        {t('hire.description')}
+                      </p>
                       <textarea
                         value={offerDescription}
                         onChange={(e) => setOfferDescription(e.target.value)}
@@ -211,7 +223,9 @@ export default function Hire() {
                       />
                     </div>
                     <div className="mb-4">
-                      <p className="block text-gray-700">{t('hire.uploadFile')}</p>
+                      <p className="block text-gray-700">
+                        {t('hire.uploadFile')}
+                      </p>
                       <div
                         {...getRootProps()}
                         className="w-full rounded border-2 border-dashed border-gray-300 p-6 text-center"

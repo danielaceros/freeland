@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl'; // Import useTranslations hook
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -8,7 +9,6 @@ import { useUser } from '@/hooks/useUser';
 import { auth } from '@/libs/firebase';
 
 import { Logo } from './Logo';
-import { useTranslations } from 'next-intl'; // Import useTranslations hook
 
 const Menu = () => {
   const { profileData } = useUser();
