@@ -10,6 +10,9 @@ declare global {
     permission: OrgPermission;
     role: OrgRole;
   }
+  interface Window {
+    recaptchaVerifier?: import('firebase/auth').RecaptchaVerifier;
+  }
 }
 
 export {};

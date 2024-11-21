@@ -1,48 +1,49 @@
 'use client';
 
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 import { useState } from 'react';
+import { auth, googleProvider } from '../../libs/firebase';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { auth } from '../../libs/firebase'; // Importa la autenticación configurada
 import { useRouter } from 'next/navigation';
 
 const LoginController = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+
   const onSubmit = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      console.log('Usuario autenticado:', userCredential.user.email);
-      toast.success("Welcome!, "+userCredential.user.email);
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success('Successfully logged in!');
       router.push('/dashboard');
+      // Handle successful login (e.g., navigate to dashboard)
     } catch (error) {
-      console.log('Error:', error);
-      toast.error("Credenciales erróneas");
+      console.error(error);
+      toast.error('Login failed. Please check your credentials.');
     }
   };
 
   const onRegister = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      console.log('Usuario registrado:', userCredential.user.email);
-      toast.success("Welcome!, "+userCredential.user.email);
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast.success('Account created successfully!');
       router.push('/dashboard');
+      // Handle successful registration (e.g., navigate to dashboard)
     } catch (error) {
-      console.log('Error:', error);
-      toast.error("Credenciales erróneas");
+      console.error(error);
+      toast.error('Registration failed. Try again!');
+    }
+  };
+
+  const onGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      toast.success(`Welcome, ${result.user.displayName}!`);
+      router.push('/dashboard');
+      // Handle successful Google sign-in (e.g., navigate to dashboard)
+    } catch (error) {
+      console.error(error);
+      toast.error('Google Sign-In failed. Try again!');
     }
   };
 
@@ -53,7 +54,8 @@ const LoginController = () => {
     setPassword,
     onSubmit,
     onRegister,
-  } as const;
+    onGoogleSignIn,
+  };
 };
 
 export default LoginController;
