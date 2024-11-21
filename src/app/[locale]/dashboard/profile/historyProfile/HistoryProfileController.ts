@@ -17,7 +17,6 @@ const HistoryProfileController = (props: HistoryControllerProps) => {
     props.historyUser,
   );
   const [editHistory, setEditHistory] = useState<boolean>(false);
-  // const [isDeleteHistory, setIsDeleteHistory] = useState<boolean>(false);
   const isEdit = edit;
   const fromYear = useFormatDate(historyUser.fromDate);
   const toYear = useFormatDate(historyUser.toDate);

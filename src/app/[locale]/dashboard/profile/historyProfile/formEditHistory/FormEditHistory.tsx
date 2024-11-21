@@ -21,7 +21,20 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
     onChangeOpen(openPopup);
   }, [openPopup]);
 
+  const generarRandom = (length: number) => {
+    const caracteres =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split(
+        '',
+      );
+    const caracteresLength = caracteres.length;
+    return Array.from(
+      { length },
+      () => caracteres[Math.floor(Math.random() * caracteresLength)],
+    ).join('');
+  };
+
   const onSaveHistory = () => {
+    historyData.id = generarRandom(10).toString();
     onChangeHistory(historyData);
     setOpenPopup(false);
   };

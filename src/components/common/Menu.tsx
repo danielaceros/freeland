@@ -80,7 +80,7 @@ const Menu = () => {
         )}
         {isOpen && (
           <div className="ml-3 text-left text-freeland">
-            <p className="text-xl font-bold">{userName}</p>
+            <p className="text-xl font-bold">{userName || profileData.email}</p>
             <p className="text-md font-bold">{lastName}</p>
           </div>
         )}
