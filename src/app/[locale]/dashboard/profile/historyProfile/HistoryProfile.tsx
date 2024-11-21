@@ -6,7 +6,7 @@ import HistoryProfileController, {
 } from './HistoryProfileController';
 
 export interface HistoryUserProps {
-  id: number;
+  id: string;
   rol: string;
   company: string;
   fromDate: Date;

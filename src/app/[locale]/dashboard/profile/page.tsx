@@ -18,7 +18,7 @@ import HistoryProfile, {
 import SkillsProfile from './skillsProfile/SkillsProfile';
 
 interface HistoyProfile {
-  id: number;
+  id: string;
   rol: string;
   company: string;
   fromDate: Date;
