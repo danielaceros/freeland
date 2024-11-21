@@ -1,164 +1,106 @@
 {
-  "Index": {
-    "meta_title": "Freeland",
-    "meta_description": "Plataforma para autónomos"
+  "resetPasswordPrompt": "Por favor, introduce tu dirección de correo electrónico para restablecer tu contraseña.",
+  "resetPasswordSuccess": "¡Correo de restablecimiento de contraseña enviado! Revisa tu bandeja de entrada.",
+  "resetPasswordError": "Error al enviar el correo de restablecimiento de contraseña.",
+  "email": "Correo electrónico",
+  "password": "Contraseña",
+  "forgotPassword": "¿Olvidaste tu contraseña?",
+  "login": "Iniciar sesión",
+  "register": "Registrarse",
+  "or": "o",
+  "googleSignIn": "Iniciar sesión con Google",
+  "noUserAuthenticated": "No hay usuario autenticado.",
+  "errorFetchingOffers": "Error al obtener ofertas:",
+  "failedToFetchOffers": "No se pudieron obtener las ofertas.",
+  "selectFileToUpload": "Por favor selecciona un archivo para subir.",
+  "powUploadSuccess": "¡Prueba de trabajo subida con éxito!",
+  "errorUploadingFile": "Error al subir el archivo:",
+  "failedToUploadFile": "No se pudo subir el archivo.",
+  "powRemoveSuccess": "¡Prueba de trabajo eliminada con éxito!",
+  "errorRemovingFile": "Error al eliminar el archivo:",
+  "failedToRemoveFile": "No se pudo eliminar el archivo.",
+  "work": "Trabajo",
+  "allActiveJobOffers": "Todas las ofertas de trabajo activas",
+  "noActiveJobOffers": "No hay ofertas de trabajo activas disponibles.",
+  "postedOn": "Publicado el:",
+  "downloadPoW": "Descargar PoW",
+  "dragAndDrop": "Arrastra y suelta un archivo de video o imagen aquí, o haz clic para seleccionar",
+  "fileSelected": "Archivo seleccionado:",
+  "close": "Cerrar",
+  "previewPoW": "Vista previa de PoW",
+  "removePoW": "Eliminar PoW",
+  "changePoW": "Cambiar PoW",
+  "uploadPoW": "Subir PoW",
+  "mustBeLoggedIn": "Debes iniciar sesión para ver las ofertas.",
+  "dashboard": {
+    "title": "Tablero",
+    "addNew": "Agregar nuevo",
+    "welcome": "¡Bienvenido, {user}!",
+    "cards": {
+      "totalSales": {
+        "title": "Ventas totales",
+        "change": "+15% desde el mes pasado"
+      },
+      "activeUsers": {
+        "title": "Usuarios activos",
+        "change": "+30% desde el mes pasado"
+      },
+      "newSignups": {
+        "title": "Nuevas inscripciones",
+        "change": "+20% desde el mes pasado"
+      },
+      "latestActivity": {
+        "title": "Última actividad",
+        "items": [
+          "El usuario John se registró",
+          "La usuaria Jane realizó una compra",
+          "El usuario Alex inició sesión",
+          "La usuaria Mary actualizó su perfil"
+        ]
+      },
+      "revenueOverview": {
+        "title": "Resumen de ingresos",
+        "subtitle": "Esta semana"
+      }
+    }
   },
-  "Navbar": {
-    "sign_in": "Iniciar sesión",
-    "sign_up": "Registrarse",
-    "product": "Producto",
-    "docs": "Documentación",
-    "blog": "Blog",
-    "community": "Comunidad",
-    "company": "Empresa"
+  "menu": {
+    "dashboard": "Tablero",
+    "hire": "Contratar",
+    "work": "Trabajo",
+    "logout": "Cerrar sesión",
+    "viewProfile": "Ver perfil",
+    "loggedOut": "¡Cerrado sesión correctamente!",
+    "changeLocale": "Cambiar idioma"
   },
-  "Hero": {
-    "follow_twitter": "Síguenos en Twitter @Ixartz",
-    "title": "La <important>plantilla SaaS</important> perfecta para construir y escalar tu negocio con facilidad.",
-    "description": "Una plantilla de página de aterrizaje gratuita y de código abierto para tu negocio SaaS, construida con React, TypeScript, Shadcn UI y Tailwind CSS.",
-    "primary_button": "Comenzar",
-    "secondary_button": "Estrella en GitHub"
-  },
-  "Sponsors": {
-    "title": "Patrocinado por"
-  },
-  "Features": {
-    "section_subtitle": "Características",
-    "section_title": "Desbloquea el Potencial Completo de la Plantilla SaaS",
-    "section_description": "Una plantilla de página de aterrizaje gratuita y de código abierto para tu negocio SaaS, construida con React, TypeScript, Shadcn UI y Tailwind CSS.",
-    "feature1_title": "Node.js",
-    "feature2_title": "React",
-    "feature3_title": "Tailwind CSS",
-    "feature4_title": "TypeScript",
-    "feature5_title": "Shadcn UI",
-    "feature6_title": "ESLint",
-    "feature_description": "Una plantilla de página de aterrizaje gratuita y de código abierto para tu negocio SaaS, construida con React, TypeScript, Shadcn UI y Tailwind CSS."
-  },
-  "Pricing": {
-    "section_subtitle": "Características",
-    "section_title": "Desbloquea el Potencial Completo de la Plantilla SaaS",
-    "section_description": "Una plantilla de página de aterrizaje gratuita y de código abierto para tu negocio SaaS, construida con React, TypeScript, Shadcn UI y Tailwind CSS.",
-    "button_text": "Comenzar"
-  },
-  "PricingPlan": {
-    "free_plan_name": "Gratis",
-    "premium_plan_name": "Premium",
-    "enterprise_plan_name": "Empresarial",
-    "free_plan_description": "Para individuos",
-    "premium_plan_description": "Para equipos pequeños",
-    "enterprise_plan_description": "Para líderes de la industria",
-    "feature_team_member": "{number} Miembros del equipo",
-    "feature_website": "{number} Sitios web",
-    "feature_storage": "{number} GB Almacenamiento",
-    "feature_transfer": "{number} TB Transferencia",
-    "feature_email_support": "Soporte por correo electrónico",
-    "plan_interval_month": "mes",
-    "plan_interval_year": "año",
-    "next_renew_date": "Tu suscripción se renueva el {date}"
-  },
-  "FAQ": {
-    "question": "¿Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
-    "answer": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam aliquam enim dui, id consequat turpis ullamcorper ac. Mauris id quam dolor. Nullam eu egestas turpis. Proin risus elit, sollicitudin in mi a, accumsan euismod turpis. In euismod mi sed diam tristique hendrerit."
-  },
-  "CTA": {
-    "title": "¿Estás listo?",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "button_text": "Estrella en GitHub"
-  },
-  "Footer": {
-    "product": "Producto",
-    "docs": "Documentación",
-    "blog": "Blog",
-    "community": "Comunidad",
-    "company": "Empresa",
-    "terms_of_service": "Términos del servicio",
-    "privacy_policy": "Política de privacidad",
-    "designed_by": "Diseñado por <author></author>"
-  },
-  "ProtectFallback": {
-    "not_enough_permission": "No tienes permisos para realizar esta acción"
-  },
-  "SignIn": {
-    "meta_title": "Iniciar sesión",
-    "meta_description": "Inicia sesión en tu cuenta de manera sencilla con nuestro proceso de inicio de sesión fácil de usar."
-  },
-  "SignUp": {
-    "meta_title": "Registrarse",
-    "meta_description": "Crea una cuenta sin esfuerzo a través de nuestro proceso de registro intuitivo."
-  },
-  "DashboardLayout": {
-    "home": "Inicio",
-    "todos": "Tareas",
-    "members": "Miembros",
-    "billing": "Facturación",
-    "settings": "Configuraciones"
-  },
-  "Dashboard": {
-    "meta_title": "Panel de Plantilla SaaS",
-    "meta_description": "Una plantilla de página de aterrizaje gratuita y de código abierto para tu negocio SaaS, construida con Next.js, TypeScript, Shadcn UI y Tailwind CSS."
-  },
-  "DashboardIndex": {
-    "title_bar": "Panel",
-    "title_bar_description": "Bienvenido a tu panel",
-    "message_state_title": "Comencemos",
-    "message_state_description": "Puedes personalizar esta página editando el archivo en <code>dashboard/page.tsx</code>",
-    "message_state_button": "¿Necesitas integración con Stripe? Consulta Next.js Boilerplate Pro"
-  },
-  "UserProfile": {
-    "title_bar": "Perfil de Usuario",
-    "title_bar_description": "Ver y gestionar tu perfil de usuario"
-  },
-  "OrganizationProfile": {
-    "title_bar": "Gestión de Organización",
-    "title_bar_description": "Gestiona tu organización"
-  },
-  "Billing": {
-    "title_bar": "Facturación",
-    "title_bar_description": "Gestiona tu facturación y suscripción",
-    "current_section_title": "Plan Actual",
-    "current_section_description": "Ajusta tu plan de pago para que se adapte mejor a tus requisitos",
-    "manage_subscription_button": "Gestionar Suscripción"
-  },
-  "BillingOptions": {
-    "current_plan": "Plan Actual",
-    "upgrade_plan": "Comenzar"
-  },
-  "CheckoutConfirmation": {
-    "title_bar": "Confirmación de Pago",
-    "message_state_title": "Pago exitoso",
-    "message_state_description": "Tu pago ha sido procesado con éxito. ¡Gracias por tu compra!",
-    "message_state_button": "Volver a Facturación"
-  },
-  "DataTable": {
-    "no_results": "No hay resultados."
-  },
-  "Todos": {
-    "title_bar": "Lista de Tareas",
-    "title_bar_description": "Ver y gestionar tu lista de tareas",
-    "add_todo_button": "Nueva tarea"
-  },
-  "TodoTableColumns": {
-    "open_menu": "Abrir menú",
-    "edit": "Editar",
+  "hire": {
+    "title": "Contratar",
+    "addNewOffer": "Añadir Nueva Oferta",
+    "createNewOffer": "Crear una Nueva Oferta de Trabajo",
+    "offerName": "Nombre de la Oferta",
+    "description": "Descripción",
+    "uploadFile": "Subir Archivo",
+    "addOffer": "Añadir Oferta",
+    "dragAndDrop": "Arrastra y suelta tu archivo aquí, o haz clic para seleccionar",
+    "yourJobOffers": "Tus Ofertas de Trabajo",
+    "postedOn": "Publicado el",
+    "viewDetails": "Ver Detalles",
     "delete": "Eliminar",
-    "title_header": "Título",
-    "message_header": "Mensaje"
-  },
-  "AddTodo": {
-    "title_bar": "Agregar Tarea",
-    "add_todo_section_title": "Crear una nueva tarea",
-    "add_todo_section_description": "Completa el formulario a continuación para crear una nueva tarea"
-  },
-  "EditTodo": {
-    "title_bar": "Editar tarea",
-    "edit_todo_section_title": "Modificar tarea",
-    "edit_todo_section_description": "Completa el formulario a continuación para editar la tarea"
-  },
-  "TodoForm": {
-    "title_label": "Título",
-    "title_description": "Ingresa un título descriptivo para tu tarea.",
-    "message_title": "Mensaje",
-    "message_description": "Ingresa un mensaje detallado para tu tarea.",
-    "submit_button": "Enviar"
+    "viewUploadedFile": "Ver Archivo Subido",
+    "close": "Cerrar",
+    "confirmDelete": "Confirmar Eliminación",
+    "deleteConfirmation": "¿Estás seguro de que deseas eliminar esta oferta?",
+    "cancel": "Cancelar",
+    "mustBeLoggedIn": "Debes estar registrado para ver tus ofertas.",
+    "error": {
+      "fetchOffers": "Error al obtener ofertas.",
+      "fillFields": "Por favor completa todos los campos y sube un archivo.",
+      "addOffer": "No se pudo añadir la oferta.",
+      "deleteOffer": "No se pudo eliminar la oferta."
+    },
+    "success": {
+      "offerAdded": "¡Oferta añadida exitosamente!",
+      "offerDeleted": "¡Oferta eliminada exitosamente!"
+    }
   }
 }
