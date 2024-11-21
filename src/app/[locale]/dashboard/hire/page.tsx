@@ -1,15 +1,15 @@
 'use client';
-
+import { v4 as uuidv4 } from 'uuid';
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
   getDocs,
   orderBy,
   query,
+  setDoc,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useEffect, useState } from 'react';
@@ -82,21 +82,27 @@ export default function Hire() {
       toast.error('Please fill in all fields and upload a file.');
       return;
     }
-
+  
     try {
-      // Upload file to Firebase Storage in a user-specific path
-      const storageRef = ref(storage, `offers/${user!.uid}/${offerFile.name}`); // Change this line
+      // Generate a random offer ID
+      const offerId = uuidv4();  // Generates a unique random ID for the offer
+  
+      // Upload the file to Firebase Storage under the user's UID and offer ID
+      const storageRef = ref(storage, `offers/${user!.uid}/${offerId}/recruiter/${offerFile.name}`); // Include the offerId here
       await uploadBytes(storageRef, offerFile);
       const fileUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded file
-
-      // Add the offer to Firestore
-      await addDoc(collection(db, 'users', user!.uid, 'offers'), {
+  
+      // Add the offer to Firestore under the user's UID and offerId
+      await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
         name: offerName,
         description: offerDescription,
         createdAt: new Date(),
         fileUrl, // Store the file URL in Firestore
       });
+  
       toast.success('Offer added successfully!');
+      
+      // Reset the form and fetch updated offers
       setOfferName('');
       setOfferDescription('');
       setOfferFile(null);
