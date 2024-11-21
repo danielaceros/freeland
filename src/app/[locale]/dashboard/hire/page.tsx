@@ -14,10 +14,10 @@ import {
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-
+import { useDropzone } from 'react-dropzone'; // Import the Dropzone hook
 import Menu from '@/components/common/Menu';
-
 import { auth, db, storage } from '../../../../libs/firebase';
+import { useTranslations } from 'next-intl';
 
 // Define the types for Offer and User
 interface Offer {
@@ -29,12 +29,13 @@ interface Offer {
 }
 
 export default function Hire() {
+  const t = useTranslations(); // Initialize translations
   const [user, setUser] = useState<User | null>(null); // User state
   const [loading, setLoading] = useState(true);
   const [offers, setOffers] = useState<Offer[]>([]); // State for job offers
   const [offerName, setOfferName] = useState('');
   const [offerDescription, setOfferDescription] = useState('');
-  const [offerFile, setOfferFile] = useState<File | null>(null);
+  const [offerFile, setOfferFile] = useState<File | null>(null); // File state
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null); // Selected offer for modal
   const [modalOpen, setModalOpen] = useState(false); // Modal open state
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false); // Confirmation modal state
@@ -47,7 +48,6 @@ export default function Hire() {
 
     try {
       const querySnapshot = await getDocs(q);
-      // eslint-disable-next-line @typescript-eslint/no-shadow
       const offersData: Offer[] = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
@@ -57,7 +57,7 @@ export default function Hire() {
       }));
       setOffers(offersData); // Update the offers state
     } catch (error) {
-      toast.error('Failed to fetch offers.');
+      toast.error(t('error.fetchOffers'));
     }
   };
 
@@ -79,10 +79,10 @@ export default function Hire() {
   // Function to handle adding a new job offer
   const handleAddOffer = async () => {
     if (!offerName || !offerDescription || !offerFile) {
-      toast.error('Please fill in all fields and upload a file.');
+      toast.error(t('error.fillFields'));
       return;
     }
-  
+
     try {
       // Generate a random offer ID
       const offerId = uuidv4();  // Generates a unique random ID for the offer
@@ -100,7 +100,7 @@ export default function Hire() {
         fileUrl, // Store the file URL in Firestore
       });
   
-      toast.success('Offer added successfully!');
+      toast.success(t('success.offerAdded'));
       
       // Reset the form and fetch updated offers
       setOfferName('');
@@ -109,7 +109,7 @@ export default function Hire() {
       fetchOffers(user!.uid); // Fetch the updated offers
     } catch (error) {
       console.error('Error adding offer:', error);
-      toast.error('Failed to add offer.');
+      toast.error(t('error.addOffer'));
     }
   };
 
@@ -144,12 +144,12 @@ export default function Hire() {
     try {
       // Delete the offer document from Firestore
       await deleteDoc(doc(db, 'users', user!.uid, 'offers', offerToDelete));
-      toast.success('Offer deleted successfully!');
+      toast.success(t('success.offerDeleted'));
       fetchOffers(user!.uid); // Fetch updated offers after deletion
       closeConfirmDeleteModal(); // Close the confirmation modal
     } catch (error) {
       console.error('Error deleting offer:', error);
-      toast.error('Failed to delete offer.');
+      toast.error(t('error.deleteOffer'));
     }
   };
 
@@ -160,19 +160,27 @@ export default function Hire() {
     </div>
   );
 
+  // Handle file drop using react-dropzone
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setOfferFile(acceptedFiles[0] || null); // Set the first file dropped
+    },
+    multiple: false, // Only accept one file
+  });
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
 
       <div className="flex flex-1 flex-col">
         <header className="flex items-center justify-between bg-white p-4 shadow">
-          <h2 className="text-3xl font-semibold">Hire</h2>
+          <h2 className="text-3xl font-semibold">{t('hire.title')}</h2>
           <button
             type="button"
             className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
             onClick={handleAddOffer}
           >
-            Add New Offer
+            {t('hire.addNewOffer')}
           </button>
         </header>
 
@@ -184,11 +192,9 @@ export default function Hire() {
               {user ? (
                 <>
                   <div className="mb-6">
-                    <h3 className="text-xl font-semibold">
-                      Create a New Job Offer
-                    </h3>
+                    <h3 className="text-xl font-semibold">{t('hire.createNewOffer')}</h3>
                     <div className="mb-4">
-                      <p className="block text-gray-700">Offer Name</p>
+                      <p className="block text-gray-700">{t('hire.offerName')}</p>
                       <input
                         type="text"
                         value={offerName}
@@ -197,7 +203,7 @@ export default function Hire() {
                       />
                     </div>
                     <div className="mb-4">
-                      <p className="block text-gray-700">Description</p>
+                      <p className="block text-gray-700">{t('hire.description')}</p>
                       <textarea
                         value={offerDescription}
                         onChange={(e) => setOfferDescription(e.target.value)}
@@ -205,26 +211,28 @@ export default function Hire() {
                       />
                     </div>
                     <div className="mb-4">
-                      <p className="block text-gray-700">Upload File</p>
-                      <input
-                        type="file"
-                        onChange={(e) =>
-                          setOfferFile(e.target.files?.[0] || null)
-                        }
-                        className="w-full rounded border border-gray-300 p-2"
-                      />
+                      <p className="block text-gray-700">{t('hire.uploadFile')}</p>
+                      <div
+                        {...getRootProps()}
+                        className="w-full rounded border-2 border-dashed border-gray-300 p-6 text-center"
+                      >
+                        <input {...getInputProps()} />
+                        <p className="text-gray-600">
+                          {offerFile ? offerFile.name : t('hire.dragAndDrop')}
+                        </p>
+                      </div>
                     </div>
                     <button
                       type="button"
                       onClick={handleAddOffer}
                       className="mt-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
                     >
-                      Add Offer
+                      {t('hire.addOffer')}
                     </button>
                   </div>
 
                   <h3 className="mb-4 text-xl font-semibold">
-                    Your Job Offers
+                    {t('hire.yourJobOffers')}
                   </h3>
                   <div className="grid grid-cols-1 gap-6">
                     {offers.map((offer) => (
@@ -235,7 +243,8 @@ export default function Hire() {
                         <h4 className="text-lg font-semibold">{offer.name}</h4>
                         <p className="text-gray-600">{offer.description}</p>
                         <p className="text-gray-700">
-                          Posted on: {offer.createdAt.toLocaleDateString()}
+                          {t('hire.postedOn')}{' '}
+                          {offer.createdAt.toLocaleDateString()}
                         </p>
                         <div className="mt-4 flex justify-between">
                           <button
@@ -243,14 +252,14 @@ export default function Hire() {
                             onClick={() => openModal(offer)} // Open modal on offer click
                             className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
                           >
-                            View Details
+                            {t('hire.viewDetails')}
                           </button>
                           <button
                             type="button"
                             onClick={() => openConfirmDeleteModal(offer.id)} // Open confirmation modal
                             className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
                           >
-                            Delete
+                            {t('hire.delete')}
                           </button>
                         </div>
                       </div>
@@ -266,7 +275,7 @@ export default function Hire() {
                         </h2>
                         <p className="mb-4">{selectedOffer.description}</p>
                         <p className="text-gray-700">
-                          Posted on:{' '}
+                          {t('hire.postedOn')}{' '}
                           {selectedOffer.createdAt.toLocaleDateString()}
                         </p>
                         {selectedOffer.fileUrl && (
@@ -277,7 +286,7 @@ export default function Hire() {
                               rel="noopener noreferrer"
                               className="text-blue-600 underline"
                             >
-                              View Uploaded File
+                              {t('hire.viewUploadedFile')}
                             </a>
                           </div>
                         )}
@@ -286,7 +295,7 @@ export default function Hire() {
                           onClick={closeModal}
                           className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
                         >
-                          Close
+                          {t('hire.close')}
                         </button>
                       </div>
                     </div>
@@ -297,23 +306,23 @@ export default function Hire() {
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
                         <h2 className="mb-4 text-xl font-semibold">
-                          Confirm Deletion
+                          {t('hire.confirmDelete')}
                         </h2>
-                        <p>Are you sure you want to delete this offer?</p>
+                        <p>{t('hire.deleteConfirmation')}</p>
                         <div className="mt-4 flex justify-end">
                           <button
                             type="button"
                             onClick={closeConfirmDeleteModal}
                             className="mr-2 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-400"
                           >
-                            Cancel
+                            {t('hire.cancel')}
                           </button>
                           <button
                             type="button"
                             onClick={handleDeleteOffer}
                             className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
                           >
-                            Delete
+                            {t('hire.delete')}
                           </button>
                         </div>
                       </div>
@@ -323,7 +332,7 @@ export default function Hire() {
               ) : (
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold">
-                    You must be logged in to see your offers.
+                    {t('hire.mustBeLoggedIn')}
                   </h3>
                 </div>
               )}
