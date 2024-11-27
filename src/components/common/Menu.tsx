@@ -37,7 +37,7 @@ const Menu = () => {
     <aside
       className={`${
         isOpen ? 'w-64' : 'w-20'
-      } flex flex-col bg-zinc-800 p-4 text-white transition-all duration-100`}
+      } z-50 flex flex-col bg-zinc-800 p-4 text-white transition-all duration-100`}
     >
       <button
         type="button"

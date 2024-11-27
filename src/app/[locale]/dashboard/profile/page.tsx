@@ -41,6 +41,18 @@ export interface ProfileDataInterface {
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
+  const [oldProfileData, setOldProfileData] = useState<ProfileDataInterface>({
+    name: '',
+    surname: '',
+    email: '',
+    nick: '',
+    profilePicture: null,
+    profilePictureBackground: null,
+    position: '',
+    phone: '',
+    skills: [],
+    history: [],
+  });
   const [profileData, setProfileData] = useState<ProfileDataInterface>({
     name: '',
     surname: '',
@@ -89,9 +101,33 @@ export default function Profile() {
               skills: data.skills || null,
               history: data.history || null,
             });
+            setOldProfileData({
+              name: data.name || '',
+              surname: data.surname || '',
+              email: data.email || currentUser.email,
+              nick: data.nick || '',
+              profilePicture: data.profilePicture || null,
+              profilePictureBackground: data.profilePictureBackground || null,
+              position: data.position || '',
+              phone: data.phone || '',
+              skills: data.skills || null,
+              history: data.history || null,
+            });
           } else {
             await setDoc(userDocRef, { email: currentUser.email });
             setProfileData({
+              name: '',
+              surname: '',
+              email: currentUser.email,
+              nick: '',
+              profilePicture: null,
+              profilePictureBackground: null,
+              position: '',
+              phone: '',
+              skills: [],
+              history: [],
+            });
+            setOldProfileData({
               name: '',
               surname: '',
               email: currentUser.email,
@@ -165,7 +201,7 @@ export default function Profile() {
         } else {
           await setDoc(userDocRef, profileData, { merge: true });
         }
-
+        setOldProfileData(profileData);
         toast.success('Profile updated successfully!'); // Notify on successful profile update
         setIsEditing(false);
       } catch (error) {
@@ -200,25 +236,40 @@ export default function Profile() {
     setProfileData({ ...profileData, history: updateHistory });
   };
 
+  const onCancel = () => {
+    setProfileData(oldProfileData);
+    setIsEditing(false);
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
       <div className="max-h-screen flex-1 overflow-y-auto ">
         <div className="fixed bottom-0 right-0 z-50 flex rounded-md bg-white px-4 py-2">
-          <button
-            type="button"
-            onClick={() => setIsEditing(!isEditing)}
-            className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} rounded  px-4 py-2 font-bold text-white `}
-          >
-            {isEditing ? 'Cancelar' : 'Editar'}
-          </button>
-          {isEditing && (
+          {isEditing ? (
+            <>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="ml-3 rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
+              >
+                Guardar
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="hover:bg-red-800' rounded bg-red-600  px-4 py-2 font-bold text-white"
+              >
+                Cancelar
+              </button>
+            </>
+          ) : (
             <button
               type="button"
-              onClick={handleSave}
-              className="ml-3 rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
+              onClick={() => setIsEditing(!isEditing)}
+              className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} rounded  px-4 py-2 font-bold text-white `}
             >
-              Guardar
+              {isEditing ? 'Cancelar' : 'Editar'}
             </button>
           )}
         </div>
@@ -334,6 +385,7 @@ export default function Profile() {
           )}
           <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
             <div className="mb-4 w-full">
+              <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
               <SkillsProfile
                 isEditing={isEditing}
                 profileData={profileData}
