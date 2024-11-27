@@ -7,6 +7,9 @@ const config = {
   prefix: '',
   theme: {
     extend: {
+      boxShadow: {
+        top: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
+      },
       colors: {
         freeland: '#19E207',
         border: 'hsl(var(--border))',

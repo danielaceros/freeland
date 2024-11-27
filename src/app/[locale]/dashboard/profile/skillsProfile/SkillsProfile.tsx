@@ -15,8 +15,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
     setInputValue,
   } = SkillsProfileController(props);
   return (
-    <>
-      <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
+    <div>
       {isEditing ? (
         <>
           <div className="w-full">
@@ -62,7 +61,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
             ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
