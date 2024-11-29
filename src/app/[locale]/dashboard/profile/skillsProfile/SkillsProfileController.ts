@@ -8,11 +8,19 @@ export interface SkillsProfileControllerProps {
 
 const SkillsProfileController = (props: SkillsProfileControllerProps) => {
   const { isEditing, skillsObj, onChangeSkills } = props;
-  const [skillsData, setSkillsData] = useState<string[]>(skillsObj);
+  const [skillsData, setSkillsData] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
 
   useEffect(() => {
-    onChangeSkills(skillsData);
+    if (skillsObj) {
+      setSkillsData(skillsObj);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (skillsData && skillsData.length > 0) {
+      onChangeSkills(skillsData);
+    }
   }, [skillsData]);
 
   const handleKeyDown = (event: any) => {

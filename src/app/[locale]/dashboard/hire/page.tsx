@@ -16,17 +16,19 @@ export interface Offer {
   id: string;
   name: string;
   description: string;
-  descriptionShort: string;
+  descriptionShort?: string;
   createdAt: Date;
-  duration: string;
-  durationValue: string;
-  priceHour: number;
-  priceMounth: number;
-  priceProyect: number;
-  currency: string;
-  categories: string[];
-  skillsMin: string[];
+  duration?: string;
+  durationValue?: string;
+  priceHour?: number;
+  priceMounth?: number;
+  priceProyect?: number;
+  currency?: string;
+  categories?: string[];
+  skillsMin?: string[];
   fileUrl?: string;
+  userId?: string;
+  recruiterVideoUrl?: string;
 }
 
 export default function Hire() {
@@ -36,6 +38,7 @@ export default function Hire() {
   const [loading, setLoading] = useState(true);
   const [saveHire, setSaveHire] = useState(false);
   const [openNewHire, setOpenNewHire] = useState(false);
+  const [offerEdit, setOfferEdit] = useState<Offer>({} as Offer);
 
   // Function to fetch job offers from Firestore
   const fetchOffers = async (uid: string) => {
@@ -100,6 +103,11 @@ export default function Hire() {
     setSaveHire(true);
   };
 
+  const editOfferSelected = (offerObj: Offer) => {
+    setOfferEdit(offerObj);
+    setOpenNewHire(true);
+  };
+
   return (
     <div className="flex max-h-screen overflow-y-hidden bg-gray-100">
       <Menu />
@@ -117,12 +125,14 @@ export default function Hire() {
                     closeNewHire={onCloseNewHire}
                     saveHire={saveHire}
                     savedHire={(saved) => setSaveHire(saved)}
+                    offerEdit={offerEdit}
                   />
                 ) : (
                   <ViewUserHire
                     user={user}
                     offers={offers}
                     onFetchOffers={fetchOffers}
+                    onEditOffer={editOfferSelected}
                   />
                 )}
                 <div className="fixed bottom-0 right-0 z-40 flex w-full justify-end  bg-white px-4 py-2 shadow-top">

@@ -12,10 +12,11 @@ interface ViewUserHireProps {
   user: any;
   onFetchOffers: (updateOffers: string) => void;
   offers: Offer[];
+  onEditOffer: (offer: Offer) => void;
 }
 
 const ViewUserHire = (props: ViewUserHireProps) => {
-  const { user, offers, onFetchOffers } = props;
+  const { user, offers, onFetchOffers, onEditOffer } = props;
   const t = useTranslations(); // Initialize translations
 
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null); // Selected offer for modal
@@ -62,10 +63,9 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       toast.error(t('error.deleteOffer'));
     }
   };
-  console.log('selectedOffer', selectedOffer);
+
   return (
     <div>
-      <h3 className="mb-4 text-xl font-semibold">{t('hire.yourJobOffers')}</h3>
       <div className="flex flex-wrap">
         {offers.map((offer) => (
           <ViewCardHire
@@ -74,6 +74,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
             onOpenConfirmDeleteModal={openConfirmDeleteModal}
             onOpenModal={openModal}
             showEdit
+            onEditOffer={onEditOffer}
           />
         ))}
       </div>

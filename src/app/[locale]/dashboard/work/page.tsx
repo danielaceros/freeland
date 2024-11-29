@@ -26,16 +26,8 @@ import { toast } from 'react-toastify';
 import Menu from '@/components/common/Menu';
 
 import { auth, db, storage } from '../../../../libs/firebase';
-
-interface Offer {
-  id: string;
-  userId: string;
-  name: string;
-  description: string;
-  createdAt: Date;
-  fileUrl?: string;
-  recruiterVideoUrl?: string;
-}
+import type { Offer } from '../hire/page';
+import ViewCardHire from '../hire/viewCardHire/viewCardHire';
 
 export default function Work() {
   const t = useTranslations();
@@ -162,18 +154,20 @@ export default function Work() {
       const fileRef = ref(storage, selectedOffer.fileUrl);
       await deleteObject(fileRef);
 
-      const offerRef = doc(
-        db,
-        'users',
-        selectedOffer.userId,
-        'offers',
-        selectedOffer.id,
-      );
-      await updateDoc(offerRef, { fileUrl: null });
+      if (selectedOffer.userId && selectedOffer.id) {
+        const offerRef = doc(
+          db,
+          'users',
+          selectedOffer.userId,
+          'offers',
+          selectedOffer.id,
+        );
+        await updateDoc(offerRef, { fileUrl: null });
 
-      toast.success(t('powRemoveSuccess'));
-      closeModal();
-      router.push('/dashboard/work');
+        toast.success(t('powRemoveSuccess'));
+        closeModal();
+        router.push('/dashboard/work');
+      }
     } catch (error) {
       console.error(t('errorRemovingFile'), error);
       toast.error(t('failedToRemoveFile'));
@@ -227,22 +221,12 @@ export default function Work() {
                   </h3>
                   <div className="grid grid-cols-1 gap-6">
                     {offers.length > 0 ? (
-                      offers.map((offer) => (
-                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-                        <div
+                      offers.map((offer: Offer) => (
+                        <ViewCardHire
                           key={offer.id}
-                          className="cursor-pointer rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl"
-                          onClick={() => openModal(offer)}
-                        >
-                          <h4 className="text-lg font-semibold">
-                            {offer.name}
-                          </h4>
-                          <p className="text-gray-600">{offer.description}</p>
-                          <p className="text-gray-700">
-                            {t('postedOn')}{' '}
-                            {offer.createdAt.toLocaleDateString()}
-                          </p>
-                        </div>
+                          offer={offer}
+                          onOpenModal={openModal}
+                        />
                       ))
                     ) : (
                       <p className="text-gray-700">{t('noActiveJobOffers')}</p>
