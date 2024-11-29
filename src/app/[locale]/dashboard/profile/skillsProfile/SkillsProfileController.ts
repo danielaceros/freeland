@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 
-import type { ProfileDataInterface } from '../page';
-
 export interface SkillsProfileControllerProps {
   isEditing: boolean;
-  profileData: ProfileDataInterface;
-  onChangeSkills: (updateSkills: ProfileDataInterface) => void;
+  skillsObj: string[];
+  onChangeSkills: (updateSkills: string[]) => void;
 }
 
 const SkillsProfileController = (props: SkillsProfileControllerProps) => {
-  const { isEditing, profileData, onChangeSkills } = props;
-  const [skillsData, setSkillsData] = useState<string[]>(profileData.skills);
+  const { isEditing, skillsObj, onChangeSkills } = props;
+  const [skillsData, setSkillsData] = useState<string[]>(skillsObj);
   const [inputValue, setInputValue] = useState<string>('');
 
   useEffect(() => {
-    onChangeSkills({ ...profileData, skills: skillsData });
+    onChangeSkills(skillsData);
   }, [skillsData]);
 
   const handleKeyDown = (event: any) => {
@@ -35,7 +33,7 @@ const SkillsProfileController = (props: SkillsProfileControllerProps) => {
     skillsData,
     inputValue,
     isEditing,
-    profileData,
+    skillsObj,
     handleKeyDown,
     removeSkill,
     setInputValue,

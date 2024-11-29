@@ -241,6 +241,10 @@ export default function Profile() {
     setIsEditing(false);
   };
 
+  const updateSkills = (newSkills: string[]) => {
+    setProfileData({ ...profileData, skills: newSkills });
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
@@ -291,7 +295,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('name', e.target.value)
                       }
-                      className="w-96 rounded border border-gray-300 p-2"
+                      className="w-96 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       placeholder={`Enter ${'name'}`}
                     />
                     <input
@@ -300,7 +304,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('surname', e.target.value)
                       }
-                      className="ml-1 w-96 rounded border border-gray-300 p-2"
+                      className="ml-1 w-96 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       placeholder={`Enter ${'surname'}`}
                     />
                     <div className="mt-5 w-full">
@@ -318,7 +322,7 @@ export default function Profile() {
                             setProfilePicture(file);
                           }
                         }}
-                        className="w-full rounded border border-gray-300 p-2"
+                        className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       />
                     </div>
                     <div className="mt-5 w-full">
@@ -335,7 +339,7 @@ export default function Profile() {
                             setProfilePictureBackground(file);
                           }
                         }}
-                        className="w-full rounded border border-gray-300 p-2"
+                        className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       />
                     </div>
                   </div>
@@ -351,7 +355,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('name', e.target.value)
                       }
-                      className="w-full rounded border border-gray-300 p-2"
+                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       placeholder={`Enter ${'name'}`}
                     />
                   </div>
@@ -363,7 +367,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('position', e.target.value)
                       }
-                      className="w-full rounded border border-gray-300 p-2"
+                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       placeholder={`Enter ${'position'}`}
                     />
                   </div>
@@ -375,7 +379,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('phone', e.target.value)
                       }
-                      className="w-full rounded border border-gray-300 p-2"
+                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       placeholder={`Enter ${'phone'}`}
                     />
                   </div>
@@ -388,8 +392,8 @@ export default function Profile() {
               <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
               <SkillsProfile
                 isEditing={isEditing}
-                profileData={profileData}
-                onChangeSkills={setProfileData}
+                skillsObj={profileData.skills}
+                onChangeSkills={updateSkills}
               />
             </div>
           </div>

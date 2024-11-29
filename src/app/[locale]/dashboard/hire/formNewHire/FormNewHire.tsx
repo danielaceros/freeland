@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { db, storage } from '@/libs/firebase';
 
+import SkillsProfile from '../../profile/skillsProfile/SkillsProfile';
 import type { Offer } from '../page';
 
 interface FormNewHireProps {
@@ -17,18 +18,47 @@ interface FormNewHireProps {
   saveHire: boolean;
   savedHire: (saved: boolean) => void;
 }
+interface ValidFieldsProps {
+  value: string | null | File;
+  errorMessage: string;
+}
 const FormNewHire = (props: FormNewHireProps) => {
   const { user, saveHire, closeNewHire, onFetchOffers, savedHire } = props;
   const t = useTranslations(); // Initialize translations
-  const [offer, setOffer] = useState<Offer>({} as Offer);
+  const [offer, setOffer] = useState<Offer>({ currency: 'euro' } as Offer);
   const [offerFile, setOfferFile] = useState<File | null>(null); // File state
 
   const [selectedOptions, setSelectedOptions] = useState<any>([]);
 
-  // Function to handle adding a new job offer
+  const validFields: ValidFieldsProps[] = [
+    {
+      value: offer.name,
+      errorMessage: 'El campo "Nombre de la oferta" está vacío',
+    },
+    {
+      value: offer.descriptionShort,
+      errorMessage: 'El campo "Descripción corta" está vacío',
+    },
+    {
+      value: offer.description,
+      errorMessage: 'El campo "Descripción" está vacío',
+    },
+    { value: offerFile, errorMessage: 'El campo "Prueba de nivel" está vacío' },
+  ];
+  const errorMessageDuration =
+    'El campo "Duración" está vacío cuando se asignó un valor en días/mes/año';
+
   const handleAddOffer = async () => {
-    if (!offer.name || !offer.description || !offerFile) {
-      toast.error(t('error.fillFields'));
+    for (const field of validFields) {
+      if (!field.value) {
+        toast.error(field.errorMessage);
+        savedHire(false);
+        return;
+      }
+    }
+    if (!offer.duration && offer.durationValue) {
+      toast.error(errorMessageDuration);
+      savedHire(false);
       return;
     }
 
@@ -37,25 +67,29 @@ const FormNewHire = (props: FormNewHireProps) => {
       const offerId = uuidv4(); // Generates a unique random ID for the offer
 
       // Upload the file to Firebase Storage under the user's UID and offer ID
-      const storageRef = ref(
-        storage,
-        `offers/${user!.uid}/${offerId}/recruiter/${offerFile.name}`,
-      ); // Include the offerId here
-      await uploadBytes(storageRef, offerFile);
-      const fileUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded file
+      let fileUrl;
+      if (offerFile) {
+        const storageRef = ref(
+          storage,
+          `offers/${user!.uid}/${offerId}/recruiter/${offerFile.name}`,
+        ); // Include the offerId here
+        await uploadBytes(storageRef, offerFile);
+        fileUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded file
+      }
 
       // Add the offer to Firestore under the user's UID and offerId
       await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
         name: offer.name,
         description: offer.description,
-        duration: offer.duration,
-        durationValue: offer.durationValue,
+        duration: offer.duration || null,
+        durationValue: offer.durationValue || null,
         descriptionShort: offer.descriptionShort,
         currency: offer.currency,
-        priceHour: offer.priceHour,
-        priceMounth: offer.priceMounth,
-        priceProyect: offer.priceProyect,
-        categories: selectedOptions,
+        priceHour: offer.priceHour || null,
+        priceMounth: offer.priceMounth || null,
+        priceProyect: offer.priceProyect || null,
+        categories: selectedOptions || null,
+        skillsMin: offer.skillsMin || null,
         createdAt: new Date(),
         fileUrl, // Store the file URL in Firestore
       });
@@ -96,16 +130,24 @@ const FormNewHire = (props: FormNewHireProps) => {
     setSelectedOptions(options);
   };
 
+  const updateSkills = (skills: string[]) => {
+    if (skills) {
+      setOffer({ ...offer, skillsMin: skills });
+    }
+  };
+
   return (
     <div className="mb-6">
       <div className="flex flex-wrap">
-        <div className="mb-4 flex w-full items-center rounded-md bg-white p-6">
+        <div className="mb-4 flex w-full items-center rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
           <input
             type="text"
             value={offer.name}
             onChange={(e) => setOffer({ ...offer, name: e.target.value })}
-            className="w-8/12 rounded border border-gray-300 p-2"
+            className="w-8/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
+            required
             placeholder={t('hire.offerName')}
+            maxLength={18}
           />
           <label htmlFor="duration" className="ml-5">
             Duración:{' '}
@@ -114,8 +156,9 @@ const FormNewHire = (props: FormNewHireProps) => {
             id="duration"
             value={offer.duration}
             onChange={(e) => setOffer({ ...offer, duration: e.target.value })}
-            className="ml-5 w-2/12 rounded border border-gray-300 p-2"
+            className="ml-5 w-2/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
           >
+            <option value="">Seleciona</option>
             <option value="day">Por día</option>
             <option value="month">Por mes</option>
             <option value="year">Por año</option>
@@ -128,14 +171,14 @@ const FormNewHire = (props: FormNewHireProps) => {
             onChange={(e) =>
               setOffer({ ...offer, durationValue: e.target.value })
             }
-            className="ml-5 w-2/12 rounded border border-gray-300 p-2"
+            className="ml-5 w-2/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             disabled={offer.duration === 'infinite'}
             placeholder="20"
           />
         </div>
         <div className="flex w-full flex-wrap">
           <div className="flex w-full">
-            <div className="mb-4 rounded-md bg-white xl:w-4/12 ">
+            <div className="mb-4 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl xl:w-4/12">
               <div className="mb-5 rounded-t-md bg-zinc-700 p-3">
                 <p className="font-semibold text-white">
                   Precio de la oferta:{' '}
@@ -149,9 +192,12 @@ const FormNewHire = (props: FormNewHireProps) => {
                     type="number"
                     value={offer.priceHour}
                     onChange={(e) =>
-                      setOffer({ ...offer, priceHour: Number(e.target.value) })
+                      setOffer({
+                        ...offer,
+                        priceHour: Number(e.target.value),
+                      })
                     }
-                    className="w-full rounded border border-gray-300 p-2"
+                    className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                     placeholder="25"
                   />
                 </div>
@@ -167,7 +213,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                         priceMounth: Number(e.target.value),
                       })
                     }
-                    className="w-full rounded border border-gray-300 p-2"
+                    className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                     placeholder="900"
                   />
                 </div>
@@ -185,7 +231,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                         priceProyect: Number(e.target.value),
                       })
                     }
-                    className="w-full rounded border border-gray-300 p-2"
+                    className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                     placeholder="3000"
                   />
                 </div>
@@ -197,7 +243,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                     onChange={(e) =>
                       setOffer({ ...offer, currency: e.target.value })
                     }
-                    className="w-full rounded border border-gray-300 p-2"
+                    className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                   >
                     <option value="euro">€</option>
                     <option value="dolar">$</option>
@@ -206,17 +252,19 @@ const FormNewHire = (props: FormNewHireProps) => {
               </div>
             </div>
 
-            <div className="mb-4 ml-5 rounded-md bg-white md:w-6/12 xl:w-4/12">
+            <div className="mb-4 ml-5 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl md:w-6/12 xl:w-4/12">
               <div className="rounded-t-md bg-zinc-700 p-3">
-                <p className="text-white">Asignar categorías: </p>
+                <p className="font-semibold text-white">Asignar categorías: </p>
               </div>
               <div className="p-6">
                 <select
                   name="categories"
                   id="categories"
                   multiple
-                  onChange={onChangeCategory}
-                  className="block min-h-40 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  onChange={(e) => {
+                    onChangeCategory(e);
+                  }}
+                  className="block min-h-40 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-freeland focus:ring-freeland"
                 >
                   <option value="web">Diseño web</option>
                   <option value="graphic">Diseño gráfico</option>
@@ -229,53 +277,45 @@ const FormNewHire = (props: FormNewHireProps) => {
               </div>
             </div>
 
-            <div className="mb-4 ml-5 rounded-md bg-white md:w-6/12 xl:w-4/12">
+            <div className="mb-4 ml-5 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl md:w-6/12 xl:w-4/12">
               <div className="rounded-t-md bg-zinc-700 p-3">
-                <p className="text-white">Requisitos mínimos: </p>
+                <p className="font-semibold text-white">Requisitos mínimos: </p>
               </div>
               <div className="p-6">
-                <select
-                  id="multi-select"
-                  multiple
-                  className="block min-h-40 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="option1">Opción 1</option>
-                  <option value="option2">Opción 2</option>
-                  <option value="option3">Opción 3</option>
-                  <option value="option4">Opción 4</option>
-                  <option value="option4">Opción 4</option>
-                  <option value="option1">Opción 1</option>
-                  <option value="option2">Opción 2</option>
-                  <option value="option3">Opción 3</option>
-                  <option value="option4">Opción 4</option>
-                  <option value="option4">Opción 4</option>
-                </select>
+                <SkillsProfile
+                  isEditing
+                  skillsObj={offer.skillsMin}
+                  onChangeSkills={updateSkills}
+                />
               </div>
             </div>
           </div>
         </div>
-        <div className="mb-4 w-full rounded-md bg-white p-6">
+
+        <div className="mb-4 w-full rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
           <textarea
             value={offer.descriptionShort}
             onChange={(e) =>
               setOffer({ ...offer, descriptionShort: e.target.value })
             }
-            className="w-full rounded border border-gray-300 p-2"
+            className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             placeholder={t('hire.descriptionShort')}
+            maxLength={25}
           />
         </div>
-        <div className="mb-4  w-full rounded-md bg-white p-6">
+
+        <div className="mb-4  w-full rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
           <textarea
             value={offer.description}
             onChange={(e) =>
               setOffer({ ...offer, description: e.target.value })
             }
-            className="w-full rounded border border-gray-300 p-2"
+            className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             rows={10}
             placeholder={t('hire.description')}
           />
         </div>
-        <div className="mb-4 w-full rounded-md bg-white p-6">
+        <div className="mb-8 w-full rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
           <p className="mb-3 block font-semibold text-gray-700 ">
             {t('hire.uploadFile')}
           </p>

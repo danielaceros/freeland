@@ -24,7 +24,8 @@ export interface Offer {
   priceMounth: number;
   priceProyect: number;
   currency: string;
-  categories: [];
+  categories: string[];
+  skillsMin: string[];
   fileUrl?: string;
 }
 
@@ -55,6 +56,7 @@ export default function Hire() {
         priceProyect: docu.data().priceProyect,
         currency: docu.data().currency,
         categories: docu.data().categories,
+        skillsMin: docu.data().skillsMin,
         createdAt: new Date(docu.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
         fileUrl: docu.data().fileUrl, // Get the file URL if exists
       }));
