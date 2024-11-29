@@ -9,7 +9,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
     skillsData,
     inputValue,
     isEditing,
-    profileData,
+    skillsObj,
     handleKeyDown,
     removeSkill,
     setInputValue,
@@ -26,7 +26,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Escribe una habilidad y presiona Enter"
-              className="w-full rounded border border-gray-300 p-2"
+              className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             />
           </div>
           <div className="flex pt-3">
@@ -50,8 +50,8 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
         </>
       ) : (
         <div className="flex pt-3">
-          {profileData.skills &&
-            profileData.skills.map((skill: string, i: number) => (
+          {skillsObj &&
+            skillsObj.map((skill: string, i: number) => (
               <div
                 key={`${skill}-${i.toString()}`}
                 className="mb-2 mr-2 rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"

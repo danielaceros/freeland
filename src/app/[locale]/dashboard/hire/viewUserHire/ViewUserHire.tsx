@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { db } from '@/libs/firebase';
 
 import type { Offer } from '../page';
+import ViewCardHire from '../viewCardHire/viewCardHire';
 
 interface ViewUserHireProps {
   user: any;
@@ -67,31 +68,13 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       <h3 className="mb-4 text-xl font-semibold">{t('hire.yourJobOffers')}</h3>
       <div className="flex flex-wrap">
         {offers.map((offer) => (
-          <div key={offer.id} className="w-4/12 cursor-pointer p-3">
-            <div className="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
-              <h4 className="text-lg font-semibold">{offer.name}</h4>
-              <p className="text-gray-600">{offer.description}</p>
-              <p className="text-gray-700">
-                {t('hire.postedOn')} {offer.createdAt.toLocaleDateString()}
-              </p>
-              <div className="mt-4 flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => openModal(offer)} // Open modal on offer click
-                  className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
-                >
-                  {t('hire.viewDetails')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openConfirmDeleteModal(offer.id)} // Open confirmation modal
-                  className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
-                >
-                  {t('hire.delete')}
-                </button>
-              </div>
-            </div>
-          </div>
+          <ViewCardHire
+            key={offer.id}
+            offer={offer}
+            onOpenConfirmDeleteModal={openConfirmDeleteModal}
+            onOpenModal={openModal}
+            showEdit
+          />
         ))}
       </div>
 
@@ -100,6 +83,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
             <h2 className="mb-4 text-xl font-semibold">{selectedOffer.name}</h2>
+
             <p className="mb-4">{selectedOffer.description}</p>
             <p className="text-gray-700">
               {t('hire.postedOn')}{' '}

@@ -1,15 +1,31 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 import { useRouter } from 'next/navigation';
-import { auth, db, storage } from '../../../../libs/firebase';
-import { toast } from 'react-toastify';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { collection, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import Menu from '@/components/common/Menu';
-import { useDropzone } from 'react-dropzone';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { toast } from 'react-toastify';
+
+import Menu from '@/components/common/Menu';
+
+import { auth, db, storage } from '../../../../libs/firebase';
 
 interface Offer {
   id: string;
@@ -38,6 +54,7 @@ export default function Work() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         await fetchOffers();
       } else {
         console.log(t('noUserAuthenticated'));
@@ -57,6 +74,7 @@ export default function Work() {
 
       for (const userDoc of usersSnapshot.docs) {
         const offersCollection = collection(userDoc.ref, 'offers');
+        // eslint-disable-next-line no-await-in-loop
         const offersSnapshot = await getDocs(offersCollection);
 
         for (const offerDoc of offersSnapshot.docs) {
@@ -110,7 +128,7 @@ export default function Work() {
     try {
       const storageRef = ref(
         storage,
-        `offers/${selectedOffer.userId}/${selectedOffer.id}/freelance/${user!.uid}/${selectedFile.name}`
+        `offers/${selectedOffer.userId}/${selectedOffer.id}/freelance/${user!.uid}/${selectedFile.name}`,
       );
       await uploadBytes(storageRef, selectedFile);
       const fileURL = await getDownloadURL(storageRef);
@@ -122,7 +140,7 @@ export default function Work() {
         'offers',
         selectedOffer.id,
         'freelance',
-        user!.uid
+        user!.uid,
       );
 
       // Use setDoc with merge: true to create the document if it doesn't exist
@@ -144,7 +162,13 @@ export default function Work() {
       const fileRef = ref(storage, selectedOffer.fileUrl);
       await deleteObject(fileRef);
 
-      const offerRef = doc(db, 'users', selectedOffer.userId, 'offers', selectedOffer.id);
+      const offerRef = doc(
+        db,
+        'users',
+        selectedOffer.userId,
+        'offers',
+        selectedOffer.id,
+      );
       await updateDoc(offerRef, { fileUrl: null });
 
       toast.success(t('powRemoveSuccess'));
@@ -169,8 +193,8 @@ export default function Work() {
   };
 
   const LoadingSpinner = () => (
-    <div className="flex items-center justify-center h-full">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-600 border-b-4"></div>
+    <div className="flex h-full items-center justify-center">
+      <div className="size-16 animate-spin rounded-full border-y-4 border-green-600" />
     </div>
   );
 
@@ -198,19 +222,25 @@ export default function Work() {
             <div>
               {user ? (
                 <div>
-                  <h3 className="text-xl font-semibold mb-4">{t('allActiveJobOffers')}</h3>
+                  <h3 className="mb-4 text-xl font-semibold">
+                    {t('allActiveJobOffers')}
+                  </h3>
                   <div className="grid grid-cols-1 gap-6">
                     {offers.length > 0 ? (
                       offers.map((offer) => (
+                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                         <div
                           key={offer.id}
-                          className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow cursor-pointer"
+                          className="cursor-pointer rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl"
                           onClick={() => openModal(offer)}
                         >
-                          <h4 className="text-lg font-semibold">{offer.name}</h4>
+                          <h4 className="text-lg font-semibold">
+                            {offer.name}
+                          </h4>
                           <p className="text-gray-600">{offer.description}</p>
                           <p className="text-gray-700">
-                            {t('postedOn')} {offer.createdAt.toLocaleDateString()}
+                            {t('postedOn')}{' '}
+                            {offer.createdAt.toLocaleDateString()}
                           </p>
                         </div>
                       ))
@@ -221,28 +251,35 @@ export default function Work() {
 
                   {modalOpen && selectedOffer && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-semibold mb-4">{selectedOffer.name}</h2>
+                      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+                        <h2 className="mb-4 text-xl font-semibold">
+                          {selectedOffer.name}
+                        </h2>
                         <p className="mb-4">{selectedOffer.description}</p>
                         <p className="text-gray-700">
-                          {t('postedOn')} {selectedOffer.createdAt.toLocaleDateString()}
+                          {t('postedOn')}{' '}
+                          {selectedOffer.createdAt.toLocaleDateString()}
                         </p>
                         <br />
                         <button
+                          type="button"
                           onClick={handleViewRecruiterPoW}
-                          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+                          className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
                         >
                           {t('downloadPoW')}
                         </button>
                         <div
                           {...getRootProps()}
-                          className="border-4 border-dashed p-6 text-center cursor-pointer mt-4"
+                          className="mt-4 cursor-pointer border-4 border-dashed p-6 text-center"
                         >
                           <input {...getInputProps()} />
                           {selectedFile ? (
                             <div>
-                              <p>{t('fileSelected')} {selectedFile.name}</p>
+                              <p>
+                                {t('fileSelected')} {selectedFile.name}
+                              </p>
                               {selectedFile.type.startsWith('video/') ? (
+                                // eslint-disable-next-line jsx-a11y/media-has-caption
                                 <video controls className="w-full">
                                   <source src={previewUrl!} type="video/mp4" />
                                 </video>
@@ -250,7 +287,7 @@ export default function Work() {
                                 <img
                                   src={previewUrl!}
                                   alt="Selected file preview"
-                                  className="w-full h-auto object-contain"
+                                  className="h-auto w-full object-contain"
                                 />
                               )}
                             </div>
@@ -261,28 +298,32 @@ export default function Work() {
 
                         <div className="mt-4 flex justify-end space-x-4">
                           <button
+                            type="button"
                             onClick={closeModal}
-                            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                            className="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
                           >
                             {t('close')}
                           </button>
                           {uploadPow && (
                             <button
+                              type="button"
                               onClick={handleViewPoW}
-                              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+                              className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
                             >
                               {t('previewPoW')}
                             </button>
                           )}
                           <button
+                            type="button"
                             onClick={handleRemovePoW}
-                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500"
+                            className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
                           >
                             {t('removePoW')}
                           </button>
                           <button
+                            type="button"
                             onClick={handleFileUpload}
-                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+                            className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
                           >
                             {uploadPow ? t('changePoW') : t('uploadPoW')}
                           </button>

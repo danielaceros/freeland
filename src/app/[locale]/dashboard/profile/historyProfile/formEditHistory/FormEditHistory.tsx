@@ -58,7 +58,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                     type="text"
                     id="rol"
                     value={historyData.rol}
-                    className="mb-3 w-full rounded border border-gray-300 p-2"
+                    className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                     title="Puesto de trabajo"
                     placeholder="Puesto de trabajo"
                     onChange={(e) =>
@@ -70,7 +70,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                     type="text"
                     id="company"
                     value={historyData.company}
-                    className="mb-3 w-full rounded border border-gray-300 p-2"
+                    className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                     title="Empresa"
                     placeholder="Empresa"
                     onChange={(e) =>
@@ -93,7 +93,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                         })
                       }
                       required
-                      className="w-3/6 rounded border border-gray-300 p-2"
+                      className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       title="Inicio del puesto"
                     />
                     <input
@@ -107,7 +107,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                         })
                       }
                       required
-                      className="ml-3 w-3/6 rounded border border-gray-300 p-2"
+                      className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       title="Fin del puesto"
                     />
                   </div>
@@ -115,7 +115,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                   <textarea
                     id="description"
                     value={historyData.description}
-                    className="mb-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                    className="mb-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:border-freeland focus:ring-freeland sm:text-sm/6"
                     rows={15}
                     onChange={(e) =>
                       setHistoryData({
