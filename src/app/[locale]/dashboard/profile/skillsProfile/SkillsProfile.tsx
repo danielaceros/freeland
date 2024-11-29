@@ -14,6 +14,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
     removeSkill,
     setInputValue,
   } = SkillsProfileController(props);
+
   return (
     <div>
       {isEditing ? (
@@ -30,22 +31,39 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
             />
           </div>
           <div className="flex pt-3">
-            {skillsData &&
-              skillsData.map((skill: string, i: number) => (
-                <div
-                  key={`${skill}-${i.toString()}`}
-                  className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
-                >
-                  {skill.toUpperCase()}
-                  <button
-                    type="button"
-                    onClick={() => removeSkill(skill)}
-                    className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+            {skillsData.length > 0
+              ? skillsData.map((skill: string, i: number) => (
+                  <div
+                    key={`${skill}-${i.toString()}`}
+                    className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
                   >
-                    &times;
-                  </button>
-                </div>
-              ))}
+                    {skill.toUpperCase()}
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))
+              : skillsObj &&
+                skillsObj.length > 0 &&
+                skillsObj.map((skill: string, i: number) => (
+                  <div
+                    key={`${skill}-${i.toString()}`}
+                    className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                  >
+                    {skill.toUpperCase()}
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
           </div>
         </>
       ) : (

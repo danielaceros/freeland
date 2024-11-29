@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
@@ -17,18 +17,20 @@ interface FormNewHireProps {
   closeNewHire: (close: boolean) => void;
   saveHire: boolean;
   savedHire: (saved: boolean) => void;
+  offerEdit: Offer;
 }
 interface ValidFieldsProps {
   value: string | null | File;
   errorMessage: string;
 }
 const FormNewHire = (props: FormNewHireProps) => {
-  const { user, saveHire, closeNewHire, onFetchOffers, savedHire } = props;
+  const { user, saveHire, offerEdit, closeNewHire, onFetchOffers, savedHire } =
+    props;
   const t = useTranslations(); // Initialize translations
   const [offer, setOffer] = useState<Offer>({ currency: 'euro' } as Offer);
   const [offerFile, setOfferFile] = useState<File | null>(null); // File state
 
-  const [selectedOptions, setSelectedOptions] = useState<any>([]);
+  const [selectedOptions, setSelectedOptions] = useState<any>(offer.categories);
 
   const validFields: ValidFieldsProps[] = [
     {
@@ -36,7 +38,7 @@ const FormNewHire = (props: FormNewHireProps) => {
       errorMessage: 'El campo "Nombre de la oferta" está vacío',
     },
     {
-      value: offer.descriptionShort,
+      value: offer.descriptionShort || null,
       errorMessage: 'El campo "Descripción corta" está vacío',
     },
     {
@@ -48,12 +50,20 @@ const FormNewHire = (props: FormNewHireProps) => {
   const errorMessageDuration =
     'El campo "Duración" está vacío cuando se asignó un valor en días/mes/año';
 
+  useEffect(() => {
+    if (offerEdit) {
+      setOffer(offerEdit);
+    }
+  }, [offerEdit]);
+
   const handleAddOffer = async () => {
     for (const field of validFields) {
       if (!field.value) {
-        toast.error(field.errorMessage);
-        savedHire(false);
-        return;
+        if (!(offer.fileUrl && !offerFile)) {
+          toast.error(field.errorMessage);
+          savedHire(false);
+          return;
+        }
       }
     }
     if (!offer.duration && offer.durationValue) {
@@ -77,24 +87,42 @@ const FormNewHire = (props: FormNewHireProps) => {
         fileUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded file
       }
 
-      // Add the offer to Firestore under the user's UID and offerId
-      await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
-        name: offer.name,
-        description: offer.description,
-        duration: offer.duration || null,
-        durationValue: offer.durationValue || null,
-        descriptionShort: offer.descriptionShort,
-        currency: offer.currency,
-        priceHour: offer.priceHour || null,
-        priceMounth: offer.priceMounth || null,
-        priceProyect: offer.priceProyect || null,
-        categories: selectedOptions || null,
-        skillsMin: offer.skillsMin || null,
-        createdAt: new Date(),
-        fileUrl, // Store the file URL in Firestore
-      });
+      if (offer.id) {
+        await updateDoc(doc(db, 'users', user!.uid, 'offers', offer.id), {
+          name: offer.name,
+          description: offer.description,
+          duration: offer.duration || null,
+          durationValue: offer.durationValue || null,
+          descriptionShort: offer.descriptionShort,
+          currency: offer.currency,
+          priceHour: offer.priceHour || null,
+          priceMounth: offer.priceMounth || null,
+          priceProyect: offer.priceProyect || null,
+          categories: selectedOptions || null,
+          skillsMin: offer.skillsMin || null,
+          createdAt: new Date(),
+          fileUrl: fileUrl || offer.fileUrl,
+        });
+        toast.success(t('success.offerUpdated'));
+      } else {
+        await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
+          name: offer.name,
+          description: offer.description,
+          duration: offer.duration || null,
+          durationValue: offer.durationValue || null,
+          descriptionShort: offer.descriptionShort,
+          currency: offer.currency,
+          priceHour: offer.priceHour || null,
+          priceMounth: offer.priceMounth || null,
+          priceProyect: offer.priceProyect || null,
+          categories: selectedOptions || null,
+          skillsMin: offer.skillsMin || null,
+          createdAt: new Date(),
+          fileUrl: fileUrl || offer.fileUrl,
+        });
 
-      toast.success(t('success.offerAdded'));
+        toast.success(t('success.offerAdded'));
+      }
 
       // Reset the form and fetch updated offers
       setOffer({} as Offer);
@@ -147,7 +175,7 @@ const FormNewHire = (props: FormNewHireProps) => {
             className="w-8/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             required
             placeholder={t('hire.offerName')}
-            maxLength={18}
+            // maxLength={18}
           />
           <label htmlFor="duration" className="ml-5">
             Duración:{' '}
@@ -265,6 +293,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                     onChangeCategory(e);
                   }}
                   className="block min-h-40 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-freeland focus:ring-freeland"
+                  value={selectedOptions || offer.categories}
                 >
                   <option value="web">Diseño web</option>
                   <option value="graphic">Diseño gráfico</option>
@@ -284,7 +313,7 @@ const FormNewHire = (props: FormNewHireProps) => {
               <div className="p-6">
                 <SkillsProfile
                   isEditing
-                  skillsObj={offer.skillsMin}
+                  skillsObj={offer.skillsMin || []}
                   onChangeSkills={updateSkills}
                 />
               </div>
@@ -300,7 +329,6 @@ const FormNewHire = (props: FormNewHireProps) => {
             }
             className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             placeholder={t('hire.descriptionShort')}
-            maxLength={25}
           />
         </div>
 
@@ -319,6 +347,17 @@ const FormNewHire = (props: FormNewHireProps) => {
           <p className="mb-3 block font-semibold text-gray-700 ">
             {t('hire.uploadFile')}
           </p>
+          {offer.fileUrl && (
+            <p className="mb-5">
+              <a
+                href={offer.fileUrl}
+                target="_blank"
+                className=" rounded-md bg-freeland p-3 font-bold text-white"
+              >
+                Ver archivo subido
+              </a>
+            </p>
+          )}
           <div
             {...getRootProps()}
             className="w-full rounded border-2 border-dashed border-gray-300 px-6 py-16 text-center"
