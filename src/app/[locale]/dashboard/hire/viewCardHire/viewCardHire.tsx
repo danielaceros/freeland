@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import { useTranslations } from 'next-intl';
@@ -32,7 +33,13 @@ const ViewCardHire = (props: ViewCardHireProps) => {
       key={offer.id}
       className={`${!showEdit && 'cursor-pointer'} w-4/12 p-3`}
     >
-      <div className="flex min-h-96 flex-col rounded-lg bg-white p-6  shadow-md transition-shadow hover:shadow-xl">
+      {
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+      }
+      <div
+        className="flex min-h-96 flex-col rounded-lg bg-white p-6  shadow-md transition-shadow hover:shadow-xl"
+        onClick={() => (!showEdit ? onOpenModal(offer) : null)}
+      >
         <div className="">
           {showEdit && (
             <div className="text-right">
