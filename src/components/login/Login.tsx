@@ -1,21 +1,30 @@
 'use client';
 
-import { ChangeEvent, useState } from 'react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { useRouter } from 'next/navigation'; // Import useRouter from 'next/navigation'
+import { useTranslations } from 'next-intl';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
+import { toast } from 'react-toastify';
+
+import { auth } from '../../libs/firebase';
 import { Logo } from '../common/Logo';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import LoginController from './LoginController';
-import { auth } from '../../libs/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { toast } from 'react-toastify';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';  // Import useRouter from 'next/navigation'
 
 const Login = () => {
   const t = useTranslations();
-  const { email, password, setEmail, setPassword, onSubmit, onRegister, onGoogleSignIn } =
-    LoginController();
+  const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    onSubmit,
+    onRegister,
+    onGoogleSignIn,
+  } = LoginController();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -37,53 +46,60 @@ const Login = () => {
   const handleLocaleChange = (locale: string) => {
     // Get the current path without the locale
     const currentPath = window.location.pathname.replace(/^\/[a-z]{2}/, ''); // Remove the existing locale from path
-    
+
     // Update the URL with the new locale
     const newPath = `/${locale}${currentPath}`;
-    
+
     // Use router.push to navigate to the new URL
     router.push(newPath);
   };
 
   return (
-    <div className="height100 flex min-h-full flex-1 flex-col justify-center bg-slate-950 px-6 py-12 lg:px-8">
+    <div
+      className="height100 bg-url flex min-h-full flex-1 flex-col justify-center bg-slate-950 bg-cover px-6 py-12 lg:px-8"
+      style={{ backgroundImage: "url('/assets/images/login.jpg')" }}
+    >
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <form
           action="#"
           method="POST"
-          className="space-y-6 rounded-md bg-white bg-opacity-10 p-10"
+          className="space-y-6 rounded-md bg-zinc-800 bg-opacity-80 p-10"
         >
-          <div className="flex justify-between mb-6">
+          <div className="mb-6 flex justify-center">
             <Logo />
-            <div>
+            <div className="absolute right-3 top-3">
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="text-white"
               >
-                🌐
+                🌐Idioma
               </button>
               {isDropdownOpen && (
-                <div className="absolute bg-gray-700 text-white rounded-md p-2 mt-2">
+                <div className="absolute right-2 mt-2 rounded-md bg-gray-700 p-2 text-white">
                   <button
+                    type="button"
                     onClick={() => handleLocaleChange('en')}
                     className="block px-4 py-2 hover:bg-green-600"
                   >
                     English
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleLocaleChange('es')}
                     className="block px-4 py-2 hover:bg-green-600"
                   >
                     Español
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleLocaleChange('fr')}
                     className="block px-4 py-2 hover:bg-green-600"
                   >
                     Français
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleLocaleChange('it')}
                     className="block px-4 py-2 hover:bg-green-600"
                   >
@@ -100,7 +116,9 @@ const Login = () => {
               type="email"
               placeholder={t('email')}
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               className="bg-white"
               required
             />
@@ -112,7 +130,9 @@ const Login = () => {
               type="password"
               placeholder={t('password')}
               value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               className="bg-white"
               required
             />
@@ -132,27 +152,27 @@ const Login = () => {
             <Button
               onClick={onSubmit}
               type="button"
-              className="flex w-full justify-center rounded-md bg-freeland px-3 py-1.5 text-lg font-semibold text-white hover:bg-freeland-dark"
+              className="hover:bg-freeland-dark flex w-full justify-center rounded-md bg-freeland px-3 py-1.5 text-lg font-semibold text-white"
             >
               {t('login')}
             </Button>
             <Button
               onClick={onRegister}
               type="button"
-              className="flex w-full justify-center rounded-md bg-freeland px-3 py-1.5 text-lg font-semibold text-white hover:bg-freeland-dark"
+              className="hover:bg-freeland-dark flex w-full justify-center rounded-md bg-freeland px-3 py-1.5 text-lg font-semibold text-white"
             >
               {t('register')}
             </Button>
           </div>
 
-          <div className="flex items-center justify-center mt-6">
+          <div className="mt-6 flex items-center justify-center">
             <span className="text-sm text-gray-300">{t('or')}</span>
           </div>
 
           <Button
             onClick={onGoogleSignIn}
             type="button"
-            className="flex w-full items-center justify-center space-x-2 rounded-md border-2 border-white px-3 py-2 text-lg font-semibold text-white bg-black hover:text-black hover:bg-white transition-colors duration-200"
+            className="flex w-full items-center justify-center space-x-2 rounded-md border-2 border-white bg-black px-3 py-2 text-lg font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-black"
           >
             <FcGoogle size={24} />
             <span>{t('googleSignIn')}</span>
