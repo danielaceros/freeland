@@ -529,7 +529,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                   isMulti
                   options={categorygroupedOptions}
                   onChange={categoryhandleSkillSelect}
-                  getOptionLabel={(e: any) => `${e.label}`}
+                  getOptionLabel={(e) => `${e.label}`}
                 />
               </div>
             </div>
@@ -545,7 +545,7 @@ const FormNewHire = (props: FormNewHireProps) => {
                   isMulti
                   options={groupedOptions}
                   onChange={handleSkillSelect}
-                  getOptionLabel={(e: any) => `${e.label}`}
+                  getOptionLabel={(e) => `${e.label}`}
                 />
               </div>
             </div>
