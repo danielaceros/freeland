@@ -36,16 +36,16 @@ const ViewUserHire = (props: ViewUserHireProps) => {
     setModalOpen(false);
   };
 
-  // Function to open the delete confirmation modal
-  const openConfirmDeleteModal = (offerId: string) => {
-    setOfferToDelete(offerId);
-    setConfirmDeleteOpen(true);
-  };
-
   // Function to close the delete confirmation modal
   const closeConfirmDeleteModal = () => {
     setOfferToDelete(null);
     setConfirmDeleteOpen(false);
+  };
+
+  // Function to open the delete confirmation modal
+  const openConfirmDeleteModal = (offerId: string) => {
+    setOfferToDelete(offerId);
+    setConfirmDeleteOpen(true);
   };
 
   // Function to delete an offer
@@ -67,6 +67,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
   const showCurrency = (currency: string) => {
     return currency === 'euro' ? '€' : '$';
   };
+
   return (
     <div>
       <div className="flex flex-wrap">
@@ -79,6 +80,9 @@ const ViewUserHire = (props: ViewUserHireProps) => {
               onOpenModal={openModal}
               showEdit
               onEditOffer={onEditOffer}
+              onLike={() => openModal(offer)}
+              onStarRating={() => openModal(offer)}
+              // onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
             />
           ))
         ) : (
@@ -89,6 +93,19 @@ const ViewUserHire = (props: ViewUserHireProps) => {
             </h2>
           </div>
         )}
+        {/* {offers.map((offer) => (
+          <ViewCardHire
+          key={offer.id}
+          offer={offer}
+          onOpenModal={openModal}
+          onClick={() => {
+            openModal(offer);
+          }}
+          onLike={() => openModal(offer)}
+          onStarRating={() => openModal(offer)}
+          onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
+        />
+        ))} */}
       </div>
 
       {/* Modal for offer details */}
