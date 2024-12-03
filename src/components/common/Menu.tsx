@@ -72,6 +72,7 @@ const Menu = () => {
         type="button"
         className="mb-5 flex cursor-pointer"
         onClick={() => router.push('/dashboard/profile')}
+        title={t('menu.viewProfile')}
       >
         {img && (
           <img
@@ -82,8 +83,8 @@ const Menu = () => {
         )}
         {isOpen && (
           <div className="ml-3 text-left text-freeland">
-            <p className="text-xl font-bold">{userName || profileData.email}</p>
-            <p className="text-md font-bold">{lastName}</p>
+            <p className="text-xl font-bold">{userName || 'Editar perfil'}</p>
+            <p className="text-md font-bold">{lastName || profileData.email}</p>
           </div>
         )}
       </button>

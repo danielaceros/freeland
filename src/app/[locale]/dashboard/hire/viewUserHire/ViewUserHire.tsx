@@ -67,16 +67,25 @@ const ViewUserHire = (props: ViewUserHireProps) => {
   return (
     <div>
       <div className="flex flex-wrap">
-        {offers.map((offer) => (
-          <ViewCardHire
-            key={offer.id}
-            offer={offer}
-            onOpenConfirmDeleteModal={openConfirmDeleteModal}
-            onOpenModal={openModal}
-            showEdit
-            onEditOffer={onEditOffer}
-          />
-        ))}
+        {offers.length > 0 ? (
+          offers.map((offer) => (
+            <ViewCardHire
+              key={offer.id}
+              offer={offer}
+              onOpenConfirmDeleteModal={openConfirmDeleteModal}
+              onOpenModal={openModal}
+              showEdit
+              onEditOffer={onEditOffer}
+            />
+          ))
+        ) : (
+          <div className="flex min-h-screen w-full items-center justify-center">
+            <h2 className="m-0 text-xl">
+              {`Aún no has creado ninguna oferta. Añade ofertas desde el botón
+              'Añadir oferta'`}
+            </h2>
+          </div>
+        )}
       </div>
 
       {/* Modal for offer details */}

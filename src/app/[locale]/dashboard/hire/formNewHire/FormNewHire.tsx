@@ -51,6 +51,10 @@ const FormNewHire = (props: FormNewHireProps) => {
     'El campo "Duración" está vacío cuando se asignó un valor en días/mes/año';
 
   useEffect(() => {
+    setOffer({} as Offer);
+  }, []);
+
+  useEffect(() => {
     if (offerEdit) {
       setOffer(offerEdit);
     }
