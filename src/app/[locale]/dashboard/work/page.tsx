@@ -71,6 +71,7 @@ export default function Work() {
 
         for (const offerDoc of offersSnapshot.docs) {
           offersData.push({
+            userId: offerDoc.data().userId,
             id: offerDoc.id,
             name: offerDoc.data().name,
             description: offerDoc.data().description,
@@ -98,7 +99,6 @@ export default function Work() {
   };
 
   const openModal = (offer: Offer) => {
-    console.log('asdasdas');
     setSelectedOffer(offer);
     setofferPow(offer.fileUrl!);
     console.log(offer.fileUrl!);
