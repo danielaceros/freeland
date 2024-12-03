@@ -85,6 +85,7 @@ export default function Hire() {
   }, []);
 
   const onOpenNewHire = () => {
+    setOfferEdit({} as Offer);
     setOpenNewHire(true);
   };
 
@@ -94,7 +95,7 @@ export default function Hire() {
 
   // Loading Spinner Component
   const LoadingSpinner = () => (
-    <div className="flex h-full items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="size-16 animate-spin rounded-full border-y-4 border-green-600" />
     </div>
   );

@@ -196,7 +196,7 @@ export default function Work() {
   };
 
   const LoadingSpinner = () => (
-    <div className="flex h-full items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="size-16 animate-spin rounded-full border-y-4 border-green-600" />
     </div>
   );
