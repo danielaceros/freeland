@@ -13,13 +13,16 @@ import FormNewHire from './formNewHire/FormNewHire';
 import ViewUserHire from './viewUserHire/ViewUserHire';
 
 export interface Offer {
+  likes: number;
+  visits: number;
+  stars: number;
   id: string;
   name: string;
   description: string;
-  descriptionShort?: string;
+  descriptionShort: string;
   createdAt: Date;
   duration?: string;
-  durationValue?: string;
+  durationValue?: number;
   priceHour?: number;
   priceMounth?: number;
   priceProyect?: number;
@@ -49,6 +52,10 @@ export default function Hire() {
       const querySnapshot = await getDocs(q);
       const offersData: Offer[] = querySnapshot.docs.map((docu) => ({
         id: docu.id,
+        likes: docu.data().likes || 0,
+        visits: docu.data().visits || 0,
+        stars: docu.data().stars || 0,
+        totalStars: docu.data().totalStars || 0,
         name: docu.data().name,
         description: docu.data().description,
         descriptionShort: docu.data().descriptionShort,
@@ -60,6 +67,7 @@ export default function Hire() {
         currency: docu.data().currency,
         categories: docu.data().categories,
         skillsMin: docu.data().skillsMin,
+        userId: uid,
         createdAt: new Date(docu.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
         fileUrl: docu.data().fileUrl, // Get the file URL if exists
       }));
