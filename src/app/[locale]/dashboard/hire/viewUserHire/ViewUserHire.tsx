@@ -16,7 +16,7 @@ interface ViewUserHireProps {
 }
 
 const ViewUserHire = (props: ViewUserHireProps) => {
-  const { user, offers, onFetchOffers, onEditOffer } = props;
+  const { user, offers, onFetchOffers } = props;
   const t = useTranslations(); // Initialize translations
 
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null); // Selected offer for modal
@@ -34,12 +34,6 @@ const ViewUserHire = (props: ViewUserHireProps) => {
   const closeModal = () => {
     setSelectedOffer(null);
     setModalOpen(false);
-  };
-
-  // Function to open the delete confirmation modal
-  const openConfirmDeleteModal = (offerId: string) => {
-    setOfferToDelete(offerId);
-    setConfirmDeleteOpen(true);
   };
 
   // Function to close the delete confirmation modal
@@ -69,13 +63,16 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       <div className="flex flex-wrap">
         {offers.map((offer) => (
           <ViewCardHire
-            key={offer.id}
-            offer={offer}
-            onOpenConfirmDeleteModal={openConfirmDeleteModal}
-            onOpenModal={openModal}
-            showEdit
-            onEditOffer={onEditOffer}
-          />
+          key={offer.id}
+          offer={offer}
+          onOpenModal={openModal}
+          onClick={() => {
+            openModal(offer);
+          }}
+          onLike={() => openModal(offer)}
+          onStarRating={() => openModal(offer)}
+          onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
+        />
         ))}
       </div>
 

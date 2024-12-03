@@ -1,0 +1,12 @@
+.rc-slider-track {
+  background-color: green !important; /* Set the color of the track */
+}
+
+.rc-slider-handle {
+  border-color: green !important; /* Set the border color of the handle */
+  background-color: green !important; /* Set the background color of the handle */
+}
+
+.rc-slider-rail {
+  background-color: #ddd !important; /* Change the rail color to a light gray */
+}

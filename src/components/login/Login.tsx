@@ -73,7 +73,7 @@ const Login = () => {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="text-white"
               >
-                🌐Idioma
+                🌐 {t('chooseLanguage')}
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-2 mt-2 rounded-md bg-gray-700 p-2 text-white">
