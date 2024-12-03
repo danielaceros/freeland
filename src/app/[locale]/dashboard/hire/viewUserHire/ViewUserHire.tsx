@@ -80,8 +80,8 @@ const ViewUserHire = (props: ViewUserHireProps) => {
               onOpenModal={openModal}
               showEdit
               onEditOffer={onEditOffer}
-              onLike={() => openModal(offer)}
-              onStarRating={() => openModal(offer)}
+              // onLike={() => openModal(offer)}
+              // onStarRating={() => openModal(offer)}
               // onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
             />
           ))
