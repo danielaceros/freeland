@@ -93,19 +93,6 @@ const ViewUserHire = (props: ViewUserHireProps) => {
             </h2>
           </div>
         )}
-        {/* {offers.map((offer) => (
-          <ViewCardHire
-          key={offer.id}
-          offer={offer}
-          onOpenModal={openModal}
-          onClick={() => {
-            openModal(offer);
-          }}
-          onLike={() => openModal(offer)}
-          onStarRating={() => openModal(offer)}
-          onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
-        />
-        ))} */}
       </div>
 
       {/* Modal for offer details */}

@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -16,13 +17,7 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
-import { useRouter } from 'next/navigation';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useTranslations } from 'next-intl';
 import Slider from 'rc-slider';
 import { useEffect, useState } from 'react';
@@ -39,7 +34,7 @@ import ViewCardHire from '../hire/viewCardHire/viewCardHire';
 export default function Work() {
   const t = useTranslations();
   const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
+  // const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [offers, setOffers] = useState<Offer[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
@@ -215,7 +210,6 @@ export default function Work() {
 
       for (const userDoc of usersSnapshot.docs) {
         const offersCollection = collection(userDoc.ref, 'offers');
-        // eslint-disable-next-line no-await-in-loop
         const offersSnapshot = await getDocs(offersCollection);
 
         for (const offerDoc of offersSnapshot.docs) {
@@ -249,6 +243,21 @@ export default function Work() {
       toast.error(t('failedToFetchOffers'));
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        await fetchOffers();
+      } else {
+        console.log(t('noUserAuthenticated'));
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -341,7 +350,7 @@ export default function Work() {
   };
 
   const LoadingSpinner = () => (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       <div className="size-16 animate-spin rounded-full border-y-4 border-green-600" />
     </div>
   );
@@ -353,9 +362,6 @@ export default function Work() {
       }
     },
   });
-  const showCurrency = (currency: string) => {
-    return currency === 'euro' ? '€' : '$';
-  };
 
   // Handle range sliders and skills filter
   const handlePriceRangeChange = (value: [number, number]) => {
@@ -461,32 +467,6 @@ export default function Work() {
     );
   });
 
-  const handleRemovePoW = async () => {
-    if (!selectedOffer || !selectedOffer.fileUrl) return;
-
-    try {
-      const fileRef = ref(storage, selectedOffer.fileUrl);
-      await deleteObject(fileRef);
-
-      if (selectedOffer.userId && selectedOffer.id) {
-        const offerRef = doc(
-          db,
-          'users',
-          selectedOffer.userId,
-          'offers',
-          selectedOffer.id,
-        );
-        await updateDoc(offerRef, { fileUrl: null });
-
-        toast.success(t('powRemoveSuccess'));
-        closeModal();
-        router.push('/dashboard/work');
-      }
-    } catch (error) {
-      console.error(t('errorRemovingFile'), error);
-      toast.error(t('failedToRemoveFile'));
-    }
-  };
   return (
     <div className="flex max-h-screen overflow-y-hidden bg-gray-100">
       <Menu />
@@ -558,7 +538,7 @@ export default function Work() {
                       isMulti
                       options={groupedOptions} // Using grouped options with categories
                       onChange={handleSkillSelect}
-                      getOptionLabel={(e: any) => `${e.label}`} // Adjust display format here
+                      getOptionLabel={(e) => `${e.label}`} // Adjust display format here
                     />
                   </div>
 
@@ -581,144 +561,133 @@ export default function Work() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-700">{t('noActiveJobOffers')}</p>
-                    )}
-
-                    {modalOpen && selectedOffer && (
-                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
-                          <div className="mb-5 flex w-full items-center justify-between border-b-2 border-gray-200 pb-5">
-                            <h2 className="mb-4 text-xl font-semibold">
-                              {selectedOffer.name}
-                            </h2>
-                            <div className="flex flex-wrap items-center">
-                              {(selectedOffer.priceProyect ||
-                                selectedOffer.priceHour ||
-                                selectedOffer.priceMounth) && (
-                                <div className="w-auto rounded-md border-2 border-freeland p-2 font-bold text-freeland">
-                                  {selectedOffer.priceHour &&
-                                    `${selectedOffer.priceHour}${showCurrency(selectedOffer.currency || '')}/hora`}
-                                  {selectedOffer.priceMounth &&
-                                    `${selectedOffer.priceMounth}${showCurrency(selectedOffer.currency || '')}/día`}
-                                  {selectedOffer.priceProyect &&
-                                    `${selectedOffer.priceProyect}${showCurrency(selectedOffer.currency || '')}/año`}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex">
-                            <div className="w-9/12 border-r-2 border-gray-200 pr-5">
-                              <textarea
-                                className="mb-4 size-full border-0"
-                                readOnly
-                              >
-                                {selectedOffer.description}
-                              </textarea>
-                            </div>
-                            <div className="w-3/12 pl-5">
-                              <p className="mb-5 text-gray-700">
-                                {t('hire.postedOn')}{' '}
-                                {selectedOffer.createdAt.toLocaleDateString()}
-                              </p>
-                              <p className="mb-5 text-gray-700">
-                                {t('hire.offerDuration')}:{' '}
-                                {selectedOffer.durationValue}{' '}
-                                {selectedOffer.duration}
-                              </p>
-                              <button
-                                type="button"
-                                onClick={handleViewRecruiterPoW}
-                                className="block w-full rounded bg-freeland px-4 py-2 text-center text-white"
-                              >
-                                {t('downloadPoW')}
-                              </button>
-                              <div
-                                {...getRootProps()}
-                                className="mt-4 cursor-pointer border-4 border-dashed p-6 text-center"
-                              >
-                                <input {...getInputProps()} />
-                                {selectedFile ? (
-                                  <div>
-                                    <p>
-                                      {t('fileSelected')} {selectedFile.name}
-                                    </p>
-                                    {selectedFile.type.startsWith('video/') ? (
-                                      // eslint-disable-next-line jsx-a11y/media-has-caption
-                                      <video controls className="w-full">
-                                        <source
-                                          src={previewUrl!}
-                                          type="video/mp4"
-                                        />
-                                      </video>
-                                    ) : (
-                                      <img
-                                        src={previewUrl!}
-                                        alt="Selected file preview"
-                                        className="h-auto w-full object-contain"
-                                      />
-                                    )}
-                                  </div>
-                                ) : (
-                                  <p>{t('dragAndDrop')}</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="mt-5 w-full border-t-2 border-gray-200 pt-5">
-                            <p className="text-md mb-5 font-bold">
-                              Habilidades requeridas
-                            </p>
-                            {selectedOffer.skillsMin && (
-                              <div className="mt-auto flex">
-                                {selectedOffer.skillsMin.map(
-                                  (skill: string, i: number) => (
-                                    <div
-                                      key={`${skill}-${i.toString()}`}
-                                      className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
-                                    >
-                                      {skill.toUpperCase()}
-                                    </div>
-                                  ),
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          <div className="mt-4 flex justify-end space-x-4">
-                            <button
-                              type="button"
-                              onClick={closeModal}
-                              className="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                            >
-                              {t('close')}
-                            </button>
-                            {uploadPow && (
-                              <button
-                                type="button"
-                                onClick={handleViewPoW}
-                                className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
-                              >
-                                {t('previewPoW')}
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={handleRemovePoW}
-                              className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
-                            >
-                              {t('removePoW')}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={handleFileUpload}
-                              className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
-                            >
-                              {uploadPow ? t('changePoW') : t('uploadPoW')}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                      <p className="text-gray-700">{t('noMatchingOffers')}</p>
                     )}
                   </div>
+
+                  {modalOpen && selectedOffer && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-8 shadow-lg">
+                        <div className="flex justify-between">
+                          <h2 className="text-2xl font-semibold">
+                            {selectedOffer.name}
+                          </h2>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-green-600">
+                              ${selectedOffer.priceHour}/h
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-8 grid grid-cols-2 gap-8">
+                          <div>
+                            <h3 className="mb-4 text-lg font-semibold">
+                              {t('description')}
+                            </h3>
+                            <p>{selectedOffer.description}</p>
+                          </div>
+
+                          <div>
+                            <h5 className="text-lg font-semibold">
+                              {t('publishDate')}
+                            </h5>
+                            <p className="mb-5 font-semibold">
+                              {new Date(
+                                selectedOffer.createdAt,
+                              ).toLocaleDateString()}
+                            </p>
+                            {offerPow ? (
+                              <div className="flex items-center">
+                                <button
+                                  type="button"
+                                  onClick={handleViewRecruiterPoW}
+                                  className="mt-4 w-full rounded bg-blue-600 px-4 py-2 text-white"
+                                >
+                                  {t('viewProofOfWork')}
+                                </button>
+                              </div>
+                            ) : (
+                              <p>{t('noProofOfWork')}</p>
+                            )}
+
+                            {uploadPow ? (
+                              <div className="mt-4 flex items-center">
+                                <button
+                                  type="button"
+                                  onClick={handleViewPoW}
+                                  className="mt-4 w-full rounded bg-blue-600 px-4 py-2 text-white"
+                                >
+                                  {t('viewUploadedProofOfWork')}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="mt-4">
+                                {/* Drag-and-Drop Zone */}
+                                <div className="h-48 border-2 border-dashed border-gray-300 bg-gray-50">
+                                  <div
+                                    {...getRootProps()}
+                                    className="flex h-full items-center justify-center"
+                                  >
+                                    <input {...getInputProps()} />
+                                    {previewUrl ? (
+                                      <div className="text-center">
+                                        <img
+                                          src={previewUrl}
+                                          alt="Preview"
+                                          className="mx-auto max-h-32 max-w-full"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <p className="text-gray-500">
+                                        {t('dragOrClickToSelectFile')}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Upload Button */}
+                                <button
+                                  type="button"
+                                  onClick={handleFileUpload}
+                                  className="mt-4 w-full rounded bg-green-600 px-4 py-2 text-white"
+                                >
+                                  {t('uploadProofOfWork')}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="mb-4 text-lg font-semibold">
+                            {t('requiredSkills')}
+                          </h3>
+                          {selectedOffer.skillsMin && (
+                            <div className="mt-auto flex">
+                              {selectedOffer.skillsMin.map(
+                                (skill: string, i: number) => (
+                                  <div
+                                    key={`${skill}-${i.toString()}`}
+                                    className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                                  >
+                                    {skill.toUpperCase()}
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-8 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={closeModal}
+                            className="rounded bg-gray-300 px-6 py-3 hover:bg-gray-400"
+                          >
+                            {t('close')}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p>{t('mustBeLoggedIn')}</p>

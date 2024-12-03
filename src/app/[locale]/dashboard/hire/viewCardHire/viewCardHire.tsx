@@ -27,7 +27,6 @@ interface ViewCardHireProps {
   onClick?: () => void;
   onLike: (offerId: string) => void;
   onStarRating: (offerId: string | any, rating: number) => void;
-  // onVisit: (offerId: string) => void;
 }
 
 const ViewCardHire = (props: ViewCardHireProps) => {
@@ -40,7 +39,6 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     onClick,
     onStarRating,
     onLike,
-    // onVisit,
   } = props;
 
   const t = useTranslations(); // Initialize translations
@@ -60,12 +58,12 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     <div
       key={offer.id}
       className={`${!showEdit && 'cursor-pointer'} w-4/12 p-3`}
-      onClick={() => onClick || (!showEdit ? onOpenModal(offer) : null)} // Added onClick to handle the click action
+      onClick={onClick} // Added onClick to handle the click action
     >
       {/* <div
         className="flex min-h-96 flex-col rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl"
         onClick={() => (!showEdit ? onOpenModal(offer) : null)}
-      > */}
+      >  */}
       <div className="">
         {showEdit && (
           <div className="text-right">
@@ -92,6 +90,33 @@ const ViewCardHire = (props: ViewCardHireProps) => {
                 onClick={() => onEditOffer(offer)}
                 className="ml-2 rounded"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="blue"
+                  className="size-6"
+                >
+                  <path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </button>
+            )}
+            {onOpenConfirmDeleteModal && (
+              <button
+                type="button"
+                onClick={() => onOpenConfirmDeleteModal(offer.id)}
+                className="ml-2 rounded"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="red"
+                  className="size-6"
+                />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -139,15 +164,8 @@ const ViewCardHire = (props: ViewCardHireProps) => {
         </div>
         <div className="w-6/12 text-right">
           <p className="text-gray-700">
-            {t('hire.postedOn')} {offer.createdAt.toLocaleDateString()}
+            {t('hire.offerDuration')}: {offer.durationValue} {offer.duration}
           </p>
-          {offer.duration ? (
-            <p className="text-gray-700">
-              {t('hire.offerDuration')}: {offer.durationValue} {offer.duration}
-            </p>
-          ) : (
-            <p className="min-h-6 text-gray-700" />
-          )}
         </div>
       </div>
       <div className="mb-5">
@@ -178,11 +196,21 @@ const ViewCardHire = (props: ViewCardHireProps) => {
             <span />
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => handleStarRating(5)} // Example rating of 5 stars
-          className="text-yellow-500"
-        />
+        <div>
+          <p className="text-gray-600">{offer.descriptionShort}</p>
+        </div>
+        {offer.skillsMin && (
+          <div className="mt-auto flex">
+            {offer.skillsMin.map((skill: string, i: number) => (
+              <div
+                key={`${skill}-${i.toString()}`}
+                className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+              >
+                {skill.toUpperCase()}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
