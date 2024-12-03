@@ -64,6 +64,9 @@ const ViewUserHire = (props: ViewUserHireProps) => {
     }
   };
 
+  const showCurrency = (currency: string) => {
+    return currency === 'euro' ? '€' : '$';
+  };
   return (
     <div>
       <div className="flex flex-wrap">
@@ -91,26 +94,68 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       {/* Modal for offer details */}
       {modalOpen && selectedOffer && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold">{selectedOffer.name}</h2>
-
-            <p className="mb-4">{selectedOffer.description}</p>
-            <p className="text-gray-700">
-              {t('hire.postedOn')}{' '}
-              {selectedOffer.createdAt.toLocaleDateString()}
-            </p>
-            {selectedOffer.fileUrl && (
-              <div className="mt-4">
-                <a
-                  href={selectedOffer.fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  {t('hire.viewUploadedFile')}
-                </a>
+          <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
+            <div className="mb-5 flex w-full items-center justify-between border-b-2 border-gray-200 pb-5">
+              <h2 className="text-xl font-semibold">{selectedOffer.name}</h2>
+              <div className="flex flex-wrap items-center">
+                {(selectedOffer.priceProyect ||
+                  selectedOffer.priceHour ||
+                  selectedOffer.priceMounth) && (
+                  <div className="w-auto rounded-md border-2 border-freeland p-2 font-bold text-freeland">
+                    {selectedOffer.priceHour &&
+                      `${selectedOffer.priceHour}${showCurrency(selectedOffer.currency || '')}/hora`}
+                    {selectedOffer.priceMounth &&
+                      `${selectedOffer.priceMounth}${showCurrency(selectedOffer.currency || '')}/día`}
+                    {selectedOffer.priceProyect &&
+                      `${selectedOffer.priceProyect}${showCurrency(selectedOffer.currency || '')}/año`}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+            <div className="flex" style={{ height: '350px' }}>
+              <div className="w-9/12 border-r-2 border-gray-200 pr-5 ">
+                <textarea className="mb-4 size-full border-0" readOnly>
+                  {selectedOffer.description}
+                </textarea>
+              </div>
+              <div className="w-3/12 pl-5">
+                <p className="mb-5 text-gray-700">
+                  {t('hire.postedOn')}{' '}
+                  {selectedOffer.createdAt.toLocaleDateString()}
+                </p>
+                <p className="mb-5 text-gray-700">
+                  {t('hire.offerDuration')}: {selectedOffer.durationValue}{' '}
+                  {selectedOffer.duration}
+                </p>
+                {selectedOffer.fileUrl && (
+                  <p>
+                    <a
+                      href={selectedOffer.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="my-5 block w-full rounded-md bg-freeland p-3 text-center font-bold text-white"
+                    >
+                      {t('hire.viewUploadedFile')}
+                    </a>
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="mt-5 w-full border-t-2 border-gray-200 pt-5">
+              <p className="text-md mb-5 font-bold">Habilidades requeridas</p>
+              {selectedOffer.skillsMin && (
+                <div className="mt-auto flex">
+                  {selectedOffer.skillsMin.map((skill: string, i: number) => (
+                    <div
+                      key={`${skill}-${i.toString()}`}
+                      className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                    >
+                      {skill.toUpperCase()}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               type="button"
               onClick={closeModal}

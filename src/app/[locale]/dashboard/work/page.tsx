@@ -208,7 +208,9 @@ export default function Work() {
       }
     },
   });
-
+  const showCurrency = (currency: string) => {
+    return currency === 'euro' ? '€' : '$';
+  };
   return (
     <div className="flex max-h-screen overflow-y-hidden bg-gray-100">
       <Menu />
@@ -240,54 +242,103 @@ export default function Work() {
 
                     {modalOpen && selectedOffer && (
                       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-                          <h2 className="mb-4 text-xl font-semibold">
-                            {selectedOffer.name}
-                          </h2>
-                          <p className="mb-4">{selectedOffer.description}</p>
-                          <p className="text-gray-700">
-                            {t('postedOn')}{' '}
-                            {selectedOffer.createdAt.toLocaleDateString()}
-                          </p>
-                          <br />
-                          <button
-                            type="button"
-                            onClick={handleViewRecruiterPoW}
-                            className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500"
-                          >
-                            {t('downloadPoW')}
-                          </button>
-                          <div
-                            {...getRootProps()}
-                            className="mt-4 cursor-pointer border-4 border-dashed p-6 text-center"
-                          >
-                            <input {...getInputProps()} />
-                            {selectedFile ? (
-                              <div>
-                                <p>
-                                  {t('fileSelected')} {selectedFile.name}
-                                </p>
-                                {selectedFile.type.startsWith('video/') ? (
-                                  // eslint-disable-next-line jsx-a11y/media-has-caption
-                                  <video controls className="w-full">
-                                    <source
-                                      src={previewUrl!}
-                                      type="video/mp4"
-                                    />
-                                  </video>
+                        <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
+                          <div className="mb-5 flex w-full items-center justify-between border-b-2 border-gray-200 pb-5">
+                            <h2 className="mb-4 text-xl font-semibold">
+                              {selectedOffer.name}
+                            </h2>
+                            <div className="flex flex-wrap items-center">
+                              {(selectedOffer.priceProyect ||
+                                selectedOffer.priceHour ||
+                                selectedOffer.priceMounth) && (
+                                <div className="w-auto rounded-md border-2 border-freeland p-2 font-bold text-freeland">
+                                  {selectedOffer.priceHour &&
+                                    `${selectedOffer.priceHour}${showCurrency(selectedOffer.currency || '')}/hora`}
+                                  {selectedOffer.priceMounth &&
+                                    `${selectedOffer.priceMounth}${showCurrency(selectedOffer.currency || '')}/día`}
+                                  {selectedOffer.priceProyect &&
+                                    `${selectedOffer.priceProyect}${showCurrency(selectedOffer.currency || '')}/año`}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-9/12 border-r-2 border-gray-200 pr-5">
+                              <textarea
+                                className="mb-4 size-full border-0"
+                                readOnly
+                              >
+                                {selectedOffer.description}
+                              </textarea>
+                            </div>
+                            <div className="w-3/12 pl-5">
+                              <p className="mb-5 text-gray-700">
+                                {t('hire.postedOn')}{' '}
+                                {selectedOffer.createdAt.toLocaleDateString()}
+                              </p>
+                              <p className="mb-5 text-gray-700">
+                                {t('hire.offerDuration')}:{' '}
+                                {selectedOffer.durationValue}{' '}
+                                {selectedOffer.duration}
+                              </p>
+                              <button
+                                type="button"
+                                onClick={handleViewRecruiterPoW}
+                                className="block w-full rounded bg-freeland px-4 py-2 text-center text-white"
+                              >
+                                {t('downloadPoW')}
+                              </button>
+                              <div
+                                {...getRootProps()}
+                                className="mt-4 cursor-pointer border-4 border-dashed p-6 text-center"
+                              >
+                                <input {...getInputProps()} />
+                                {selectedFile ? (
+                                  <div>
+                                    <p>
+                                      {t('fileSelected')} {selectedFile.name}
+                                    </p>
+                                    {selectedFile.type.startsWith('video/') ? (
+                                      // eslint-disable-next-line jsx-a11y/media-has-caption
+                                      <video controls className="w-full">
+                                        <source
+                                          src={previewUrl!}
+                                          type="video/mp4"
+                                        />
+                                      </video>
+                                    ) : (
+                                      <img
+                                        src={previewUrl!}
+                                        alt="Selected file preview"
+                                        className="h-auto w-full object-contain"
+                                      />
+                                    )}
+                                  </div>
                                 ) : (
-                                  <img
-                                    src={previewUrl!}
-                                    alt="Selected file preview"
-                                    className="h-auto w-full object-contain"
-                                  />
+                                  <p>{t('dragAndDrop')}</p>
                                 )}
                               </div>
-                            ) : (
-                              <p>{t('dragAndDrop')}</p>
+                            </div>
+                          </div>
+                          <div className="mt-5 w-full border-t-2 border-gray-200 pt-5">
+                            <p className="text-md mb-5 font-bold">
+                              Habilidades requeridas
+                            </p>
+                            {selectedOffer.skillsMin && (
+                              <div className="mt-auto flex">
+                                {selectedOffer.skillsMin.map(
+                                  (skill: string, i: number) => (
+                                    <div
+                                      key={`${skill}-${i.toString()}`}
+                                      className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                                    >
+                                      {skill.toUpperCase()}
+                                    </div>
+                                  ),
+                                )}
+                              </div>
                             )}
                           </div>
-
                           <div className="mt-4 flex justify-end space-x-4">
                             <button
                               type="button"
