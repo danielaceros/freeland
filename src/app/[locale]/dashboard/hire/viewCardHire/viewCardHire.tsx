@@ -134,7 +134,7 @@ const ViewCardHire = (props: ViewCardHireProps) => {
             )}
           </div>
         </div>
-        <div>
+        <div className="mb-5">
           <p className="text-gray-600">{offer.descriptionShort}</p>
         </div>
         {offer.skillsMin && (

@@ -27,7 +27,7 @@ const FormNewHire = (props: FormNewHireProps) => {
   const { user, saveHire, offerEdit, closeNewHire, onFetchOffers, savedHire } =
     props;
   const t = useTranslations(); // Initialize translations
-  const [offer, setOffer] = useState<Offer>({ currency: 'euro' } as Offer);
+  const [offer, setOffer] = useState<Offer>({} as Offer);
   const [offerFile, setOfferFile] = useState<File | null>(null); // File state
 
   const [selectedOptions, setSelectedOptions] = useState<any>(offer.categories);
@@ -93,12 +93,13 @@ const FormNewHire = (props: FormNewHireProps) => {
 
       if (offer.id) {
         await updateDoc(doc(db, 'users', user!.uid, 'offers', offer.id), {
+          userId: user.uid,
           name: offer.name,
           description: offer.description,
           duration: offer.duration || null,
           durationValue: offer.durationValue || null,
           descriptionShort: offer.descriptionShort,
-          currency: offer.currency,
+          currency: offer.currency || 'euro',
           priceHour: offer.priceHour || null,
           priceMounth: offer.priceMounth || null,
           priceProyect: offer.priceProyect || null,
@@ -110,12 +111,13 @@ const FormNewHire = (props: FormNewHireProps) => {
         toast.success(t('success.offerUpdated'));
       } else {
         await setDoc(doc(db, 'users', user!.uid, 'offers', offerId), {
+          userId: user.uid,
           name: offer.name,
           description: offer.description,
           duration: offer.duration || null,
           durationValue: offer.durationValue || null,
           descriptionShort: offer.descriptionShort,
-          currency: offer.currency,
+          currency: offer.currency || 'euro',
           priceHour: offer.priceHour || null,
           priceMounth: offer.priceMounth || null,
           priceProyect: offer.priceProyect || null,
