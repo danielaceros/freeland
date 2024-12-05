@@ -29,9 +29,10 @@ const FormNewHire = (props: FormNewHireProps) => {
   const t = useTranslations(); // Initialize translations
   const [offer, setOffer] = useState<Offer>({} as Offer);
   const [offerFile, setOfferFile] = useState<File | null>(null); // File state
-  const [selectedOptions] = useState<any>(offer.categories);
-  const [setSelectedSkills] = useState<any>([]);
-  const [setcategorySelectedSkills] = useState<any>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [categorySelectedSkills, setcategorySelectedSkills] = useState<
+    string[]
+  >([]);
 
   const validFields: ValidFieldsProps[] = [
     {
@@ -385,8 +386,8 @@ const FormNewHire = (props: FormNewHireProps) => {
           descriptionShort: offer.descriptionShort,
           currency: '€',
           priceHour: offer.priceHour || null,
-          categories: selectedOptions || null,
-          skillsMin: offer.skillsMin || null,
+          categories: categorySelectedSkills,
+          skillsMin: selectedSkills,
           createdAt: new Date(),
           fileUrl: fileUrl || offer.fileUrl,
         });
@@ -400,8 +401,8 @@ const FormNewHire = (props: FormNewHireProps) => {
           descriptionShort: offer.descriptionShort,
           currency: '€',
           priceHour: offer.priceHour || null,
-          categories: selectedOptions || null,
-          skillsMin: offer.skillsMin || null,
+          categories: categorySelectedSkills,
+          skillsMin: selectedSkills,
           createdAt: new Date(),
           fileUrl: fileUrl || offer.fileUrl,
         });
