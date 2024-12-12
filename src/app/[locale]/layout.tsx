@@ -6,6 +6,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { ToastContainer } from 'react-toastify';
 
+import { ReduxProvider } from '@/store/ReduxProvider';
 import { AllLocales } from '@/utils/AppConfig';
 
 import AuthListener from '../../components/AuthListener';
@@ -51,26 +52,28 @@ export default function RootLayout(props: {
   return (
     <html lang={props.params.locale}>
       <body className="overflow-y-hidden bg-background text-foreground antialiased">
-        <NextIntlClientProvider
-          locale={props.params.locale}
-          messages={messages}
-          // eslint-disable-next-line prettier/prettier
+        <ReduxProvider>
+          <NextIntlClientProvider
+            locale={props.params.locale}
+            messages={messages}
+            // eslint-disable-next-line prettier/prettier
         ><ToastContainer
-            position="bottom-right"
-            autoClose={5000} // Optional: Duration to auto close the toast
-            hideProgressBar={false} // Optional: Show or hide the progress bar
-            newestOnTop={false} // Optional: Show newest toast on top
-            // eslint-disable-next-line prettier/prettier
+              position="bottom-right"
+              autoClose={5000} // Optional: Duration to auto close the toast
+              hideProgressBar={false} // Optional: Show or hide the progress bar
+              newestOnTop={false} // Optional: Show newest toast on top
+              // eslint-disable-next-line prettier/prettier
         closeOnClick
-            rtl={false} // Optional: Enable RTL support
-            pauseOnFocusLoss
-            // eslint-disable-next-line prettier/prettier
+              rtl={false} // Optional: Enable RTL support
+              pauseOnFocusLoss
+              // eslint-disable-next-line prettier/prettier
         draggable
-            pauseOnHover
-          />
-          <AuthListener />
-          {props.children}
-        </NextIntlClientProvider>
+              pauseOnHover
+            />
+            <AuthListener />
+            {props.children}
+          </NextIntlClientProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

@@ -1,30 +1,22 @@
+'use client';
+
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import type { ProfileDataInterface } from '@/app/[locale]/dashboard/profile/page';
 import { auth, db } from '@/libs/firebase';
 
-interface ProfileData {
-  name: string;
-  surname: string | null;
-  email: string | null;
-  nick: string | null;
-  profilePicture: string | null;
-  position: string;
-  phone: string;
-  skills: string[];
-}
-
 interface UseUserResult {
-  user: User | null;
-  profileData: ProfileData;
+  userData: User | null;
+  profileData: ProfileDataInterface;
   hasLoaded: boolean;
 }
 
 export function useUser(): UseUserResult {
-  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUser] = useState<User | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const [profileData, setProfileData] = useState<{
@@ -33,18 +25,24 @@ export function useUser(): UseUserResult {
     email: string | null;
     nick: string | null;
     profilePicture: string | null;
+    profilePictureBackground: string | null;
     position: string;
     phone: string;
     skills: string[];
+    history: [];
+    certi: [];
   }>({
     name: '',
     surname: '',
     email: '',
     nick: '',
     profilePicture: null,
+    profilePictureBackground: null,
     position: '',
     phone: '',
     skills: [],
+    history: [],
+    certi: [],
   });
 
   useEffect(() => {
@@ -62,9 +60,12 @@ export function useUser(): UseUserResult {
               email: data.email || currentUser.email,
               nick: data.nick || '',
               profilePicture: data.profilePicture || null,
+              profilePictureBackground: data.profilePictureBackground || null,
               position: data.position || '',
               phone: data.phone || '',
               skills: data.skills || null,
+              history: data.history || null,
+              certi: data.certi || null,
             });
           } else {
             await setDoc(userDocRef, { email: currentUser.email });
@@ -74,9 +75,12 @@ export function useUser(): UseUserResult {
               email: currentUser.email,
               nick: '',
               profilePicture: null,
+              profilePictureBackground: null,
               position: '',
               phone: '',
               skills: [],
+              history: [],
+              certi: [],
             });
           }
         } catch (error) {
@@ -92,5 +96,5 @@ export function useUser(): UseUserResult {
     return () => unsubscribe();
   }, []);
 
-  return { user, profileData, hasLoaded };
+  return { userData, profileData, hasLoaded };
 }

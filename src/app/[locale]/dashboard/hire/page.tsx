@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
 import { auth, db } from '@/libs/firebase';
 
@@ -122,7 +123,8 @@ export default function Hire() {
       <Menu />
       <div className=" min-h-screen flex-1 overflow-y-scroll">
         <div className="flex flex-1 flex-col">
-          <main className="flex-1 px-16 py-6">
+          <main className="flex-1 px-16 py-6 pt-20">
+            <BarTop />
             {loading ? (
               <LoadingSpinner />
             ) : (
