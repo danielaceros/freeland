@@ -8,17 +8,18 @@ import { useDispatch } from 'react-redux';
 
 import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
-import { useUser } from '@/hooks/useUser';
-import { changeLoaded, changeUser, changeUserData } from '@/store/userStore';
+import { loadUser } from '@/utils/utils';
 
 import { auth } from '../../../libs/firebase';
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
   const t = useTranslations(); // Initialize translations
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    loadUser(dispatch);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -27,7 +28,6 @@ export default function Dashboard() {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -36,12 +36,6 @@ export default function Dashboard() {
       <div className="size-16 animate-spin rounded-full border-y-4 border-green-600" />
     </div>
   );
-
-  const { profileData, userData, hasLoaded } = useUser();
-  const dispatch = useDispatch();
-  dispatch(changeUserData(profileData));
-  dispatch(changeUser(userData));
-  dispatch(changeLoaded(hasLoaded));
 
   return (
     <div className="flex h-screen bg-gray-100">

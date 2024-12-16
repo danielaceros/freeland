@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'; // Import toast for notifications
 import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
 import { changeUserData } from '@/store/userStore';
+import { loadUser } from '@/utils/utils';
 
 import { db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
 import CertiProfile, { type CertiUserProps } from './certiProfile/CertiProfile';
@@ -19,6 +20,8 @@ import FormEditHistory from './historyProfile/formEditHistory/FormEditHistory';
 import HistoryProfile, {
   type HistoryUserProps,
 } from './historyProfile/HistoryProfile';
+import FormEditLang from './langProfile/formEditLang/FormEditLang';
+import LangProfile, { type LangUserProps } from './langProfile/LangProfile';
 import SkillsProfile from './skillsProfile/SkillsProfile';
 
 export interface HistoyProfile {
@@ -51,9 +54,11 @@ export interface ProfileDataInterface {
   skills: string[];
   history: HistoyProfile[];
   certi: CertiProfileData[];
+  lang: LangUserProps[];
 }
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.user.data);
   const userDataU = useSelector((state: any) => state.user.userData);
   const hasLoaded = useSelector((state: any) => state.user.loaded);
@@ -71,6 +76,7 @@ export default function Profile() {
     skills: [],
     history: [],
     certi: [],
+    lang: [],
   });
   const [profileData, setProfileData] = useState<ProfileDataInterface>({
     name: '',
@@ -84,6 +90,7 @@ export default function Profile() {
     skills: [],
     history: [],
     certi: [],
+    lang: [],
   });
   const [isEditing, setIsEditing] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -91,23 +98,33 @@ export default function Profile() {
     useState<File | null>(null);
   const [newHistory, setNewHistory] = useState<boolean>(false);
   const [newCerti, setNewCerti] = useState<boolean>(false);
-  const [newHistoryUser, setNewHistoryUser] = useState<HistoryUserProps>({
+  const [newLang, setNewLang] = useState<boolean>(false);
+  const newHistoryUser = {
+    id: '',
     rol: '',
     company: '',
     fromDate: new Date(),
     toDate: new Date(),
     description: '',
-  } as HistoryUserProps);
-
-  const [newCertiUser, setNewCertiUser] = useState<CertiUserProps>({
+  };
+  const newCertiUser = {
+    id: '',
     certiTitle: '',
     company: '',
     fromDate: new Date(),
     toDate: new Date(),
     description: '',
-  } as CertiUserProps);
+  };
+  const newLangUser = {
+    id: '',
+    lang: '',
+    level: '',
+  };
 
-  // Fetch profile data
+  useEffect(() => {
+    loadUser(dispatch);
+  }, []);
+
   useEffect(() => {
     if (userData) {
       setProfileData(userData);
@@ -116,27 +133,10 @@ export default function Profile() {
     }
   }, [userData]);
 
-  useEffect(() => {
-    if (profileData.history && profileData.history.length > 0) {
-      profileData.history.push(newHistoryUser);
-    } else {
-      profileData.history = [newHistoryUser];
-    }
-  }, [newHistoryUser]);
-
-  useEffect(() => {
-    if (profileData.certi && profileData.certi.length > 0) {
-      profileData.certi.push(newCertiUser);
-    } else {
-      profileData.certi = [newCertiUser];
-    }
-  }, [newCertiUser]);
-
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
   };
 
-  const dispatch = useDispatch();
   const handleSave = async () => {
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
@@ -236,6 +236,7 @@ export default function Profile() {
     setProfileData({ ...profileData, skills: newSkills });
   };
 
+  console.log('profileData.lang', profileData.lang);
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
@@ -389,13 +390,47 @@ export default function Profile() {
               />
             </div>
             <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
-              <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
-              <SkillsProfile
-                isEditing={isEditing}
-                skillsObj={profileData.skills}
-                onChangeSkills={updateSkills}
-              />
+              <div className="flex w-full items-center justify-between">
+                <h2 className="text-xl font-bold">Idiomas</h2>
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
+                    onClick={() => setNewLang(true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="white"
+                      className="mr-2 size-5 text-white"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>{' '}
+                    Idiomas
+                  </button>
+                )}
+              </div>
+              <LangProfile isEditing={isEditing} langUser={profileData.lang} />
             </div>
+            {newLang && (
+              <FormEditLang
+                open={newLang}
+                onChangeOpen={setNewLang}
+                data={newLangUser}
+                onChangeLang={(newLanguage: LangUserProps) =>
+                  setProfileData({
+                    ...profileData,
+                    lang: [...profileData.lang, newLanguage],
+                  })
+                }
+              />
+            )}
           </div>
           <div className="my-3 w-8/12 rounded-lg bg-white p-6 shadow-md">
             <div className="w-full">
@@ -417,7 +452,12 @@ export default function Profile() {
                   open={newHistory}
                   onChangeOpen={setNewHistory}
                   data={newHistoryUser}
-                  onChangeHistory={setNewHistoryUser}
+                  onChangeHistory={(newHis: HistoryUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      history: [...profileData.history, newHis],
+                    })
+                  }
                 />
               )}
 
@@ -456,7 +496,12 @@ export default function Profile() {
                   open={newCerti}
                   onChangeOpen={setNewCerti}
                   data={newCertiUser}
-                  onChangeHistory={setNewCertiUser}
+                  onChangeHistory={(newCert: CertiUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      certi: [...profileData.certi, newCert],
+                    })
+                  }
                 />
               )}
 

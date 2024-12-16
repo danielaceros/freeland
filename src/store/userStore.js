@@ -7,12 +7,14 @@ const initialState = {
 };
 
 /* eslint-disable no-param-reassign */
-const userStore = createSlice({
+export const userStore = createSlice({
   name: 'user',
   initialState,
   reducers: {
     changeUserData: (state, action) => {
-      state.data = action.payload;
+      state.data =
+        action.payload ||
+        JSON.parse(localStorage.getItem('user') || JSON.stringify({}));
     },
     changeUser: (state, action) => {
       state.userData = action.payload;
@@ -26,4 +28,4 @@ const userStore = createSlice({
 
 export const { changeUserData, changeUser, changeLoaded } = userStore.actions;
 
-export default userStore.reducer;
+// export default userStore.reducer;

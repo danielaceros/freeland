@@ -27,17 +27,20 @@ import { useTranslations } from 'next-intl';
 import Slider from 'rc-slider';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 
 import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
+import { loadUser } from '@/utils/utils';
 
 import { auth, db, storage } from '../../../../libs/firebase';
 import type { Offer } from '../hire/page';
 import ViewCardHire from '../hire/viewCardHire/viewCardHire';
 
 export default function Work() {
+  const dispatch = useDispatch();
   const t = useTranslations();
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
@@ -251,6 +254,7 @@ export default function Work() {
   };
 
   useEffect(() => {
+    loadUser(dispatch);
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);

@@ -4,11 +4,13 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
 import { auth, db } from '@/libs/firebase';
+import { loadUser } from '@/utils/utils';
 
 import FormNewHire from './formNewHire/FormNewHire';
 import ViewUserHire from './viewUserHire/ViewUserHire';
@@ -36,6 +38,7 @@ export interface Offer {
 }
 
 export default function Hire() {
+  const dispatch = useDispatch();
   const t = useTranslations(); // Initialize translations
   const [user, setUser] = useState<User | null>(null); // User state
   const [offers, setOffers] = useState<Offer[]>([]); // State for job offers
@@ -80,6 +83,7 @@ export default function Hire() {
 
   // Effect to retrieve current user information and job offers
   useEffect(() => {
+    loadUser(dispatch);
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser); // Set user state if user is logged in
