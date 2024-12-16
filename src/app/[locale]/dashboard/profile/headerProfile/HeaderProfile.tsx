@@ -20,7 +20,7 @@ const HeaderProfile = (props: HeaderProfileControllerProps) => {
           <img
             src={profileData.profilePicture}
             alt="User Profile"
-            className="z-40 mt-headerProfile size-52 rounded-full border-2 border-white"
+            className="z-30 mt-headerProfile size-52 rounded-full border-2 border-white"
           />
         )}
         <div className="mt-14 w-3/6">
