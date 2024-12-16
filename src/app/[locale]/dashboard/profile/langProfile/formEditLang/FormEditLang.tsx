@@ -1,7 +1,6 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import React, { useEffect, useState } from 'react';
-
-import useFormatDate from '@/hooks/useFormatDate';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { LangUserProps } from '../LangProfile';
 
@@ -9,33 +8,21 @@ interface FormEditCertiProps {
   open: boolean;
   onChangeOpen: (open: boolean) => void;
   data: LangUserProps;
-  onChangeHistory: (historyData: LangUserProps) => void;
+  onChangeLang: (langData: LangUserProps) => void;
 }
 
 const FormEditCerti = (props: FormEditCertiProps) => {
-  const { open, data, onChangeOpen, onChangeHistory } = props;
+  const { open, data, onChangeOpen, onChangeLang } = props;
   const [openPopup, setOpenPopup] = useState<boolean>(open);
-  const [historyData, setHistoryData] = useState<LangUserProps>(data);
+  const [langData, setLangData] = useState<LangUserProps>(data);
 
   useEffect(() => {
     onChangeOpen(openPopup);
   }, [openPopup]);
 
-  const generarRandom = (length: number) => {
-    const caracteres =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split(
-        '',
-      );
-    const caracteresLength = caracteres.length;
-    return Array.from(
-      { length },
-      () => caracteres[Math.floor(Math.random() * caracteresLength)],
-    ).join('');
-  };
-
-  const onSaveHistory = () => {
-    historyData.id = generarRandom(10).toString();
-    onChangeHistory(historyData);
+  const onSaveLang = () => {
+    langData.id = uuidv4();
+    onChangeLang(langData);
     setOpenPopup(false);
   };
 
@@ -51,85 +38,46 @@ const FormEditCerti = (props: FormEditCertiProps) => {
             transition
             className="relative overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-2xl data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
-            <form onSubmit={onSaveHistory}>
+            <form onSubmit={onSaveLang}>
               <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="">
-                  <input
-                    type="text"
-                    id="certiTitle"
-                    value={historyData.certiTitle}
-                    className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Nombre de la titulación"
-                    placeholder="Nombre de la titulación"
-                    onChange={(e) =>
-                      setHistoryData({
-                        ...historyData,
-                        certiTitle: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                  <input
-                    type="text"
-                    id="company"
-                    value={historyData.company}
-                    className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Lugar"
-                    placeholder="Lugar"
-                    onChange={(e) =>
-                      setHistoryData({
-                        ...historyData,
-                        company: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                  <div className="mb-3 flex">
-                    <input
-                      type="date"
-                      id="fromDate"
-                      value={useFormatDate(historyData.fromDate)}
-                      onChange={(e) =>
-                        setHistoryData({
-                          ...historyData,
-                          fromDate: new Date(e.target.value),
-                        })
+                <div className="flex">
+                  <div className="w-6/12 pr-2">
+                    <p className="mb-1 text-gray-600">Idioma:</p>
+                    <select
+                      id="lang"
+                      value={langData.lang}
+                      onChange={(event) =>
+                        setLangData({ ...langData, lang: event.target.value })
                       }
-                      required
-                      className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Inicio del curso"
-                    />
-                    <input
-                      type="date"
-                      id="toDate"
-                      value={useFormatDate(historyData.toDate)}
-                      onChange={(e) =>
-                        setHistoryData({
-                          ...historyData,
-                          toDate: new Date(e.target.value),
-                        })
-                      }
-                      required
-                      className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Fin del curso"
-                    />
+                      className="w-full rounded-md border-gray-300"
+                    >
+                      <option value="">Seleccionar</option>
+                      <option value="es">Español</option>
+                      <option value="en">Inglés</option>
+                      <option value="fr">Francés</option>
+                      <option value="it">Italiano</option>
+                      <option value="pt">Portugués</option>
+                    </select>
                   </div>
-
-                  <textarea
-                    id="description"
-                    value={historyData.description}
-                    className="mb-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:border-freeland focus:ring-freeland sm:text-sm/6"
-                    rows={15}
-                    onChange={(e) =>
-                      setHistoryData({
-                        ...historyData,
-                        description: e.target.value,
-                      })
-                    }
-                    required
-                    title="Descripción del puesto"
-                    placeholder="Descripción del puesto"
-                  />
+                  <div className="w-6/12">
+                    <p className="mb-1 text-gray-600">Nivel:</p>
+                    <select
+                      id="level"
+                      value={langData.level}
+                      onChange={(event) =>
+                        setLangData({ ...langData, level: event.target.value })
+                      }
+                      className="w-full rounded-md border-gray-300"
+                    >
+                      <option value="">Seleccionar</option>
+                      <option value="A1">A1</option>
+                      <option value="A2">A2</option>
+                      <option value="B1">B1</option>
+                      <option value="B2">B2</option>
+                      <option value="C1">C1</option>
+                      <option value="C2">C2</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">

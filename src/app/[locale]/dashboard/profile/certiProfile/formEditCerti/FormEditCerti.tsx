@@ -1,5 +1,6 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import useFormatDate from '@/hooks/useFormatDate';
 
@@ -21,20 +22,8 @@ const FormEditCerti = (props: FormEditCertiProps) => {
     onChangeOpen(openPopup);
   }, [openPopup]);
 
-  const generarRandom = (length: number) => {
-    const caracteres =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split(
-        '',
-      );
-    const caracteresLength = caracteres.length;
-    return Array.from(
-      { length },
-      () => caracteres[Math.floor(Math.random() * caracteresLength)],
-    ).join('');
-  };
-
   const onSaveHistory = () => {
-    historyData.id = generarRandom(10).toString();
+    historyData.id = uuidv4();
     onChangeHistory(historyData);
     setOpenPopup(false);
   };
