@@ -1,25 +1,41 @@
 'use client';
 
 import type { User } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'; // Import Firebase Storage functions
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'; // Import toast for notifications
 
+import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
+import { changeUserData } from '@/store/userStore';
+import { loadUser } from '@/utils/utils';
 
-import { auth, db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
+import { db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
+import CertiProfile, { type CertiUserProps } from './certiProfile/CertiProfile';
+import FormEditCerti from './certiProfile/formEditCerti/FormEditCerti';
 import HeaderProfile from './headerProfile/HeaderProfile';
 import FormEditHistory from './historyProfile/formEditHistory/FormEditHistory';
 import HistoryProfile, {
   type HistoryUserProps,
 } from './historyProfile/HistoryProfile';
+import FormEditLang from './langProfile/formEditLang/FormEditLang';
+import LangProfile, { type LangUserProps } from './langProfile/LangProfile';
 import SkillsProfile from './skillsProfile/SkillsProfile';
 
-interface HistoyProfile {
+export interface HistoyProfile {
   id: string;
   rol: string;
+  company: string;
+  fromDate: Date;
+  toDate: Date;
+  description: string;
+}
+
+export interface CertiProfileData {
+  id: string;
+  certiTitle: string;
   company: string;
   fromDate: Date;
   toDate: Date;
@@ -37,10 +53,17 @@ export interface ProfileDataInterface {
   phone: string;
   skills: string[];
   history: HistoyProfile[];
+  certi: CertiProfileData[];
+  lang: LangUserProps[];
 }
 
 export default function Profile() {
+  const dispatch = useDispatch();
+  const userData = useSelector((state: any) => state.user.data);
+  const userDataU = useSelector((state: any) => state.user.userData);
+  const hasLoaded = useSelector((state: any) => state.user.loaded);
   const [user, setUser] = useState<User | null>(null);
+
   const [oldProfileData, setOldProfileData] = useState<ProfileDataInterface>({
     name: '',
     surname: '',
@@ -52,6 +75,8 @@ export default function Profile() {
     phone: '',
     skills: [],
     history: [],
+    certi: [],
+    lang: [],
   });
   const [profileData, setProfileData] = useState<ProfileDataInterface>({
     name: '',
@@ -64,102 +89,49 @@ export default function Profile() {
     phone: '',
     skills: [],
     history: [],
+    certi: [],
+    lang: [],
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [profilePictureBackground, setProfilePictureBackground] =
     useState<File | null>(null);
   const [newHistory, setNewHistory] = useState<boolean>(false);
-  const [newHistoryUser, setNewHistoryUser] = useState<HistoryUserProps>({
+  const [newCerti, setNewCerti] = useState<boolean>(false);
+  const [newLang, setNewLang] = useState<boolean>(false);
+  const newHistoryUser = {
+    id: '',
     rol: '',
     company: '',
     fromDate: new Date(),
     toDate: new Date(),
     description: '',
-  } as HistoryUserProps);
+  };
+  const newCertiUser = {
+    id: '',
+    certiTitle: '',
+    company: '',
+    fromDate: new Date(),
+    toDate: new Date(),
+    description: '',
+  };
+  const newLangUser = {
+    id: '',
+    lang: '',
+    level: '',
+  };
 
-  // Fetch profile data
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        const userDocRef = doc(db, 'users', currentUser.uid);
-        try {
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            setProfileData({
-              name: data.name || '',
-              surname: data.surname || '',
-              email: data.email || currentUser.email,
-              nick: data.nick || '',
-              profilePicture: data.profilePicture || null,
-              profilePictureBackground: data.profilePictureBackground || null,
-              position: data.position || '',
-              phone: data.phone || '',
-              skills: data.skills || null,
-              history: data.history || null,
-            });
-            setOldProfileData({
-              name: data.name || '',
-              surname: data.surname || '',
-              email: data.email || currentUser.email,
-              nick: data.nick || '',
-              profilePicture: data.profilePicture || null,
-              profilePictureBackground: data.profilePictureBackground || null,
-              position: data.position || '',
-              phone: data.phone || '',
-              skills: data.skills || null,
-              history: data.history || null,
-            });
-          } else {
-            await setDoc(userDocRef, { email: currentUser.email });
-            setProfileData({
-              name: '',
-              surname: '',
-              email: currentUser.email,
-              nick: '',
-              profilePicture: null,
-              profilePictureBackground: null,
-              position: '',
-              phone: '',
-              skills: [],
-              history: [],
-            });
-            setOldProfileData({
-              name: '',
-              surname: '',
-              email: currentUser.email,
-              nick: '',
-              profilePicture: null,
-              profilePictureBackground: null,
-              position: '',
-              phone: '',
-              skills: [],
-              history: [],
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching profile data:', error);
-          toast.error('Failed to load profile data.'); // Notify on error
-        }
-        setHasLoaded(true);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
+    loadUser(dispatch);
   }, []);
 
   useEffect(() => {
-    if (profileData.history && profileData.history.length > 0) {
-      profileData.history.push(newHistoryUser);
-    } else {
-      profileData.history = [newHistoryUser];
+    if (userData) {
+      setProfileData(userData);
+      setOldProfileData(userData);
+      setUser(userDataU);
     }
-  }, [newHistoryUser]);
+  }, [userData]);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
@@ -201,6 +173,8 @@ export default function Profile() {
         } else {
           await setDoc(userDocRef, profileData, { merge: true });
         }
+
+        dispatch(changeUserData(profileData));
         setOldProfileData(profileData);
         toast.success('Profile updated successfully!'); // Notify on successful profile update
         setIsEditing(false);
@@ -236,6 +210,23 @@ export default function Profile() {
     setProfileData({ ...profileData, history: updateHistory });
   };
 
+  const changeCertiUser = (certiData: CertiUserProps) => {
+    const updateCerti = profileData.certi.map((his) => {
+      if (his.id === certiData.id) {
+        return certiData;
+      }
+      return his;
+    });
+    setProfileData({ ...profileData, certi: updateCerti });
+  };
+
+  const deteleCerti = (certiUser: CertiUserProps) => {
+    const updateCerti = profileData.certi.filter(
+      (his) => certiUser.id !== his.id,
+    );
+    setProfileData({ ...profileData, certi: updateCerti });
+  };
+
   const onCancel = () => {
     setProfileData(oldProfileData);
     setIsEditing(false);
@@ -245,10 +236,12 @@ export default function Profile() {
     setProfileData({ ...profileData, skills: newSkills });
   };
 
+  console.log('profileData.lang', profileData.lang);
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-      <div className="max-h-screen flex-1 overflow-y-auto ">
+      <div className="max-h-screen flex-1 overflow-y-auto pt-16">
+        <BarTop />
         <div className="fixed bottom-0 right-0 z-50 flex rounded-md bg-white px-4 py-2">
           {isEditing ? (
             <>
@@ -283,7 +276,7 @@ export default function Profile() {
             bg={profilePictureBackground}
           />
         </div>
-        <main className="px-16 py-6">
+        <main className="flex flex-wrap px-16 py-6">
           {isEditing && (
             <>
               <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
@@ -387,8 +380,8 @@ export default function Profile() {
               </div>
             </>
           )}
-          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
-            <div className="mb-4 w-full">
+          <div className="my-3 w-4/12 pr-6">
+            <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
               <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
               <SkillsProfile
                 isEditing={isEditing}
@@ -396,8 +389,50 @@ export default function Profile() {
                 onChangeSkills={updateSkills}
               />
             </div>
+            <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
+              <div className="flex w-full items-center justify-between">
+                <h2 className="text-xl font-bold">Idiomas</h2>
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
+                    onClick={() => setNewLang(true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="white"
+                      className="mr-2 size-5 text-white"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>{' '}
+                    Idiomas
+                  </button>
+                )}
+              </div>
+              <LangProfile isEditing={isEditing} langUser={profileData.lang} />
+            </div>
+            {newLang && (
+              <FormEditLang
+                open={newLang}
+                onChangeOpen={setNewLang}
+                data={newLangUser}
+                onChangeLang={(newLanguage: LangUserProps) =>
+                  setProfileData({
+                    ...profileData,
+                    lang: [...profileData.lang, newLanguage],
+                  })
+                }
+              />
+            )}
           </div>
-          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+          <div className="my-3 w-8/12 rounded-lg bg-white p-6 shadow-md">
             <div className="w-full">
               <div className="flex w-full justify-between">
                 <h2 className="mb-5 text-xl font-bold">Experiencia</h2>
@@ -417,7 +452,12 @@ export default function Profile() {
                   open={newHistory}
                   onChangeOpen={setNewHistory}
                   data={newHistoryUser}
-                  onChangeHistory={setNewHistoryUser}
+                  onChangeHistory={(newHis: HistoryUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      history: [...profileData.history, newHis],
+                    })
+                  }
                 />
               )}
 
@@ -430,6 +470,50 @@ export default function Profile() {
                       edit={isEditing}
                       onChangeHistoryUser={changeHistoryUser}
                       deleteHistory={deteleHistory}
+                    />
+                  );
+                })}
+            </div>
+          </div>
+
+          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+            <div className="w-full">
+              <div className="flex w-full justify-between">
+                <h2 className="mb-5 text-xl font-bold">Certificados</h2>
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={() => setNewCerti(true)}
+                    className="mb-8 mt-4 rounded bg-freeland px-4 py-2 text-white hover:bg-green-500"
+                  >
+                    Añadir Certificados
+                  </button>
+                )}
+              </div>
+
+              {newCerti && (
+                <FormEditCerti
+                  open={newCerti}
+                  onChangeOpen={setNewCerti}
+                  data={newCertiUser}
+                  onChangeHistory={(newCert: CertiUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      certi: [...profileData.certi, newCert],
+                    })
+                  }
+                />
+              )}
+
+              {profileData.certi &&
+                profileData.certi.map((certi) => {
+                  return (
+                    <CertiProfile
+                      key={certi.id}
+                      certiUser={certi}
+                      edit={isEditing}
+                      onChangeCertiUser={changeCertiUser}
+                      deleteCerti={deteleCerti}
                     />
                   );
                 })}

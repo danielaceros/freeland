@@ -1,10 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { auth, googleProvider } from '../../libs/firebase';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { toast } from 'react-toastify';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+
+import { auth, googleProvider } from '../../libs/firebase';
 
 const LoginController = () => {
   const [email, setEmail] = useState('');

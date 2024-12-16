@@ -4,17 +4,22 @@ import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useTranslations } from 'next-intl'; // Import useTranslations for translations
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
+import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
+import { loadUser } from '@/utils/utils';
 
 import { auth } from '../../../libs/firebase';
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
   const t = useTranslations(); // Initialize translations
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    loadUser(dispatch);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -23,7 +28,6 @@ export default function Dashboard() {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -38,16 +42,8 @@ export default function Dashboard() {
       <Menu />
 
       <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between bg-white p-4 shadow">
-          <h2 className="text-3xl font-semibold">{t('dashboard.title')}</h2>
-          <div className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-500">
-            {t('dashboard.addNew')}
-          </div>
-        </header>
-
-        {/* Content area */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pt-24">
+          <BarTop />
           {loading ? (
             <LoadingSpinner />
           ) : (

@@ -4,19 +4,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import useFormatDate from '@/hooks/useFormatDate';
 
-import type { HistoryUserProps } from '../HistoryProfile';
+import type { CertiUserProps } from '../CertiProfile';
 
-interface FormEditHistoryProps {
+interface FormEditCertiProps {
   open: boolean;
   onChangeOpen: (open: boolean) => void;
-  data: HistoryUserProps;
-  onChangeHistory: (historyData: HistoryUserProps) => void;
+  data: CertiUserProps;
+  onChangeHistory: (historyData: CertiUserProps) => void;
 }
 
-const FormEditHistory = (props: FormEditHistoryProps) => {
+const FormEditCerti = (props: FormEditCertiProps) => {
   const { open, data, onChangeOpen, onChangeHistory } = props;
   const [openPopup, setOpenPopup] = useState<boolean>(open);
-  const [historyData, setHistoryData] = useState<HistoryUserProps>(data);
+  const [historyData, setHistoryData] = useState<CertiUserProps>(data);
 
   useEffect(() => {
     onChangeOpen(openPopup);
@@ -45,13 +45,16 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                 <div className="">
                   <input
                     type="text"
-                    id="rol"
-                    value={historyData.rol}
+                    id="certiTitle"
+                    value={historyData.certiTitle}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Puesto de trabajo"
-                    placeholder="Puesto de trabajo"
+                    title="Nombre de la titulación"
+                    placeholder="Nombre de la titulación"
                     onChange={(e) =>
-                      setHistoryData({ ...historyData, rol: e.target.value })
+                      setHistoryData({
+                        ...historyData,
+                        certiTitle: e.target.value,
+                      })
                     }
                     required
                   />
@@ -60,8 +63,8 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                     id="company"
                     value={historyData.company}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Empresa"
-                    placeholder="Empresa"
+                    title="Lugar"
+                    placeholder="Lugar"
                     onChange={(e) =>
                       setHistoryData({
                         ...historyData,
@@ -83,7 +86,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       }
                       required
                       className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Inicio del puesto"
+                      title="Inicio del curso"
                     />
                     <input
                       type="date"
@@ -97,7 +100,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       }
                       required
                       className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Fin del puesto"
+                      title="Fin del curso"
                     />
                   </div>
 
@@ -142,4 +145,4 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
   );
 };
 
-export default FormEditHistory;
+export default FormEditCerti;
