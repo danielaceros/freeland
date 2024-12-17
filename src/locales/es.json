@@ -63,10 +63,12 @@
     "logout": "Cerrar sesión",
     "viewProfile": "Ver perfil",
     "loggedOut": "¡Sesión cerrada con éxito!",
-    "changeLocale": "Cambiar idioma"
+    "changeLocale": "Cambiar idioma",
+    "inbox": "Bandeja de Entrada"
   },
   "hire": {
     "title": "Contratar",
+    "openoffers": "Abrir Ofertas",
     "addNewOffer": "Agregar nueva oferta",
     "createNewOffer": "Crear una nueva oferta de trabajo",
     "offerName": "Nombre de la oferta",

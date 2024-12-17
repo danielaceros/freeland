@@ -63,10 +63,12 @@
     "logout": "Esci",
     "viewProfile": "Visualizza profilo",
     "loggedOut": "Uscita avvenuta con successo!",
-    "changeLocale": "Cambia lingua"
+    "changeLocale": "Cambia lingua",
+    "inbox": "Posta in Arrivo"
   },
   "hire": {
     "title": "Assumi",
+    "openoffers":"offerte aperte",
     "addNewOffer": "Aggiungi nuova offerta",
     "createNewOffer": "Crea una nuova offerta di lavoro",
     "offerName": "Nome dell'offerta",
