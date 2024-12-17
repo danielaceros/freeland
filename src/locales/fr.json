@@ -63,10 +63,12 @@
     "logout": "Se déconnecter",
     "viewProfile": "Voir le profil",
     "loggedOut": "Déconnexion réussie !",
-    "changeLocale": "Changer la langue"
+    "changeLocale": "Changer la langue",
+    "inbox": "Boîte de Réception"
   },
   "hire": {
     "title": "Embaucher",
+    "openoffers": "Offres Ouvertes",
     "addNewOffer": "Ajouter une nouvelle offre",
     "createNewOffer": "Créer une nouvelle offre d'emploi",
     "offerName": "Nom de l'offre",

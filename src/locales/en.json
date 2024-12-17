@@ -63,10 +63,12 @@
     "logout": "Log out",
     "viewProfile": "View Profile",
     "loggedOut": "Successfully logged out!",
-    "changeLocale": "Change Language"
+    "changeLocale": "Change Language",
+    "inbox": "Inbox"
   },
   "hire": {
     "title": "Hire",
+    "openoffers": "Open Offers",
     "addNewOffer": "Add New Offer",
     "createNewOffer": "Create a New Job Offer",
     "offerName": "Offer Name",
