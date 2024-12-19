@@ -6,11 +6,14 @@ import {
 } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { openChat } from '@/store/chatStore';
 
 import InboxChat from './InboxChat';
 
 const PanelChat = () => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const isOpen = useSelector((state: any) => state.chat.data);
 
@@ -21,6 +24,12 @@ const PanelChat = () => {
       setOpen(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!open) {
+      dispatch(openChat({ id: '', open: false }));
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-30">
