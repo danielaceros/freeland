@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Logo } from './Logo';
+import ViewUsersChat from './chat/ViewUsersChat';
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -17,7 +18,7 @@ const Menu = () => {
   return (
     <aside
       className={`${
-        isOpen ? 'w-64' : 'w-20'
+        isOpen ? 'w-56' : 'w-20'
       } z-50 flex flex-col bg-zinc-800 p-4 text-white transition-all duration-100`}
     >
       <button
@@ -146,6 +147,8 @@ const Menu = () => {
           )}
         </button>
       </nav>
+
+      <ViewUsersChat />
     </aside>
   );
 };

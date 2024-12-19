@@ -11,6 +11,7 @@ import Menu from '@/components/common/Menu';
 import { loadUser } from '@/utils/utils';
 
 import { auth } from '../../../libs/firebase';
+import PanelChat from '@/components/common/chat/PanelChat';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-
+      <PanelChat />
       <div className="flex flex-1 flex-col">
         <main className="flex-1 p-6 pt-24">
           <BarTop />
