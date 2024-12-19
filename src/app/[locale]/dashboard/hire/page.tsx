@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import BarTop from '@/components/common/BarTop';
+import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { auth, db } from '@/libs/firebase';
 import { loadUser } from '@/utils/utils';
@@ -129,6 +130,7 @@ export default function Hire() {
         <div className="flex flex-1 flex-col">
           <main className="flex-1 px-16 py-6 pt-20">
             <BarTop />
+            <PanelChat />
             {loading ? (
               <LoadingSpinner />
             ) : (

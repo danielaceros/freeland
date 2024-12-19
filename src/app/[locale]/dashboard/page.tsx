@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import BarTop from '@/components/common/BarTop';
+import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { loadUser } from '@/utils/utils';
 
@@ -40,7 +41,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-
+      <PanelChat />
       <div className="flex flex-1 flex-col">
         <main className="flex-1 p-6 pt-24">
           <BarTop />
