@@ -16,7 +16,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
   } = SkillsProfileController(props);
 
   return (
-    <div className='h-28'>
+    <div>
       {isEditing ? (
         <>
           <div className="w-full">
@@ -30,12 +30,12 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
               className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             />
           </div>
-          <div className="flex flex-wrap pt-3">
+          <div className="flex pt-3">
             {skillsData.length > 0
               ? skillsData.map((skill: string, i: number) => (
                   <div
                     key={`${skill}-${i.toString()}`}
-                    className="mb-2 mr-2 flex flex-wrap items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                    className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
                   >
                     {skill.toUpperCase()}
                     <button
@@ -52,7 +52,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
                 skillsObj.map((skill: string, i: number) => (
                   <div
                     key={`${skill}-${i.toString()}`}
-                    className="mb-2 mr-2 flex flex-wrap items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
+                    className="mb-2 mr-2 flex items-center rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
                   >
                     {skill.toUpperCase()}
                     <button
@@ -67,7 +67,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
           </div>
         </>
       ) : (
-        <div className="flex flex-wrap pt-3 max-h-28 overflow-x-auto space-x-2 w-full">
+        <div className="flex pt-3">
           {skillsObj &&
             skillsObj.map((skill: string, i: number) => (
               <div

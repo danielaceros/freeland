@@ -9,14 +9,8 @@ export interface HistoryUserProps {
   id: string;
   rol: string;
   company: string;
-  fromDate: {
-    seconds:Number,
-    nanoseconds: Number,
-  };
-  toDate: {
-    seconds:Number,
-    nanoseconds: Number,
-  };
+  fromDate: Date;
+  toDate: Date;
   description: string;
 }
 

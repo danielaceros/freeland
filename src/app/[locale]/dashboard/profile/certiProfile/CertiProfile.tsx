@@ -9,14 +9,8 @@ export interface CertiUserProps {
   id: string;
   certiTitle: string;
   company: string;
-  fromDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
-  toDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
+  fromDate: Date;
+  toDate: Date;
   description: string;
 }
 

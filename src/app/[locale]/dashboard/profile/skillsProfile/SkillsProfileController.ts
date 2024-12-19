@@ -15,7 +15,7 @@ const SkillsProfileController = (props: SkillsProfileControllerProps) => {
     if (skillsObj) {
       setSkillsData(skillsObj);
     }
-  }, [skillsObj]);
+  }, []);
 
   useEffect(() => {
     if (skillsData && skillsData.length > 0) {
