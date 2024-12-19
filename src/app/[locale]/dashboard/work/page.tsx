@@ -38,6 +38,7 @@ import { loadUser } from '@/utils/utils';
 import { auth, db, storage } from '../../../../libs/firebase';
 import type { Offer } from '../hire/page';
 import ViewCardHire from '../hire/viewCardHire/viewCardHire';
+import PanelChat from '@/components/common/chat/PanelChat';
 
 export default function Work() {
   const dispatch = useDispatch();
@@ -507,9 +508,13 @@ export default function Work() {
   return (
     <div className="flex max-h-screen overflow-y-hidden bg-gray-100">
       <Menu />
+      <PanelChat />
       <div className="min-h-screen flex-1 overflow-y-scroll">
         <main className="flex-1 px-6 pt-32">
           <BarTop />
+          {/* <div className="fixed bottom-0 right-0 z-40 flex rounded-md bg-white px-4 py-2 w-full h-14">
+            &nbsp;
+          </div> */}
           {loading ? (
             <LoadingSpinner />
           ) : (

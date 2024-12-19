@@ -1,11 +1,13 @@
+'use client';
+
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { db } from '@/libs/firebase';
-import { useRouter } from 'next/navigation';
 import type { Offer } from '../page';
 import ViewCardHire from '../viewCardHire/viewCardHire';
+import { useSelector } from 'react-redux';
 
 interface ViewUserHireProps {
   user: any;
@@ -42,6 +44,7 @@ interface Application {
 
 const ViewUserHire = (props: ViewUserHireProps) => {
   const { user, offers, onFetchOffers, onEditOffer } = props;
+  const profileData = useSelector((state: any) => state.user.data);
   const t = useTranslations(); // Initialize translations
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null); // Selected offer for modal
   const [applications, setApplications] = useState<Application[]>([]);
@@ -50,7 +53,8 @@ const ViewUserHire = (props: ViewUserHireProps) => {
   const [viewoffers, setviewoffers] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false); // Confirmation modal state
   const [offerToDelete, setOfferToDelete] = useState<string | null>(null); // Offer ID to delete
-  const router = useRouter();
+  // const router = useRouter();
+
   const fetchApplications = async (offered: Offer) => {
     setviewoffers(false);
     setLoadingApplications(true);
@@ -105,7 +109,6 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       }
   
       setApplications(applicationsData);
-      console.log(applicationsData);
     } catch (error) {
       console.error('Error fetching applications:', error);
       toast.error('Failed to fetch applications.');
@@ -121,11 +124,22 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       await updateDoc(applicationRef, {
         status: 2,  // Mark the application as "matched"
       });
-  
+      const freelancer = {
+        id: app.id,
+        user: `${app.freelancer?.name} ${app.freelancer?.surname}`,
+        profilePicture: app.freelancer?.profilePicture || ''
+      }
+      const freelanceCreateOffer = {
+        id: offered.userId,
+        user: `${profileData?.name} ${profileData?.surname}`,
+        profilePicture: profileData?.profilePicture || ''
+      }
       // Create a chat between the recruiter and freelancer after the match
       const chatRef = collection(db, 'chats');
       const newChat = await addDoc(chatRef, {
-        participants: [offered.userId, app.id],  // Add the recruiter and freelancer to the chat
+        participants: [offered.userId, app.id],  // Add the recruiter and freelancer to the chat,
+        freelancer: freelancer,
+        freelanceCreateOffer: freelanceCreateOffer,
         offerId: offered.id,
         createdAt: new Date(),
       });
@@ -141,7 +155,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       toast.success('Match successful! A chat has been created.');
   
       // Redirect to the newly created chat (using newChat.id as the chatId)
-      router.push(`/dashboard/chat/${newChat.id}`); // Ensure this is correct
+      // router.push(`/dashboard/chat/${newChat.id}`); // Ensure this is correct
   
     } catch (error) {
       console.error('Error handling match:', error);
@@ -315,6 +329,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
             </div>
             <button
               type="button"
+
               onClick={closeModal}
               className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
             >

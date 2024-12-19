@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useFormatDate from '@/hooks/useFormatDate';
 
 import type { HistoryUserProps } from '../HistoryProfile';
+import { convertToTimestamp, isValidDate } from '@/utils/utils';
 
 interface FormEditHistoryProps {
   open: boolean;
@@ -23,7 +24,9 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
   }, [openPopup]);
 
   const onSaveHistory = () => {
-    historyData.id = uuidv4();
+    if(!historyData.id){
+      historyData.id = uuidv4();
+    }
     onChangeHistory(historyData);
     setOpenPopup(false);
   };
@@ -75,11 +78,15 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       type="date"
                       id="fromDate"
                       value={useFormatDate(historyData.fromDate)}
-                      onChange={(e) =>
-                        setHistoryData({
-                          ...historyData,
-                          fromDate: new Date(e.target.value),
-                        })
+                      onChange={(e) => {
+                        const newDate = e.target.value;
+                          if(isValidDate(newDate)) {
+                            setHistoryData({
+                              ...historyData,
+                              fromDate: convertToTimestamp(newDate),
+                            })
+                          }
+                        }
                       }
                       required
                       className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
@@ -89,11 +96,15 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       type="date"
                       id="toDate"
                       value={useFormatDate(historyData.toDate)}
-                      onChange={(e) =>
-                        setHistoryData({
-                          ...historyData,
-                          toDate: new Date(e.target.value),
-                        })
+                      onChange={(e) => {
+                        const newDate = e.target.value;
+                          if(isValidDate(newDate)) {
+                            setHistoryData({
+                              ...historyData,
+                              toDate: convertToTimestamp(newDate),
+                            })
+                          }
+                        }
                       }
                       required
                       className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
