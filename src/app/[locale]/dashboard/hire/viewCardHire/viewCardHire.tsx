@@ -147,7 +147,7 @@ const ViewCardHire = (props: ViewCardHireProps) => {
           <p className="text-gray-600">{offer.descriptionShort}</p>
         </div>
         {offer.skillsMin && (
-          <div className="mt-auto flex">
+          <div className="mt-auto flex w-full flex-nowrap space-x-2 overflow-x-auto">
             {offer.skillsMin.map((skill: string, i: number) => (
               <div
                 key={`${skill}-${i.toString()}`}

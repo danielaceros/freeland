@@ -1,3 +1,5 @@
+'use client';
+
 import {
   addDoc,
   collection,
@@ -7,9 +9,9 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { db } from '@/libs/firebase';
@@ -52,6 +54,7 @@ interface Application {
 
 const ViewUserHire = (props: ViewUserHireProps) => {
   const { user, offers, onFetchOffers, onEditOffer } = props;
+  const profileData = useSelector((state: any) => state.user.data);
   const t = useTranslations(); // Initialize translations
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null); // Selected offer for modal
   const [applications, setApplications] = useState<Application[]>([]);
@@ -60,7 +63,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
   const [viewoffers, setviewoffers] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false); // Confirmation modal state
   const [offerToDelete, setOfferToDelete] = useState<string | null>(null); // Offer ID to delete
-  const router = useRouter();
+  // const router = useRouter();
 
   const fetchApplications = async (offered: Offer) => {
     setviewoffers(false);
@@ -123,8 +126,8 @@ const ViewUserHire = (props: ViewUserHireProps) => {
         }
       }
       /* eslint-enable no-await-in-loop */
+
       setApplications(applicationsData);
-      console.log(applicationsData);
     } catch (error) {
       console.error('Error fetching applications:', error);
       toast.error('Failed to fetch applications.');
@@ -148,11 +151,22 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       await updateDoc(applicationRef, {
         status: 2, // Mark the application as "matched"
       });
-
+      const freelancer = {
+        id: app.id,
+        user: `${app.freelancer?.name} ${app.freelancer?.surname}`,
+        profilePicture: app.freelancer?.profilePicture || '',
+      };
+      const freelanceCreateOffer = {
+        id: offered.userId,
+        user: `${profileData?.name} ${profileData?.surname}`,
+        profilePicture: profileData?.profilePicture || '',
+      };
       // Create a chat between the recruiter and freelancer after the match
       const chatRef = collection(db, 'chats');
       const newChat = await addDoc(chatRef, {
-        participants: [offered.userId, app.id], // Add the recruiter and freelancer to the chat
+        participants: [offered.userId, app.id], // Add the recruiter and freelancer to the chat,
+        freelancer,
+        freelanceCreateOffer,
         offerId: offered.id,
         createdAt: new Date(),
       });
@@ -168,7 +182,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       toast.success('Match successful! A chat has been created.');
 
       // Redirect to the newly created chat (using newChat.id as the chatId)
-      router.push(`/dashboard/chat/${newChat.id}`); // Ensure this is correct
+      // router.push(`/dashboard/chat/${newChat.id}`); // Ensure this is correct
     } catch (error) {
       console.error('Error handling match:', error);
       toast.error('Failed to create a match.');
@@ -402,7 +416,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
                               type="button"
                               className="mr-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-400"
                               onClick={() => handleMatch(selectedOffer, app)}
-                              // disabled={app.status === 2} // Disable if the status is 'match' (2)
+                              disabled={app.status === 2} // Disable if the status is 'match' (2)
                             >
                               Match
                             </button>
@@ -410,7 +424,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
                               type="button"
                               className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400"
                               onClick={() => handlePass(selectedOffer, app)}
-                              // disabled={app.status === 1} // Disable if the status is 'pass' (1)
+                              disabled={app.status === 1} // Disable if the status is 'pass' (1)
                             >
                               Pass
                             </button>
@@ -458,6 +472,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
                           <a
                             href={app.fileUrl}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="my-5 block w-full rounded-md bg-freeland p-3 text-center font-bold text-white"
                           >
                             View PoW
