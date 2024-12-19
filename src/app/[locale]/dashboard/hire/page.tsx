@@ -14,7 +14,6 @@ import { loadUser } from '@/utils/utils';
 
 import FormNewHire from './formNewHire/FormNewHire';
 import ViewUserHire from './viewUserHire/ViewUserHire';
-import PanelChat from '@/components/common/chat/PanelChat';
 
 export interface Offer {
   likes: number;
@@ -130,7 +129,6 @@ export default function Hire() {
         <div className="flex flex-1 flex-col">
           <main className="flex-1 px-16 py-6 pt-20">
             <BarTop />
-            <PanelChat />
             {loading ? (
               <LoadingSpinner />
             ) : (

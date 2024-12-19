@@ -94,17 +94,3 @@
 .height100 {
   height: 100vh;
 }
-
-/* Animación de las ondas */
-.wave-animation {
-  animation: wave-move 10s linear infinite alternate;
-}
-
-@keyframes wave-move {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}

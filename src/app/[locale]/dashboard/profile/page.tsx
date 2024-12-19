@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'; // Import toast for notifications
 import BarTop from '@/components/common/BarTop';
 import Menu from '@/components/common/Menu';
 import { changeUserData } from '@/store/userStore';
-import { loadUser, sortedDates } from '@/utils/utils';
+import { loadUser } from '@/utils/utils';
 
 import { db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
 import CertiProfile, { type CertiUserProps } from './certiProfile/CertiProfile';
@@ -23,22 +23,13 @@ import HistoryProfile, {
 import FormEditLang from './langProfile/formEditLang/FormEditLang';
 import LangProfile, { type LangUserProps } from './langProfile/LangProfile';
 import SkillsProfile from './skillsProfile/SkillsProfile';
-import NumOffersProfile from './numOffersProfile/NumOffersProfile';
-import VisitProfile from './visitProfile/VisitProfile';
-import PanelChat from '@/components/common/chat/PanelChat';
 
 export interface HistoyProfile {
   id: string;
   rol: string;
   company: string;
-  fromDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
-  toDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
+  fromDate: Date;
+  toDate: Date;
   description: string;
 }
 
@@ -46,14 +37,8 @@ export interface CertiProfileData {
   id: string;
   certiTitle: string;
   company: string;
-  fromDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
-  toDate: {
-    seconds:Number,
-    nanoseconds: Number
-  };
+  fromDate: Date;
+  toDate: Date;
   description: string;
 }
 
@@ -72,17 +57,41 @@ export interface ProfileDataInterface {
   lang: LangUserProps[];
 }
 
-
 export default function Profile() {
   const dispatch = useDispatch();
-  const [isLoadData, setIsLoadData] = useState<boolean>(false);
-  const userData = useSelector((state: any) => state.user.data) || null;
-  const userDataU = useSelector((state: any) => state.user.userData) || null;
-  const hasLoaded = useSelector((state: any) => state.user.loaded) || null;
+  const userData = useSelector((state: any) => state.user.data);
+  const userDataU = useSelector((state: any) => state.user.userData);
+  const hasLoaded = useSelector((state: any) => state.user.loaded);
   const [user, setUser] = useState<User | null>(null);
 
-  const [oldProfileData, setOldProfileData] = useState<ProfileDataInterface>({} as ProfileDataInterface);
-  const [profileData, setProfileData] = useState<ProfileDataInterface>({} as ProfileDataInterface);
+  const [oldProfileData, setOldProfileData] = useState<ProfileDataInterface>({
+    name: '',
+    surname: '',
+    email: '',
+    nick: '',
+    profilePicture: null,
+    profilePictureBackground: null,
+    position: '',
+    phone: '',
+    skills: [],
+    history: [],
+    certi: [],
+    lang: [],
+  });
+  const [profileData, setProfileData] = useState<ProfileDataInterface>({
+    name: '',
+    surname: '',
+    email: '',
+    nick: '',
+    profilePicture: null,
+    profilePictureBackground: null,
+    position: '',
+    phone: '',
+    skills: [],
+    history: [],
+    certi: [],
+    lang: [],
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [profilePictureBackground, setProfilePictureBackground] =
@@ -94,28 +103,16 @@ export default function Profile() {
     id: '',
     rol: '',
     company: '',
-    fromDate: {
-      seconds: 0,
-      nanoseconds: 0
-    },
-    toDate: {
-      seconds: 0,
-      nanoseconds: 0
-    },
+    fromDate: new Date(),
+    toDate: new Date(),
     description: '',
   };
   const newCertiUser = {
     id: '',
     certiTitle: '',
     company: '',
-    fromDate: {
-      seconds: 0,
-      nanoseconds: 0
-    },
-    toDate: {
-      seconds: 0,
-      nanoseconds: 0
-    },
+    fromDate: new Date(),
+    toDate: new Date(),
     description: '',
   };
   const newLangUser = {
@@ -124,24 +121,17 @@ export default function Profile() {
     level: '',
   };
 
-  const loadData = () =>{
-      setProfileData(userData);
-      setOldProfileData(userData);
-      setUser(userDataU);
-  }
-
   useEffect(() => {
-      loadUser(dispatch);
-      setIsLoadData(true)
-      
+    loadUser(dispatch);
   }, []);
 
   useEffect(() => {
-    if(isLoadData && userData){
-      loadData();
-      setIsLoadData(false)
+    if (userData) {
+      setProfileData(userData);
+      setOldProfileData(userData);
+      setUser(userDataU);
     }
-  }, [isLoadData, userData]);
+  }, [userData]);
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
@@ -183,11 +173,11 @@ export default function Profile() {
         } else {
           await setDoc(userDocRef, profileData, { merge: true });
         }
+
         dispatch(changeUserData(profileData));
         setOldProfileData(profileData);
         toast.success('Profile updated successfully!'); // Notify on successful profile update
         setIsEditing(false);
-        
       } catch (error) {
         console.error('Error updating profile data:', error);
         toast.error('Failed to update profile.'); // Notify on error
@@ -210,7 +200,7 @@ export default function Profile() {
       }
       return his;
     });
-    setProfileData({ ...profileData, history: sortedDates(updateHistory, 'fromDate', 'ASC') });
+    setProfileData({ ...profileData, history: updateHistory });
   };
 
   const deteleHistory = (historyUser: HistoryUserProps) => {
@@ -246,34 +236,13 @@ export default function Profile() {
     setProfileData({ ...profileData, skills: newSkills });
   };
 
-  const updateLang = (newlangs: any) => {
-    let langList = profileData.lang;
-    (langList)
-      ? setProfileData({ ...profileData, lang: [...profileData.lang, newlangs] })
-      : setProfileData({ ...profileData, lang: [newlangs] })
-  };
-
-  const updateHistory = (newHis:any) =>{
-    let historyList = profileData.history;
-    (historyList)
-      ? setProfileData({ ...profileData, history: [...profileData.history, newHis] })
-      : setProfileData({ ...profileData, history: [newHis] })
-  }
-
-  const updateCerti = (newCert:any) =>{
-    let certiList = profileData.certi;
-    (certiList)
-      ? setProfileData({ ...profileData, certi: [...profileData.certi, newCert] })
-      : setProfileData({ ...profileData, certi: [newCert] })
-  }
-
+  console.log('profileData.lang', profileData.lang);
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-      <PanelChat />
       <div className="max-h-screen flex-1 overflow-y-auto pt-16">
         <BarTop />
-        <div className="fixed bottom-0 right-0 z-40 flex rounded-md bg-white px-4 py-2 w-full justify-end">
+        <div className="fixed bottom-0 right-0 z-50 flex rounded-md bg-white px-4 py-2">
           {isEditing ? (
             <>
               <button
@@ -411,66 +380,59 @@ export default function Profile() {
               </div>
             </>
           )}
-
-          <div className="w-full pr-6 flex space-x-5">
-            <div className='w-4/12'>
-              <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
-                <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
-                <SkillsProfile
-                  isEditing={isEditing}
-                  skillsObj={profileData.skills}
-                  onChangeSkills={updateSkills}
-                />
-              </div>
+          <div className="my-3 w-4/12 pr-6">
+            <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
+              <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
+              <SkillsProfile
+                isEditing={isEditing}
+                skillsObj={profileData.skills}
+                onChangeSkills={updateSkills}
+              />
             </div>
-            <div className='w-4/12'>
-              <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
-                <div className="flex w-full items-center justify-between">
-                  <h2 className="mb-5 text-xl font-bold">Idiomas</h2>
-                  {isEditing && (
-                    <button
-                      type="button"
-                      className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
-                      onClick={() => setNewLang(true)}
+            <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
+              <div className="flex w-full items-center justify-between">
+                <h2 className="text-xl font-bold">Idiomas</h2>
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
+                    onClick={() => setNewLang(true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="white"
+                      className="mr-2 size-5 text-white"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="white"
-                        className="mr-2 size-5 text-white"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M12 4.5v15m7.5-7.5h-15"
-                        />
-                      </svg>{' '}
-                      Idiomas
-                    </button>
-                  )}
-                </div>
-                <LangProfile isEditing={isEditing} langUser={profileData.lang} />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>{' '}
+                    Idiomas
+                  </button>
+                )}
               </div>
-              {newLang && (
-                <FormEditLang
-                  open={newLang}
-                  onChangeOpen={setNewLang}
-                  data={newLangUser}
-                  onChangeLang={updateLang}
-                />
-              )}
+              <LangProfile isEditing={isEditing} langUser={profileData.lang} />
             </div>
-            <div className='w-2/12'>
-              <VisitProfile />
-            </div>
-            <div className='w-2/12'>
-              <NumOffersProfile />
-            </div>
-            
+            {newLang && (
+              <FormEditLang
+                open={newLang}
+                onChangeOpen={setNewLang}
+                data={newLangUser}
+                onChangeLang={(newLanguage: LangUserProps) =>
+                  setProfileData({
+                    ...profileData,
+                    lang: [...profileData.lang, newLanguage],
+                  })
+                }
+              />
+            )}
           </div>
-          <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
+          <div className="my-3 w-8/12 rounded-lg bg-white p-6 shadow-md">
             <div className="w-full">
               <div className="flex w-full justify-between">
                 <h2 className="mb-5 text-xl font-bold">Experiencia</h2>
@@ -490,12 +452,17 @@ export default function Profile() {
                   open={newHistory}
                   onChangeOpen={setNewHistory}
                   data={newHistoryUser}
-                  onChangeHistory={updateHistory}
+                  onChangeHistory={(newHis: HistoryUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      history: [...profileData.history, newHis],
+                    })
+                  }
                 />
               )}
 
-              {profileData.history && profileData.history.length > 0 &&
-                sortedDates(profileData.history, 'fromDate', 'ASC').map((history:HistoryUserProps) => {
+              {profileData.history &&
+                profileData.history.map((history) => {
                   return (
                     <HistoryProfile
                       key={history.id}
@@ -529,12 +496,17 @@ export default function Profile() {
                   open={newCerti}
                   onChangeOpen={setNewCerti}
                   data={newCertiUser}
-                  onChangeHistory={updateCerti}
+                  onChangeHistory={(newCert: CertiUserProps) =>
+                    setProfileData({
+                      ...profileData,
+                      certi: [...profileData.certi, newCert],
+                    })
+                  }
                 />
               )}
 
-              {profileData.certi && profileData.certi.length > 0 &&
-                sortedDates(profileData.certi,'fromDate', 'ASC').map((certi) => {
+              {profileData.certi &&
+                profileData.certi.map((certi) => {
                   return (
                     <CertiProfile
                       key={certi.id}

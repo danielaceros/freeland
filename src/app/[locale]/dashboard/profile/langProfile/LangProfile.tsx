@@ -11,29 +11,20 @@ export interface LangUserProps {
 }
 
 const LangProfile = (props: LangControllerProps) => {
-  const { isEditing, langList, deleteLang } = LangProfileController(props);
+  const { langUser } = LangProfileController(props);
 
   return (
-    <div className='h-28'>
-      {langList ? (
+    <div>
+      {langUser ? (
         <div className="flex w-full">
-          <div className="flex flex-wrap pt-3 overflow-x-auto space-x-2 w-full">
-            {langList && langList.length > 0 &&
-              langList.map((langU: LangUserProps, i: number) => (
+          <div className="flex pt-3">
+            {langUser &&
+              langUser.map((skill: LangUserProps, i: number) => (
                 <div
-                  key={`${langU}-${i.toString()}`}
+                  key={`${skill}-${i.toString()}`}
                   className="mb-2 mr-2 rounded-full bg-freeland px-2 py-1 text-sm font-medium text-white"
                 >
-                  {langU.lang.toUpperCase()} ({langU.level.toUpperCase()})
-                  {isEditing &&
-                    <button
-                    type="button"
-                    onClick={() => deleteLang(langU)}
-                    className="ml-1 text-white hover:text-zinc-600 focus:outline-none"
-                  >
-                    &times;
-                  </button>
-                  }
+                  {skill.lang.toUpperCase()} ({skill.level.toUpperCase()})
                 </div>
               ))}
           </div>
