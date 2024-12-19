@@ -98,7 +98,7 @@ const ViewUsersChat = () => {
                 />
               </div>
               <div>
-                <p className="leading-none text-gray-700">
+                <p className="text-left leading-none text-gray-700">
                   <strong>{userFreeland.user}</strong>
                 </p>
               </div>

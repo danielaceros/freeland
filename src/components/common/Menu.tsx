@@ -117,38 +117,13 @@ const Menu = () => {
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-          )}
-        </button>
-        <button
-          type="button"
-          className="cursor-pointer py-2 hover:text-freeland"
-          onClick={() => router.push('/dashboard/inbox')}
-        >
-          {isOpen ? (
-            t('menu.inbox')
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
               />
             </svg>
           )}
         </button>
       </nav>
-
-      <ViewUsersChat />
+      {isOpen && <ViewUsersChat />}
     </aside>
   );
 };
