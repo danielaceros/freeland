@@ -65,3 +65,43 @@ export const loadUser = (disp: any) => {
 
   return () => unsubscribe();
 };
+
+export const convertToTimestamp = (isoDateString: any) => {
+  const date = new Date(isoDateString);
+  const seconds = Math.floor(date.getTime() / 1000);
+  const nanoseconds = date.getMilliseconds() * 1000000;
+
+  return {
+    seconds,
+    nanoseconds,
+  };
+};
+
+export const sortedDates = (data: any[], field: string, type: string) => {
+  const orderData = [...data].sort((a: any, b: any) => {
+    const aField = a[field];
+    const bField = b[field];
+
+    const aSeconds = aField.seconds;
+    const bSeconds = bField.seconds;
+
+    const aNanoseconds = aField.nanoseconds;
+    const bNanoseconds = bField.nanoseconds;
+
+    // Primero comparar los segundos
+    if (aSeconds !== bSeconds) {
+      return type === 'ASC' ? bSeconds - aSeconds : aSeconds - bSeconds; // Si los segundos son diferentes, ordenamos por segundos
+    }
+
+    // Si los segundos son iguales, comparar los nanosegundos
+    return type === 'ASC'
+      ? bNanoseconds - aNanoseconds
+      : aNanoseconds - bNanoseconds; // Ordenamos por nanosegundos si los segundos son iguales
+  });
+  return orderData;
+};
+
+export const isValidDate = (date: string) => {
+  const parsedDate = new Date(date);
+  return Number.isNaN(parsedDate.getTime()); // Verifica si la fecha es válida
+};
