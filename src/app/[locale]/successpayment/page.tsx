@@ -1,14 +1,12 @@
 "use client"
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation"; // Use this hook to get query params
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../libs/firebase"
 
 const SuccessPayment = () => {
-  const searchParams = useSearchParams(); // Access query parameters
-  const amount = searchParams.get("amount");  // Get 'amount' from query
-  const chatid = searchParams.get("chatid");
-  const sender = searchParams.get("sender"); // Get 'sender' from query
+  const amount = new URLSearchParams(window.location.search).get("amount");
+  const chatid = new URLSearchParams(window.location.search).get("chatid");
+  const sender = new URLSearchParams(window.location.search).get("sender");
   const [loading, setLoading] = useState(true);
   const [messageSent, setMessageSent] = useState(false); // Flag to track if the message was sent
 
