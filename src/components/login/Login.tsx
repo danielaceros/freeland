@@ -1,10 +1,10 @@
 'use client';
 
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { useRouter } from 'next/navigation'; // Import useRouter from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-toastify';
 
@@ -27,6 +27,19 @@ const Login = () => {
   } = LoginController();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Check if user is logged in and redirect to dashboard
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // If the user is logged in, redirect to /dashboard
+        router.push('/dashboard');
+      }
+    });
+
+    // Cleanup on component unmount
+    return () => unsubscribe();
+  }, [router]);
 
   const handleForgotPassword = async () => {
     if (!email) {

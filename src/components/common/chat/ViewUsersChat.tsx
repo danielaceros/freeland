@@ -80,10 +80,17 @@ const ViewUsersChat = () => {
 
       {chats.length > 0 ? (
         chats.map((chat) => {
+          // Check if freelanceCreateOffer and freelancer exist before accessing them
           const userFreeland =
-            chat.freelanceCreateOffer.id !== userId
-              ? chat.freelanceCreateOffer
-              : chat.freelancer;
+            chat?.freelanceCreateOffer?.id !== userId
+              ? chat?.freelanceCreateOffer
+              : chat?.freelancer;
+
+          // Check if userFreeland exists
+          if (!userFreeland) {
+            return null; // Skip rendering if no userFreeland found
+          }
+
           return (
             <button
               type="button"

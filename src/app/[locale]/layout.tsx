@@ -1,6 +1,6 @@
 import '@/styles/global.css';
 import 'react-toastify/dist/ReactToastify.css';
-
+import BotChat from "@/components/BotChat";
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
@@ -57,7 +57,8 @@ export default function RootLayout(props: {
             locale={props.params.locale}
             messages={messages}
             // eslint-disable-next-line prettier/prettier
-        ><ToastContainer
+        ><BotChat />
+          <ToastContainer
               position="bottom-right"
               autoClose={5000} // Optional: Duration to auto close the toast
               hideProgressBar={false} // Optional: Show or hide the progress bar
