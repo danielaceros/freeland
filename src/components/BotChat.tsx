@@ -1,7 +1,8 @@
 "use client";
+
 import { useState, useEffect, type SetStateAction } from "react";
 import { auth } from "@/libs/firebase"; // Asegúrate de tener configurado el auth de Firebase
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore"; // Firebase Firestore
 import axios from "axios"; // Para la comunicación con la API
 
@@ -15,6 +16,12 @@ const BotChat = () => {
   const [userTokens, setUserTokens] = useState(0); // Tokens del usuario
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [tokensToBuy, setTokensToBuy] = useState(10); // Tokens que el usuario quiere comprar (valor mínimo de 10)
+  const [isClient, setIsClient] = useState(false); // Flag to check if we're in the client
+
+  // Check if the component is rendered on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Check user authentication status
   useEffect(() => {
@@ -106,9 +113,11 @@ const BotChat = () => {
     const value = Math.max(10, Number(e.target.value)); // Aseguramos que no se ingresen menos de 10 tokens
     setTokensToBuy(value);
   };
-  
-  // Realiza el pago de tokens y redirige al usuario a Stripe
+
+  // Realiza el pago de tokens y redirige al usuario a Stripe (solo si es cliente)
   const handlePayment = async () => {
+    if (!isClient) return; // Ensure window.location is only used on client side
+
     try {
       const response = await axios.post("/api/tokens", { amount: tokensToBuy / 10, productName: `Compra de ${tokensToBuy} tokens` });
       if (response.data.url) {
@@ -128,7 +137,6 @@ const BotChat = () => {
       >
         🤖 Freeland AI®
       </button>
-      
 
       {isOpen && (
         <div className="fixed bottom-16 right-6 w-80 bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">

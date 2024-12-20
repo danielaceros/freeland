@@ -12,9 +12,13 @@ const SuccessPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null); // Store the user object
   const [tokensAdded, setTokensAdded] = useState<number>(0);
+  const [isClient, setIsClient] = useState(false); // State to track if we're in the client-side
   const router = useRouter();
 
   useEffect(() => {
+    // Set the isClient flag to true after the component mounts (client-side only)
+    setIsClient(true);
+
     // Listen for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -26,14 +30,18 @@ const SuccessPage = () => {
   }, [router]);
 
   useEffect(() => {
+    if (!isClient) return; // Ensure that window is accessed only on the client
+
+    // Safely access window and URLSearchParams
     const tokens = new URLSearchParams(window.location.search).get("tokens");
 
     if (tokens && user) {
-      handleSuccess(parseInt(tokens));
+      handleSuccess(parseInt(tokens)); // Proceed if tokens exist and user is authenticated
     } else {
-      // Redirect to home if parameters or user are missing
+      // Optionally handle the case when tokens or user are missing
+      console.error("Tokens or user data is missing.");
     }
-  }, [user, router]);
+  }, [user, isClient, router]);
 
   const handleSuccess = async (tokens: number) => {
     if (user) {
@@ -59,7 +67,7 @@ const SuccessPage = () => {
     // After processing, stop loading and redirect
     setLoading(false);
     setTimeout(() => {
-      router.push("/"); // Redirect to home page after 2 seconds
+      router.push("/"); // Redirect to home page after 300ms
     }, 300);
   };
 

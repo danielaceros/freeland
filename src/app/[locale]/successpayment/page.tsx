@@ -1,18 +1,36 @@
-"use client"
+"use client";
+
 import { useEffect, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../../libs/firebase"
+import { db } from "../../../libs/firebase";
 
 const SuccessPayment = () => {
-  const amount = new URLSearchParams(window.location.search).get("amount");
-  const chatid = new URLSearchParams(window.location.search).get("chatid");
-  const sender = new URLSearchParams(window.location.search).get("sender");
+  const [isClient, setIsClient] = useState(false); // Track if the component is on the client
   const [loading, setLoading] = useState(true);
   const [messageSent, setMessageSent] = useState(false); // Flag to track if the message was sent
+  const [amount, setAmount] = useState<string | null>(null); // Cambiar el tipo a string | null
+  const [chatid, setChatid] = useState<string | null>(null); // Cambiar el tipo a string | null
+  const [sender, setSender] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Set isClient to true once the component is mounted
+    setIsClient(true);
+
+    // Extract URL parameters only on the client
+    if (isClient) {
+      const amountFromUrl = new URLSearchParams(window.location.search).get("amount");
+      const chatidFromUrl = new URLSearchParams(window.location.search).get("chatid");
+      const senderFromUrl = new URLSearchParams(window.location.search).get("sender");
+
+      setAmount(amountFromUrl);
+      setChatid(chatidFromUrl);
+      setSender(senderFromUrl);
+    }
+  }, [isClient]);
 
   useEffect(() => {
     // If the message has been sent, do nothing
-    if (messageSent) return;
+    if (messageSent || !isClient) return;
 
     // Validate parameters
     if (!amount || !chatid) {
@@ -56,11 +74,11 @@ const SuccessPayment = () => {
 
     // Call the function to send the message
     sendPaymentMessage();
-  }, [amount, chatid, messageSent, sender]); // Depend on messageSent to prevent re-calling
+  }, [amount, chatid, messageSent, sender, isClient]); // Depend on isClient to ensure client-side execution
 
   // Redirect the user after 0.3 seconds
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isClient) {
       const timer = setTimeout(() => {
         window.location.href =
           process.env.NODE_ENV === "production"
@@ -70,11 +88,10 @@ const SuccessPayment = () => {
 
       // Cleanup timer on component unmount
       return () => clearTimeout(timer);
-    }
-    else {
+    } else {
       return
     }
-  }, [loading]);
+  }, [loading, isClient]);
 
   if (loading) {
     return <div>Loading...</div>;

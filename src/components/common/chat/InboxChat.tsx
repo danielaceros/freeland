@@ -8,25 +8,28 @@ interface InboxChatProps {
   chatId: string;
 }
 
-const InboxChat = (props: InboxChatProps) => {
-  const { chatId } = props;
+interface Message {
+  senderId: string;
+  message: string;
+  createdAt: { seconds: number };  // Asegúrate de que createdAt sea un objeto con `seconds`
+}
+
+const InboxChat = ({ chatId }: InboxChatProps) => {
   const profileData = useSelector((state: any) => state.user.userData);
 
-  // Define state for chat data, messages, and payment visibility
   const [chatData, setChatData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // Show modal for payment
-  const [offerAmount, setOfferAmount] = useState<string>(''); // State to store the offer amount
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [offerAmount, setOfferAmount] = useState<string>('');
 
-  // Fetch chat data from Firebase
   useEffect(() => {
     if (!chatId) return;
 
     const fetchChatData = async () => {
       try {
-        const chatRef = doc(db, 'chats', chatId as string);
+        const chatRef = doc(db, 'chats', chatId);
         const chatSnapshot = await getDoc(chatRef);
 
         if (chatSnapshot.exists()) {
@@ -35,10 +38,9 @@ const InboxChat = (props: InboxChatProps) => {
           console.error('Chat not found');
         }
 
-        // Fetch messages for this chat
-        const messagesRef = collection(db, 'chats', chatId as string, 'messages');
+        const messagesRef = collection(db, 'chats', chatId, 'messages');
         const messagesSnapshot = await getDocs(messagesRef);
-        const messagesList = messagesSnapshot.docs.map((docu) => docu.data());
+        const messagesList = messagesSnapshot.docs.map(doc => doc.data());
         setMessages(sortedDates(messagesList, 'createdAt', 'DESC'));
       } catch (error) {
         console.error('Error fetching chat data:', error);
@@ -49,54 +51,45 @@ const InboxChat = (props: InboxChatProps) => {
     fetchChatData();
   }, [chatId]);
 
-  // Handle sending new message
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!newMessage.trim()) return; // Don't send empty messages
+    if (!newMessage.trim()) return;
+
+    const messageData: Message = {
+      senderId: profileData.uid,
+      message: newMessage,
+      createdAt: { seconds: Math.floor(new Date().getTime() / 1000) }, // Convertir el timestamp de Date a `seconds`
+    };
 
     try {
-      const messagesRef = collection(db, 'chats', chatId as string, 'messages');
-      await addDoc(messagesRef, {
-        senderId: profileData.uid,
-        message: newMessage,
-        createdAt: new Date(),
-      });
+      const messagesRef = collection(db, 'chats', chatId, 'messages');
+      await addDoc(messagesRef, messageData);
 
-      // Add the new message to the state
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          senderId: profileData.uid,
-          message: newMessage,
-          createdAt: new Date(),
-        },
-      ]);
-      setNewMessage(''); // Clear input field
+      setMessages(prevMessages => [...prevMessages, messageData]);
+      setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
   const handlePayment = async () => {
-    // Check if the offer amount is valid
     if (!offerAmount || isNaN(Number(offerAmount)) || Number(offerAmount) <= 0) {
       alert('Please enter a valid offer amount.');
       return;
     }
 
     try {
-      // Request the backend to create a Stripe Checkout session and get the payment URL
       const response = await fetch('/api/pay', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: Number(offerAmount), // Convert the amount to cents
+          amount: Number(offerAmount),
           productName: 'Freelance Service',
           chatid: chatId,
-          sender: profileData.uid
+          sender: profileData.uid,
         }),
       });
 
@@ -106,7 +99,6 @@ const InboxChat = (props: InboxChatProps) => {
         console.error('Error fetching payment URL:', error);
         alert('Payment failed!');
       } else {
-        // Redirect the user to the Stripe Checkout page
         window.location.href = url;
       }
     } catch (error) {
@@ -115,32 +107,47 @@ const InboxChat = (props: InboxChatProps) => {
     }
   };
 
-  // Show payment modal when the button is clicked
-  const handleShowPayment = () => {
-    setShowPaymentModal(true); // Set state to show the payment modal
-  };
+  const handleShowPayment = () => setShowPaymentModal(true);
 
-  // Close the modal when the user cancels
   const handleCloseModal = () => {
     setShowPaymentModal(false);
-    setOfferAmount(''); // Clear the input when closing the modal
+    setOfferAmount('');
   };
 
-  if (loading) {
-    return <div className="text-center text-lg text-gray-500">Cargando...</div>;
-  }
+  const renderMessages = () => {
+    if (messages.length === 0) {
+      return <p className="text-center text-gray-500">No hay mensajes aún...</p>;
+    }
+
+    return messages.map((message) => (
+      <div
+        key={message.createdAt.seconds}
+        className={`flex ${message.senderId === profileData.uid ? 'justify-end' : 'justify-start'}`}
+      >
+        <div
+          className={`max-w-xs rounded-lg p-3 text-sm shadow-md ${message.senderId === profileData.uid ? 'bg-zinc-700 text-white' : 'bg-gray-300 text-gray-800'}`}
+        >
+          <p>{message.message}</p>
+          <span className="text-xs text-gray-500">
+            {new Date(message.createdAt.seconds * 1000).toLocaleString()}
+          </span>
+        </div>
+      </div>
+    ));
+  };
+
+  if (loading) return <div className="text-center text-lg text-gray-500">Cargando...</div>;
 
   return (
     <>
       {chatData && (
         <div className="flex w-full items-center space-x-3 bg-zinc-800 p-6">
           <img
-            src={
-              chatData.freelanceCreateOffer.id === profileData.uid
-                ? chatData.freelancer.profilePicture
-                : chatData.freelanceCreateOffer.profilePicture
-            }
+            src={chatData.freelanceCreateOffer.id === profileData.uid
+              ? chatData.freelancer.profilePicture
+              : chatData.freelanceCreateOffer.profilePicture}
             className="size-12 rounded-full border-2 border-green-600"
+            alt="Profile Picture"
           />
           <h2 className="text-2xl font-bold text-freeland">
             {chatData.freelanceCreateOffer.id === profileData.uid
@@ -151,39 +158,11 @@ const InboxChat = (props: InboxChatProps) => {
       )}
 
       <div className="mx-auto space-y-6 rounded-lg">
-        {/* Messages Section */}
-        <div
-          className="space-y-4 overflow-y-auto rounded-md p-4 shadow-md"
-          style={{ height: 'calc(68vh)' }}
-        >
-          {messages.length > 0 ? (
-            messages.map((message) => (
-              <div
-                key={message.senderId}
-                className={`flex ${message.senderId === profileData.uid ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs rounded-lg p-3 text-sm shadow-md ${message.senderId === profileData.uid ? 'bg-zinc-700 text-white' : 'bg-gray-300 text-gray-800'}`}
-                >
-                  <p>{message.message}</p>
-                  <span className="text-xs text-gray-500">
-                    {new Date(
-                      message.createdAt.seconds * 1000,
-                    ).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">No hay mensajes aún...</p>
-          )}
+        <div className="space-y-4 overflow-y-auto rounded-md p-4 shadow-md" style={{ height: 'calc(68vh)' }}>
+          {renderMessages()}
         </div>
 
-        {/* Message Input */}
-        <form
-          onSubmit={handleSendMessage}
-          className="flex items-center space-x-4 px-3"
-        >
+        <form onSubmit={handleSendMessage} className="flex items-center space-x-4 px-3">
           <input
             type="text"
             value={newMessage}
@@ -197,7 +176,6 @@ const InboxChat = (props: InboxChatProps) => {
           >
             Enviar
           </button>
-          {/* Show payment modal when button is clicked */}
           <button
             type="button"
             onClick={handleShowPayment}
@@ -208,7 +186,6 @@ const InboxChat = (props: InboxChatProps) => {
         </form>
       </div>
 
-      {/* Modal for payment */}
       {showPaymentModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-96">
@@ -225,7 +202,7 @@ const InboxChat = (props: InboxChatProps) => {
                 onClick={handleCloseModal}
                 className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 onClick={handlePayment}
