@@ -95,6 +95,8 @@ const InboxChat = (props: InboxChatProps) => {
         body: JSON.stringify({
           amount: Number(offerAmount), // Convert the amount to cents
           productName: 'Freelance Service',
+          chatid: chatId,
+          sender: profileData.uid
         }),
       });
 

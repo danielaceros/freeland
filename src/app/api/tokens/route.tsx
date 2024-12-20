@@ -9,7 +9,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Handle POST requests to create the Stripe Checkout session
 export async function POST(req: Request) {
   try {
-    const { amount, productName, chatid, sender } = await req.json();
+    const { amount, productName } = await req.json();
+    const tokensToAdd = amount * 10;
     // Determine the success and cancel URLs based on the environment
     const baseUrl = process.env.NODE_ENV === 'production'
       ? process.env.NEXT_PUBLIC_URL
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${baseUrl}/successpayment?chatid=${chatid}&amount=${amount}&sender=${sender}`,
+      success_url: `${baseUrl}/successtokens?tokens=${tokensToAdd}`,
       cancel_url: `${baseUrl}/failed`, // Assuming a cancel route
     });
 
