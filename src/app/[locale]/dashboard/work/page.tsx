@@ -424,53 +424,6 @@ export default function Work() {
     );
   };
 
-  // const handleLike = async (offer: Offer) => {
-  //   try {
-  //     const offerRef = doc(
-  //       db,
-  //       'users',
-  //       selectedOffer!.userId ?? '', // Asegúrate de que sea un string no undefined
-  //       'offers',
-  //       selectedOffer!.id ?? '', // Asegúrate de que sea un string no undefined
-  //     );
-  //     const newLikes = offer.likes + 1;
-  //     await updateDoc(offerRef, { likes: newLikes });
-  //     toast.success(t('offerLiked'));
-  //     setOffers((prevOffers) =>
-  //       prevOffers.map((o) =>
-  //         o.id === offer.id ? { ...o, likes: newLikes } : o,
-  //       ),
-  //     );
-  //   } catch (error) {
-  //     toast.error(t('failedToLikeOffer'));
-  //   }
-  // };
-
-  // const handleStarRating = async (offer: Offer) => {
-  //   console.log(offer);
-  //   try {
-  //     const offerRef = doc(
-  //       db,
-  //       'users',
-  //       offer.userId ?? '', // Asegúrate de que sea un string no undefined
-  //       'offers',
-  //       offer.id ?? '', // Asegúrate de que sea un string no undefined
-  //     );
-  //     const offerf = await getDoc(offerRef);
-
-  //     const offerData = offerf.data();
-
-  //     await updateDoc(offerRef, {
-  //       stars: offerData!.stars + 1,
-  //     });
-
-  //     toast.success(t('offerRated'));
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(t('failedToRateOffer'));
-  //   }
-  // };
-
   const handleVisit = async (offer: Offer) => {
     try {
       const offerRef = doc(db, 'users', offer.userId!, 'offers', offer.id!);
@@ -585,23 +538,18 @@ export default function Work() {
                     />
                   </div>
 
-                  <div className="flex flex-wrap">
+                  <div className="flex flex-col flex-wrap md:flex-row">
                     {filteredOffers.length > 0 ? (
                       filteredOffers.map((offer: Offer) => (
-                        // <div key={offer.id}>
                         <ViewCardHire
                           key={offer.id}
                           offer={offer}
                           onOpenModal={openModal}
                           onClick={() => {
                             openModal(offer);
-                            handleVisit(offer); // Aquí se maneja la visita
+                            handleVisit(offer);
                           }}
-                          // onLike={() => handleLike(offer)}
-                          // onStarRating={() => handleStarRating(offer)}
-                          // onVisit={() => handleVisit(offer)} // Aquí se pasa la propiedad onVisit
                         />
-                        // </div>
                       ))
                     ) : (
                       <p className="text-gray-700">{t('noMatchingOffers')}</p>
@@ -628,16 +576,16 @@ export default function Work() {
                             )}
                           </div>
                         </div>
-                        <div className="flex">
-                          <div className="w-9/12 border-r-2 border-gray-200 pr-5">
+                        <div className="flex flex-col md:flex-row">
+                          <div className="border-r-2 border-gray-200 pr-5 md:w-9/12">
                             <textarea
-                              className="mb-4 size-full border-0"
+                              className="mb-4 size-full min-h-40 border-0"
                               readOnly
                             >
                               {selectedOffer.description}
                             </textarea>
                           </div>
-                          <div className="w-3/12 pl-5">
+                          <div className="pl-5 md:w-3/12">
                             <p className="mb-5 text-gray-700">
                               {t('hire.postedOn')}{' '}
                               {selectedOffer.createdAt.toLocaleDateString()}

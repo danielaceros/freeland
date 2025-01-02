@@ -262,7 +262,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
 
   return (
     <div>
-      <div className="flex flex-wrap">
+      <div className="flex flex-col flex-wrap md:flex-row">
         {offers.length > 0 ? (
           offers.map((offer) => (
             <ViewCardHire
@@ -272,9 +272,6 @@ const ViewUserHire = (props: ViewUserHireProps) => {
               onOpenModal={openModal}
               showEdit
               onEditOffer={onEditOffer}
-              // onLike={() => openModal(offer)}
-              // onStarRating={() => openModal(offer)}
-              // onVisit={() => openModal(offer)} // Aquí se pasa la propiedad onVisit
             />
           ))
         ) : (
@@ -308,13 +305,13 @@ const ViewUserHire = (props: ViewUserHireProps) => {
                 )}
               </div>
             </div>
-            <div className="flex" style={{ height: '350px' }}>
-              <div className="w-9/12 border-r-2 border-gray-200 pr-5 ">
-                <textarea className="mb-4 size-full border-0" readOnly>
+            <div className="md:heightPopup md:flex">
+              <div className="border-r-2 border-gray-200 md:w-9/12 md:pr-5 ">
+                <textarea className="mb-4 size-full min-h-40 border-0" readOnly>
                   {selectedOffer.description}
                 </textarea>
               </div>
-              <div className="w-3/12 pl-5">
+              <div className="md:w-3/12 md:pl-5">
                 <p className="mb-5 text-gray-700">
                   {t('hire.postedOn')}{' '}
                   {selectedOffer.createdAt.toLocaleDateString()}

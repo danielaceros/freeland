@@ -25,8 +25,6 @@ interface ViewCardHireProps {
   onOpenModal: (offer: Offer) => void;
   onEditOffer?: (offer: Offer) => void;
   onClick?: () => void;
-  // onLike: (offerId: string) => void;
-  // onStarRating: (offerId: string | any, rating: number) => void;
 }
 
 const ViewCardHire = (props: ViewCardHireProps) => {
@@ -37,8 +35,6 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     onOpenModal,
     onEditOffer,
     onClick,
-    // onStarRating,
-    // onLike,
   } = props;
 
   const t = useTranslations(); // Initialize translations
@@ -47,23 +43,13 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     return currency;
   };
 
-  // Handle the star rating update
-  // const handleStarRating = (rating: number) => {
-  //   // Ensure onStarRating is called with the offer's id and the selected rating
-  //   onStarRating(offer.id, rating);
-  // };
-
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       key={offer.id}
-      className={`${!showEdit && 'cursor-pointer'} flex w-4/12 flex-col`}
+      className={`${!showEdit && 'cursor-pointer'} flex flex-col md:w-6/12 lg:w-4/12`}
       onClick={onClick} // Added onClick to handle the click action
     >
-      {/* <div
-        className="flex min-h-96 flex-col rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl"
-        onClick={() => (!showEdit ? onOpenModal(offer) : null)}
-      >  */}
       <div className="m-3 min-h-96 rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl ">
         <div className="">
           {showEdit && (
@@ -158,19 +144,6 @@ const ViewCardHire = (props: ViewCardHireProps) => {
             ))}
           </div>
         )}
-        {/* <div className="mt-4">
-         <div className="mt-2 flex items-center justify-between">
-          <button type="button" onClick={() => onLike}>
-            ❤️ {offer.likes}
-          </button>
-          <div className="flex items-center">
-            <button type="button" onClick={() => handleStarRating(1)}>
-              ⭐ {offer.stars}
-            </button>
-            <span />
-          </div>
-        </div>
-      </div> */}
       </div>
     </div>
   );

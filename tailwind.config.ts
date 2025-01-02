@@ -45,6 +45,9 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        height: {
+          heightPopup: '350px',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

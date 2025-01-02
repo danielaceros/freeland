@@ -463,16 +463,16 @@ const FormNewHire = (props: FormNewHireProps) => {
   return (
     <div className="mb-6">
       <div className="flex flex-wrap">
-        <div className="mb-4 flex w-full items-center rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
+        <div className="mb-4 flex w-full flex-col items-center rounded-md bg-white p-6 shadow-md transition-shadow hover:shadow-xl md:flex-row">
           <input
             type="text"
             value={offer.name}
             onChange={(e) => setOffer({ ...offer, name: e.target.value })}
-            className="w-8/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
+            className="mb-5 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:mb-0 md:w-8/12"
             required
             placeholder={t('hire.offerName')}
           />
-          <label htmlFor="duration" className="ml-5">
+          <label htmlFor="duration" className="w-full md:ml-5  md:w-auto">
             {t('hire.duration')}:
           </label>
           <input
@@ -485,22 +485,22 @@ const FormNewHire = (props: FormNewHireProps) => {
                 durationValue: parseInt(e.target.value, 10),
               })
             }
-            className="ml-5 w-2/12 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
+            className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:ml-5 md:w-2/12"
             disabled={offer.duration === 'infinite'}
             placeholder="20"
           />
         </div>
 
         <div className="flex w-full flex-wrap">
-          <div className="flex w-full">
-            <div className="mb-4 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl xl:w-4/12">
+          <div className="w-full md:flex">
+            <div className="mb-4 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl sm:w-full md:w-6/12 xl:w-4/12">
               <div className="mb-5 rounded-t-md bg-zinc-700 p-3">
                 <p className="font-semibold text-white">
                   {t('hire.offerPrice')}:
                 </p>
               </div>
-              <div className="mb-5 flex px-6">
-                <div className="w-6/12">
+              <div className="mb-5 flex px-6 pb-6 md:pb-0">
+                <div className="w-full">
                   <p>{t('hire.pricePerHour')}: </p>
                   <input
                     id="priceHour"
@@ -519,7 +519,7 @@ const FormNewHire = (props: FormNewHireProps) => {
               </div>
             </div>
 
-            <div className="mb-4 ml-5 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl md:w-6/12 xl:w-4/12">
+            <div className="mb-4 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl sm:w-full md:ml-5 md:w-6/12 xl:w-4/12">
               <div className="rounded-t-md bg-zinc-700 p-3">
                 <p className="font-semibold text-white">
                   {t('hire.assignCategories')}:
@@ -535,7 +535,7 @@ const FormNewHire = (props: FormNewHireProps) => {
               </div>
             </div>
 
-            <div className="mb-4 ml-5 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl md:w-6/12 xl:w-4/12">
+            <div className="mb-4 rounded-md bg-white shadow-md transition-shadow hover:shadow-xl sm:w-full md:ml-5 md:w-6/12 xl:w-4/12">
               <div className="rounded-t-md bg-zinc-700 p-3">
                 <p className="font-semibold text-white">
                   {t('hire.minimumRequirements')}:
