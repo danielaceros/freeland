@@ -287,7 +287,7 @@ export default function Profile() {
     <div className="flex h-screen bg-gray-100">
       <Menu />
       <PanelChat />
-      <div className="max-h-screen flex-1 overflow-y-auto pt-16">
+      <div className="max-h-screen flex-1 overflow-y-auto py-16">
         <BarTop />
         <div className="fixed bottom-0 right-0 z-40 flex w-full justify-end rounded-md bg-white px-4 py-2">
           {isEditing ? (
@@ -323,7 +323,7 @@ export default function Profile() {
             bg={profilePictureBackground}
           />
         </div>
-        <main className="flex flex-wrap px-16 py-6">
+        <main className="flex flex-wrap px-3 py-6 md:px-16">
           {isEditing && (
             <>
               <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
@@ -335,7 +335,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('name', e.target.value)
                       }
-                      className="w-96 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
+                      className="rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:w-6/12"
                       placeholder={`Enter ${'name'}`}
                     />
                     <input
@@ -344,7 +344,7 @@ export default function Profile() {
                       onChange={(e) =>
                         handleInputChange('surname', e.target.value)
                       }
-                      className="ml-1 w-96 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
+                      className="ml-1 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:w-6/12"
                       placeholder={`Enter ${'surname'}`}
                     />
                     <div className="mt-5 w-full">
@@ -428,8 +428,8 @@ export default function Profile() {
             </>
           )}
 
-          <div className="flex w-full space-x-5 pr-6">
-            <div className="w-4/12">
+          <div className="w-full md:flex md:space-x-5">
+            <div className="md:w-4/12">
               <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
                 <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
                 <SkillsProfile
@@ -439,7 +439,7 @@ export default function Profile() {
                 />
               </div>
             </div>
-            <div className="w-4/12">
+            <div className="md:w-4/12">
               <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
                 <div className="flex w-full items-center justify-between">
                   <h2 className="mb-5 text-xl font-bold">Idiomas</h2>
@@ -481,11 +481,13 @@ export default function Profile() {
                 />
               )}
             </div>
-            <div className="w-2/12">
-              <VisitProfile />
-            </div>
-            <div className="w-2/12">
-              <NumOffersProfile />
+            <div className="flex space-x-5 md:w-4/12">
+              <div className="w-6/12">
+                <VisitProfile />
+              </div>
+              <div className="w-6/12">
+                <NumOffersProfile />
+              </div>
             </div>
           </div>
           <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">

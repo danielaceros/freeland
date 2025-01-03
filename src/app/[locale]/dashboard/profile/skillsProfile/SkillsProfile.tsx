@@ -16,7 +16,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
   } = SkillsProfileController(props);
 
   return (
-    <div className="h-28">
+    <div className="md:h-28">
       {isEditing ? (
         <>
           <div className="w-full">
