@@ -428,60 +428,62 @@ export default function Profile() {
             </>
           )}
 
-          <div className="w-full md:flex md:space-x-5">
-            <div className="md:w-4/12">
-              <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
-                <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
-                <SkillsProfile
-                  isEditing={isEditing}
-                  skillsObj={profileData.skills}
-                  onChangeSkills={updateSkills}
-                />
-              </div>
-            </div>
-            <div className="md:w-4/12">
-              <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
-                <div className="flex w-full items-center justify-between">
-                  <h2 className="mb-5 text-xl font-bold">Idiomas</h2>
-                  {isEditing && (
-                    <button
-                      type="button"
-                      className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
-                      onClick={() => setNewLang(true)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="white"
-                        className="mr-2 size-5 text-white"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M12 4.5v15m7.5-7.5h-15"
-                        />
-                      </svg>{' '}
-                      Idiomas
-                    </button>
-                  )}
+          <div className="w-full md:flex md:flex-wrap lg:flex-nowrap lg:space-x-5">
+            <div className="flex flex-col md:w-full md:flex-row md:space-x-5 lg:w-6/12">
+              <div className="w-full md:w-6/12">
+                <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
+                  <h2 className="mb-5 text-xl font-bold">Habilidades</h2>
+                  <SkillsProfile
+                    isEditing={isEditing}
+                    skillsObj={profileData.skills}
+                    onChangeSkills={updateSkills}
+                  />
                 </div>
-                <LangProfile
-                  isEditing={isEditing}
-                  langUser={profileData.lang}
-                />
               </div>
-              {newLang && (
-                <FormEditLang
-                  open={newLang}
-                  onChangeOpen={setNewLang}
-                  data={newLangUser}
-                  onChangeLang={(data) => updateLang(data)}
-                />
-              )}
+              <div className="w-full md:w-6/12">
+                <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
+                  <div className="flex w-full items-center justify-between">
+                    <h2 className="mb-5 text-xl font-bold">Idiomas</h2>
+                    {isEditing && (
+                      <button
+                        type="button"
+                        className="flex items-center rounded-md bg-freeland px-3 py-2 text-white"
+                        onClick={() => setNewLang(true)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="2"
+                          stroke="white"
+                          className="mr-2 size-5 text-white"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                          />
+                        </svg>{' '}
+                        Idiomas
+                      </button>
+                    )}
+                  </div>
+                  <LangProfile
+                    isEditing={isEditing}
+                    langUser={profileData.lang}
+                  />
+                </div>
+                {newLang && (
+                  <FormEditLang
+                    open={newLang}
+                    onChangeOpen={setNewLang}
+                    data={newLangUser}
+                    onChangeLang={(data) => updateLang(data)}
+                  />
+                )}
+              </div>
             </div>
-            <div className="flex space-x-5 md:w-4/12">
+            <div className="flex space-x-5 md:w-full lg:w-6/12">
               <div className="w-6/12">
                 <VisitProfile />
               </div>
