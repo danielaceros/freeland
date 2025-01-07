@@ -30,7 +30,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
               className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             />
           </div>
-          <div className="flex flex-wrap pt-3">
+          <div className="flex max-h-20 w-full flex-wrap space-x-2 overflow-x-auto pt-3">
             {skillsData.length > 0
               ? skillsData.map((skill: string, i: number) => (
                   <div

@@ -1,9 +1,11 @@
+import 'react-datepicker/dist/react-datepicker.css';
+
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import useFormatDate from '@/hooks/useFormatDate';
-import { convertToTimestamp, isValidDate } from '@/utils/utils';
+import { convertToTimestamp } from '@/utils/utils';
 
 import type { CertiUserProps } from '../CertiProfile';
 
@@ -27,6 +29,31 @@ const FormEditCerti = (props: FormEditCertiProps) => {
     historyData.id = uuidv4();
     onChangeHistory(historyData);
     setOpenPopup(false);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string,
+  ) => {
+    const newDateString = e.target.value;
+    const newDate = new Date(newDateString);
+    if (!Number.isNaN(newDate.getTime())) {
+      const timestamp = convertToTimestamp(newDate);
+
+      if (field === 'from') {
+        setHistoryData({
+          ...historyData,
+          fromDate: timestamp,
+        });
+      } else {
+        setHistoryData({
+          ...historyData,
+          toDate: timestamp,
+        });
+      }
+    } else {
+      console.log('Fecha no válida');
+    }
   };
 
   return (
@@ -79,15 +106,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       type="date"
                       id="fromDate"
                       value={useFormatDate(historyData.fromDate)}
-                      onChange={(e) => {
-                        const newDate = e.target.value;
-                        if (isValidDate(newDate)) {
-                          setHistoryData({
-                            ...historyData,
-                            fromDate: convertToTimestamp(newDate),
-                          });
-                        }
-                      }}
+                      onChange={(e) => handleInputChange(e, 'from')}
                       required
                       className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       title="Inicio del curso"
@@ -96,15 +115,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       type="date"
                       id="toDate"
                       value={useFormatDate(historyData.toDate)}
-                      onChange={(e) => {
-                        const newDate = e.target.value;
-                        if (isValidDate(newDate)) {
-                          setHistoryData({
-                            ...historyData,
-                            toDate: convertToTimestamp(newDate),
-                          });
-                        }
-                      }}
+                      onChange={(e) => handleInputChange(e, 'to')}
                       required
                       className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
                       title="Fin del curso"

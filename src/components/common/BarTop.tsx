@@ -4,12 +4,14 @@ import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { auth } from '@/libs/firebase';
+import { loadUser } from '@/utils/utils';
 
 const BarTop = () => {
+  const dispatch = useDispatch();
   const profileData = useSelector((state: any) => state.user.data);
   const t = useTranslations();
   const router = useRouter();
@@ -29,6 +31,11 @@ const BarTop = () => {
     } catch (error) {
       console.error('Logout error:', error);
     }
+  };
+
+  const handleNavigateWithReload = () => {
+    loadUser(dispatch);
+    router.push('/dashboard/profile');
   };
 
   return (
@@ -83,7 +90,7 @@ const BarTop = () => {
             <button
               type="button"
               className="w-full cursor-pointer py-2 text-left text-sm text-white hover:text-freeland"
-              onClick={() => router.push('/dashboard/profile')}
+              onClick={handleNavigateWithReload}
             >
               Mi Perfil
             </button>

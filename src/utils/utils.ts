@@ -5,7 +5,12 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 import { auth, db } from '@/libs/firebase';
-import { changeLoaded, changeUser, changeUserData } from '@/store/userStore';
+import {
+  changeLoaded,
+  changeUser,
+  changeUserData,
+  changeUserProfile,
+} from '@/store/userStore';
 
 export const loadUser = (disp: any) => {
   const dispatch = disp;
@@ -63,6 +68,63 @@ export const loadUser = (disp: any) => {
     }
   });
 
+  return () => unsubscribe();
+};
+
+export const loadDataUser = (disp: any, userId: string) => {
+  const dispatch = disp;
+
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser) {
+      const userDocRef = doc(db, 'users', userId);
+      try {
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          dispatch(
+            changeUserProfile({
+              name: data.name || '',
+              surname: data.surname || '',
+              email: data.email || currentUser.email,
+              nick: data.nick || '',
+              profilePicture: data.profilePicture || null,
+              profilePictureBackground: data.profilePictureBackground || null,
+              position: data.position || '',
+              phone: data.phone || '',
+              skills: data.skills || null,
+              history: data.history || null,
+              certi: data.certi || null,
+              lang: data.lang || null,
+            }),
+          );
+        } else {
+          dispatch(
+            changeUserProfile({
+              name: '',
+              surname: '',
+              email: currentUser.email,
+              nick: '',
+              profilePicture: null,
+              profilePictureBackground: null,
+              position: '',
+              phone: '',
+              skills: [],
+              history: [],
+              certi: [],
+              lang: [],
+            }),
+          );
+        }
+        loadUser(disp);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        toast.error('Failed to load profile data.'); // Notify on error
+      }
+      dispatch(changeLoaded(true));
+    } else {
+      dispatch(changeUser(null));
+    }
+  });
   return () => unsubscribe();
 };
 

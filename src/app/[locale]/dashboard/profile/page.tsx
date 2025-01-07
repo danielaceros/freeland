@@ -11,7 +11,7 @@ import BarTop from '@/components/common/BarTop';
 import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { changeUserData } from '@/store/userStore';
-import { loadUser, sortedDates } from '@/utils/utils';
+import { loadDataUser, loadUser, sortedDates } from '@/utils/utils';
 
 import { db, storage } from '../../../../libs/firebase'; // Ensure the import path is correct
 import CertiProfile, { type CertiUserProps } from './certiProfile/CertiProfile';
@@ -72,19 +72,27 @@ export interface ProfileDataInterface {
   lang: LangUserProps[];
 }
 
-export default function Profile() {
+const isEmpty = (obj: Record<string, any>): boolean => {
+  return JSON.stringify(obj) === '{}';
+};
+
+export default function Profile(userId: any) {
   const dispatch = useDispatch();
+  const userViewId = userId.userId;
   const [isLoadData, setIsLoadData] = useState<boolean>(false);
   const userData = useSelector((state: any) => state.user.data) || null;
   const userDataU = useSelector((state: any) => state.user.userData) || null;
   const hasLoaded = useSelector((state: any) => state.user.loaded) || null;
+  const userDataProfile =
+    useSelector((state: any) => state.user.userDataProfile) || null;
+
   const [user, setUser] = useState<User | null>(null);
 
   const [oldProfileData, setOldProfileData] = useState<ProfileDataInterface>(
-    {} as ProfileDataInterface,
+    userData || ({} as ProfileDataInterface),
   );
   const [profileData, setProfileData] = useState<ProfileDataInterface>(
-    {} as ProfileDataInterface,
+    userData || ({} as ProfileDataInterface),
   );
   const [isEditing, setIsEditing] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -139,7 +147,24 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    if (isLoadData && userData) {
+    if (userViewId) {
+      loadDataUser(dispatch, userViewId);
+    } else {
+      setProfileData(profileData);
+      dispatch(changeUserData(null));
+    }
+  }, [userViewId]);
+
+  console.log('userId', userViewId);
+  useEffect(() => {
+    if (userDataProfile) {
+      setProfileData(userDataProfile);
+      dispatch(changeUserData(null));
+    }
+  }, [userDataProfile]);
+
+  useEffect(() => {
+    if (isLoadData && !isEmpty(userData)) {
       loadData();
       setIsLoadData(false);
     }
@@ -311,7 +336,7 @@ export default function Profile() {
             <button
               type="button"
               onClick={() => setIsEditing(!isEditing)}
-              className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} rounded  px-4 py-2 font-bold text-white `}
+              className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} ${userViewId ? 'hidden' : 'block'} rounded  px-4 py-2 font-bold text-white `}
             >
               {isEditing ? 'Cancelar' : 'Editar'}
             </button>

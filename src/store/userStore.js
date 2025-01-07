@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   data: {},
   userData: {},
+  userDataProfile: {},
   loaded: false,
 };
 
@@ -22,10 +23,14 @@ export const userStore = createSlice({
     changeLoaded: (state, action) => {
       state.loaded = action.payload;
     },
+    changeUserProfile: (state, action) => {
+      state.userDataProfile = action.payload;
+    },
   },
 });
 /* eslint-enable no-param-reassign */
 
-export const { changeUserData, changeUser, changeLoaded } = userStore.actions;
+export const { changeUserData, changeUser, changeLoaded, changeUserProfile } =
+  userStore.actions;
 
 // export default userStore.reducer;
