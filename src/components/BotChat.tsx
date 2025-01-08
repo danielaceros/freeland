@@ -166,7 +166,7 @@ const BotChat = () => {
     <div>
       <button
         type="button"
-        className="fixed bottom-16 right-3 rounded-full bg-green-600 p-4 text-white shadow-lg hover:bg-blue-500"
+        className="fixed bottom-32 right-3 rounded-full bg-green-600 p-4 text-white shadow-lg hover:bg-blue-500 md:bottom-16"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         🤖 Freeland AI®

@@ -128,7 +128,7 @@ export default function Hire() {
       <Menu />
       <div className=" min-h-screen flex-1 overflow-y-scroll">
         <div className="flex flex-1 flex-col">
-          <main className="flex-1 p-6 pt-20">
+          <main className="flex-1 p-3  pt-20">
             <BarTop />
             <PanelChat />
             {loading ? (
