@@ -73,50 +73,51 @@ const ViewUsersChat = () => {
   }
 
   return (
-    <div className="mt-16 space-y-4 rounded-md bg-zinc-700 px-1 pb-3 pt-1">
+    <div className="mt-16 space-y-4 rounded-md bg-zinc-700 px-1 pb-3 pt-1 ">
       <div className="rounded-md bg-zinc-800 p-2 text-center font-bold">
         <h2>Freelancers</h2>
       </div>
+      <div className="max-h-60 overflow-x-auto">
+        {chats.length > 0 ? (
+          chats.map((chat) => {
+            // Check if freelanceCreateOffer and freelancer exist before accessing them
+            const userFreeland =
+              chat?.freelanceCreateOffer?.id !== userId
+                ? chat?.freelanceCreateOffer
+                : chat?.freelancer;
 
-      {chats.length > 0 ? (
-        chats.map((chat) => {
-          // Check if freelanceCreateOffer and freelancer exist before accessing them
-          const userFreeland =
-            chat?.freelanceCreateOffer?.id !== userId
-              ? chat?.freelanceCreateOffer
-              : chat?.freelancer;
+            // Check if userFreeland exists
+            if (!userFreeland) {
+              return null; // Skip rendering if no userFreeland found
+            }
 
-          // Check if userFreeland exists
-          if (!userFreeland) {
-            return null; // Skip rendering if no userFreeland found
-          }
-
-          return (
-            <button
-              type="button"
-              key={chat.id}
-              className="flex cursor-pointer items-center space-x-3 rounded-md bg-gray-100 p-4 shadow-md hover:bg-gray-200"
-              onClick={() => handleChatClick(chat.id)}
-            >
-              <div>
-                <img
-                  src={userFreeland.profilePicture}
-                  className="h-10 w-12 rounded-full border-2 border-green-600"
-                />
-              </div>
-              <div>
-                <p className="text-left leading-none text-gray-700">
-                  <strong>{userFreeland.user}</strong>
-                </p>
-              </div>
-            </button>
-          );
-        })
-      ) : (
-        <div className="text-center">
-          <p>no hay chat</p>
-        </div>
-      )}
+            return (
+              <button
+                type="button"
+                key={chat.id}
+                className="my-2 flex cursor-pointer items-center space-x-3 rounded-md bg-gray-100 p-4 shadow-md hover:bg-gray-200"
+                onClick={() => handleChatClick(chat.id)}
+              >
+                <div>
+                  <img
+                    src={userFreeland.profilePicture}
+                    className="h-10 w-12 rounded-full border-2 border-green-600"
+                  />
+                </div>
+                <div>
+                  <p className="text-left leading-none text-gray-700">
+                    <strong>{userFreeland.user}</strong>
+                  </p>
+                </div>
+              </button>
+            );
+          })
+        ) : (
+          <div className="text-center">
+            <p>no hay chat</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

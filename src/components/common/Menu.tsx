@@ -30,7 +30,7 @@ const Menu = () => {
       <aside
         className={`${
           isMenuMinimize ? 'w-56' : 'w-20'
-        } z-50 flex flex-col bg-zinc-800 p-4 text-white transition-all duration-100 sm:hidden md:block`}
+        } z-50 flex flex-col justify-between bg-zinc-800 p-4 text-white transition-all duration-100 sm:hidden md:block`}
       >
         <button
           type="button"
@@ -51,7 +51,7 @@ const Menu = () => {
             />
           </svg>
         </button>
-        <div className="">
+        <div className="flex flex-col justify-between">
           <button
             type="button"
             className="flex cursor-pointer justify-center"
