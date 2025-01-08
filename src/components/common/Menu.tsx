@@ -30,7 +30,7 @@ const Menu = () => {
       <aside
         className={`${
           isMenuMinimize ? 'w-56' : 'w-20'
-        } z-50 hidden flex-col justify-between bg-zinc-800 p-4 text-white transition-all duration-100 sm:flex md:block`}
+        } sm: z-50 hidden flex-col bg-zinc-800 p-4 text-white transition-all duration-100 md:flex`}
       >
         <button
           type="button"

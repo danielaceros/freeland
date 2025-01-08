@@ -149,7 +149,11 @@ const InboxChat = ({ chatId }: InboxChatProps) => {
   return (
     <>
       {chatData && (
-        <div className="flex w-full items-center space-x-3 bg-zinc-800 p-6">
+        <button
+          type="button"
+          className="flex w-full items-center space-x-3 bg-zinc-800 p-6"
+          onClick={handleCloseModal}
+        >
           <img
             src={
               chatData.freelanceCreateOffer.id === profileData.uid
@@ -163,7 +167,7 @@ const InboxChat = ({ chatId }: InboxChatProps) => {
               ? chatData.freelancer.user
               : chatData.freelanceCreateOffer.user}
           </h2>
-        </div>
+        </button>
       )}
 
       <div className="mx-auto space-y-6 rounded-lg">
