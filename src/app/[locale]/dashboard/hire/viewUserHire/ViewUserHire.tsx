@@ -286,7 +286,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
 
       {/* Modal for offer details */}
       {modalOpen && selectedOffer && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center overflow-x-auto bg-black bg-opacity-50">
           <div className="w-full max-w-5xl rounded-lg bg-white p-6 shadow-lg">
             <div className="mb-5 flex w-full items-center justify-between border-b-2 border-gray-200 pb-5">
               <h2 className="text-xl font-semibold">{selectedOffer.name}</h2>
