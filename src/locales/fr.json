@@ -64,7 +64,8 @@
     "viewProfile": "Voir le profil",
     "loggedOut": "Déconnexion réussie !",
     "changeLocale": "Changer la langue",
-    "inbox": "Boîte de Réception"
+    "inbox": "Boîte de Réception",
+    "chat": "Chat"
   },
   "hire": {
     "title": "Embaucher",
@@ -248,6 +249,9 @@
     "devops": "DevOps",
     "java": "Java",
     "c": "C"
+  },
+  "inbox": {
+    "emptyChat": "Il n'y a pas de discussion"
   },
   "searchOffers": "Rechercher des offres d'emploi",
   "priceRange": "Plage de prix",

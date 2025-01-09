@@ -64,11 +64,12 @@
     "viewProfile": "Visualizza profilo",
     "loggedOut": "Uscita avvenuta con successo!",
     "changeLocale": "Cambia lingua",
-    "inbox": "Posta in Arrivo"
+    "inbox": "Posta in Arrivo",
+    "chat": "Chat"
   },
   "hire": {
     "title": "Assumi",
-    "openoffers":"offerte aperte",
+    "openoffers": "offerte aperte",
     "addNewOffer": "Aggiungi nuova offerta",
     "createNewOffer": "Crea una nuova offerta di lavoro",
     "offerName": "Nome dell'offerta",
@@ -248,6 +249,9 @@
     "devops": "DevOps",
     "java": "Java",
     "c": "C"
+  },
+  "inbox": {
+    "emptyChat": "Non c'è chat"
   },
   "searchOffers": "Cerca offerte di lavoro",
   "priceRange": "Fascia di prezzo",

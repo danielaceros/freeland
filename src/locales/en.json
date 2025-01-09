@@ -64,7 +64,8 @@
     "viewProfile": "View Profile",
     "loggedOut": "Successfully logged out!",
     "changeLocale": "Change Language",
-    "inbox": "Inbox"
+    "inbox": "Inbox",
+    "chat": "Chat"
   },
   "hire": {
     "title": "Hire",
@@ -248,6 +249,9 @@
     "devops": "DevOps",
     "java": "Java",
     "c": "C"
+  },
+  "inbox": {
+    "emptyChat": "There is no chat"
   },
   "searchOffers": "Search job offers",
   "priceRange": "Price Range",

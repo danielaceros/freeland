@@ -64,7 +64,8 @@
     "viewProfile": "Ver perfil",
     "loggedOut": "¡Sesión cerrada con éxito!",
     "changeLocale": "Cambiar idioma",
-    "inbox": "Bandeja de Entrada"
+    "inbox": "Bandeja de Entrada",
+    "chat": "Chat"
   },
   "hire": {
     "title": "Contratar",
@@ -248,6 +249,9 @@
     "azure": "Azure",
     "devops": "DevOps",
     "c": "C"
+  },
+  "inbox": {
+    "emptyChat": "No hay chat"
   },
   "searchOffers": "Buscar ofertas de trabajo",
   "priceRange": "Rango de precio",

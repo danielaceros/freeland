@@ -1,4 +1,5 @@
 import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -17,7 +18,7 @@ interface Message {
 
 const InboxChat = ({ chatId }: InboxChatProps) => {
   const profileData = useSelector((state: any) => state.user.userData);
-
+  const router = useRouter();
   const [chatData, setChatData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState('');
@@ -125,7 +126,7 @@ const InboxChat = ({ chatId }: InboxChatProps) => {
         <p className="text-center text-gray-500">No hay mensajes aún...</p>
       );
     }
-
+    console.log('chatData.freelancer', chatData);
     return messages.map((message) => (
       <div
         key={message.createdAt.seconds}
@@ -152,7 +153,10 @@ const InboxChat = ({ chatId }: InboxChatProps) => {
         <button
           type="button"
           className="flex w-full items-center space-x-3 bg-zinc-800 p-6"
-          onClick={handleCloseModal}
+          onClick={() =>
+            router.push(`/dashboard/viewuser/${chatData.freelancer.id}`)
+          }
+          title="Ver perfil"
         >
           <img
             src={

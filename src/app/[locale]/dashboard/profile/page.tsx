@@ -62,6 +62,7 @@ export interface ProfileDataInterface {
   surname: string | null;
   email: string | null;
   nick: string | null;
+  visits: number;
   profilePicture: string | null;
   profilePictureBackground: string | null;
   position: string;
@@ -135,6 +136,21 @@ export default function Profile(userId: any) {
     level: '',
   };
 
+  const visitPerfil = async (id: string, data: any) => {
+    if (id) {
+      const userDocRef = doc(db, 'users', id);
+
+      const visit = !data.visits ? 0 : data.visits;
+      const newData = { ...data, visits: visit + 1 };
+      await setDoc(
+        userDocRef,
+        {
+          ...newData,
+        },
+        { merge: true },
+      );
+    }
+  };
   const loadData = () => {
     setProfileData(userData);
     setOldProfileData(userData);
@@ -155,11 +171,11 @@ export default function Profile(userId: any) {
     }
   }, [userViewId]);
 
-  console.log('userId', userViewId);
   useEffect(() => {
     if (userDataProfile) {
       setProfileData(userDataProfile);
       dispatch(changeUserData(null));
+      visitPerfil(userViewId, userDataProfile);
     }
   }, [userDataProfile]);
 
@@ -173,7 +189,7 @@ export default function Profile(userId: any) {
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
   };
-
+  console.log('profileData', profileData);
   const handleSave = async () => {
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
@@ -510,7 +526,7 @@ export default function Profile(userId: any) {
             </div>
             <div className="flex space-x-5 md:w-full lg:w-6/12">
               <div className="w-6/12">
-                <VisitProfile />
+                <VisitProfile visit={profileData.visits} />
               </div>
               <div className="w-6/12">
                 <NumOffersProfile />

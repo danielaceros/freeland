@@ -73,11 +73,11 @@ const ViewUsersChat = () => {
   }
 
   return (
-    <div className="mt-16 space-y-4 rounded-md bg-zinc-700 px-1 pb-3 pt-1 ">
-      <div className="rounded-md bg-zinc-800 p-2 text-center font-bold">
+    <div className="mt-3 space-y-4 rounded-md bg-zinc-200 p-1">
+      {/* <div className="rounded-md bg-zinc-800 p-2 text-center font-bold">
         <h2>Freelancers</h2>
-      </div>
-      <div className="max-h-60 overflow-x-auto">
+      </div> */}
+      <div className="">
         {chats.length > 0 ? (
           chats.map((chat) => {
             // Check if freelanceCreateOffer and freelancer exist before accessing them
@@ -95,7 +95,7 @@ const ViewUsersChat = () => {
               <button
                 type="button"
                 key={chat.id}
-                className="my-2 flex cursor-pointer items-center space-x-3 rounded-md bg-gray-100 p-4 shadow-md hover:bg-gray-200"
+                className="my-2 flex w-full cursor-pointer items-center space-x-3 rounded-md bg-gray-100 p-4 shadow-md hover:bg-gray-200"
                 onClick={() => handleChatClick(chat.id)}
               >
                 <div>
