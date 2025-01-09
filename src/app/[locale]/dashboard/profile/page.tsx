@@ -172,7 +172,7 @@ export default function Profile(userId: any) {
   }, [userViewId]);
 
   useEffect(() => {
-    if (userDataProfile) {
+    if (!isEmpty(userDataProfile)) {
       setProfileData(userDataProfile);
       dispatch(changeUserData(null));
       visitPerfil(userViewId, userDataProfile);
@@ -189,7 +189,7 @@ export default function Profile(userId: any) {
   const handleInputChange = (field: string, value: string) => {
     setProfileData((prevData) => ({ ...prevData, [field]: value }));
   };
-  console.log('profileData', profileData);
+
   const handleSave = async () => {
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
