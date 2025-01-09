@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +14,11 @@ const Menu = () => {
   const isMenuMinimize =
     useSelector((state: any) => state.menuMinimize.isMenuMinimize) || null;
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslations();
   const [showMenu, setShowMenu] = useState(false);
+
+  const isActive = (path: string) => pathname === path;
 
   const toggleSidebar = () => {
     dispatch(changeStateMinimize(!isMenuMinimize));
@@ -63,7 +66,7 @@ const Menu = () => {
           <nav className="flex flex-col items-start pl-3">
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/dashboard') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/')}
             >
               {isMenuMinimize ? (
@@ -87,7 +90,7 @@ const Menu = () => {
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/hire') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/hire')}
             >
               {isMenuMinimize ? (
@@ -111,7 +114,7 @@ const Menu = () => {
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/work') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/work')}
             >
               {isMenuMinimize ? (
@@ -135,7 +138,7 @@ const Menu = () => {
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/inbox') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/inbox')}
             >
               {isMenuMinimize ? (
@@ -195,28 +198,28 @@ const Menu = () => {
           <nav className="flex flex-col items-start pl-3">
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/dashboard') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/')}
             >
               {t('menu.dashboard')}
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/hire') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/hire')}
             >
               {t('menu.hire')}
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/work') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/work')}
             >
               {t('menu.work')}
             </button>
             <button
               type="button"
-              className="cursor-pointer py-2 hover:text-freeland"
+              className={`cursor-pointer py-2 hover:text-freeland ${isActive('/dashboard/inbox') ? 'text-freeland' : ''}`}
               onClick={() => router.push('/dashboard/inbox')}
             >
               {t('menu.chat')}
