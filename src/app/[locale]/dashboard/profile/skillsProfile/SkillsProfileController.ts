@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 export interface SkillsProfileControllerProps {
@@ -8,6 +9,7 @@ export interface SkillsProfileControllerProps {
 
 const SkillsProfileController = (props: SkillsProfileControllerProps) => {
   const { isEditing, skillsObj, onChangeSkills } = props;
+  const t = useTranslations();
   const [skillsData, setSkillsData] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
 
@@ -45,6 +47,7 @@ const SkillsProfileController = (props: SkillsProfileControllerProps) => {
     handleKeyDown,
     removeSkill,
     setInputValue,
+    t,
   };
 };
 

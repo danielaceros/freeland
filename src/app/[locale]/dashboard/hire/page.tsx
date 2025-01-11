@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import BarTop from '@/components/common/BarTop';
-import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { auth, db } from '@/libs/firebase';
 import { loadUser } from '@/utils/utils';
@@ -40,15 +39,14 @@ export interface Offer {
 
 export default function Hire() {
   const dispatch = useDispatch();
-  const t = useTranslations(); // Initialize translations
-  const [user, setUser] = useState<User | null>(null); // User state
-  const [offers, setOffers] = useState<Offer[]>([]); // State for job offers
+  const t = useTranslations();
+  const [user, setUser] = useState<User | null>(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [saveHire, setSaveHire] = useState(false);
   const [openNewHire, setOpenNewHire] = useState(false);
   const [offerEdit, setOfferEdit] = useState<Offer>({} as Offer);
 
-  // Function to fetch job offers from Firestore
   const fetchOffers = async (uid: string) => {
     const offersCollection = collection(db, 'users', uid, 'offers');
     const q = query(offersCollection, orderBy('createdAt', 'desc'));
@@ -73,24 +71,23 @@ export default function Hire() {
         categories: docu.data().categories,
         skillsMin: docu.data().skillsMin,
         userId: uid,
-        createdAt: new Date(docu.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
-        fileUrl: docu.data().fileUrl, // Get the file URL if exists
+        createdAt: new Date(docu.data().createdAt.seconds * 1000),
+        fileUrl: docu.data().fileUrl,
       }));
-      setOffers(offersData); // Update the offers state
+      setOffers(offersData);
     } catch (error) {
       toast.error(t('error.fetchOffers'));
     }
   };
 
-  // Effect to retrieve current user information and job offers
   useEffect(() => {
     loadUser(dispatch);
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // Set user state if user is logged in
-        await fetchOffers(currentUser.uid); // Fetch offers for the logged-in user
+        setUser(currentUser);
+        await fetchOffers(currentUser.uid);
       } else {
-        setUser(null); // No user logged in
+        setUser(null);
       }
       setLoading(false);
     });
@@ -130,7 +127,6 @@ export default function Hire() {
         <div className="flex flex-1 flex-col">
           <main className="flex-1 p-3  pt-20">
             <BarTop />
-            <PanelChat />
             {loading ? (
               <LoadingSpinner />
             ) : (
@@ -168,14 +164,14 @@ export default function Hire() {
                         onClick={() => setOpenNewHire(false)}
                         className=" mt-1 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-500"
                       >
-                        Cancelar
+                        {t('cancel')}
                       </button>
                       <button
                         type="button"
                         onClick={saveNewHire}
                         className="ml-5 mt-1 rounded bg-freeland px-4 py-2 text-white hover:bg-green-500"
                       >
-                        Guardar
+                        {t('save')}
                       </button>
                     </>
                   )}

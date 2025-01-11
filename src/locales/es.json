@@ -1,4 +1,5 @@
 {
+  "welcome": "Bienvenido",
   "resetPasswordPrompt": "Por favor ingrese su dirección de correo electrónico para restablecer su contraseña.",
   "resetPasswordSuccess": "¡Correo electrónico de restablecimiento de contraseña enviado! Revise su bandeja de entrada.",
   "resetPasswordError": "Error al enviar el correo de restablecimiento de contraseña.",
@@ -6,6 +7,12 @@
   "password": "Contraseña",
   "forgotPassword": "¿Olvidaste tu contraseña?",
   "login": "Iniciar sesión",
+  "loginPage": {
+    "ok": "¡Has iniciado sesión exitosamente!",
+    "ko": "Error al iniciar sesión. Por favor, verifique sus credenciales",
+    "accountOK": "¡Cuenta creada exitosamente!",
+    "accountKO": "Error en el registro. ¡Inténtalo de nuevo!"
+  },
   "register": "Registrarse",
   "or": "o",
   "googleSignIn": "Iniciar sesión con Google",
@@ -98,12 +105,18 @@
       "fetchOffers": "Error al obtener las ofertas.",
       "fillFields": "Por favor completa todos los campos y sube un archivo.",
       "addOffer": "Error al agregar la oferta.",
-      "deleteOffer": "Error al eliminar la oferta."
+      "deleteOffer": "Error al eliminar la oferta.",
+      "match": "No se pudo crear una coincidencia",
+      "pass": "No se pudo aprobar esta solicitud."
     },
     "success": {
       "offerAdded": "¡Oferta agregada con éxito!",
-      "offerDeleted": "¡Oferta eliminada con éxito!"
-    }
+      "offerDeleted": "¡Oferta eliminada con éxito!",
+      "match": "¡Participación exitosa! Se ha creado un chat",
+      "pass": "Usted pasó esta solicitud."
+    },
+    "applicationsFor": "Solicitudes de",
+    "viewPow": "Ver PoW"
   },
   "categories": {
     "technology": "Tecnología",
@@ -266,5 +279,55 @@
   "months": "meses",
   "publishDate": "Publicado:",
   "chooseLanguage": "Selecciona Idioma",
-  "noMatchingOffers": "No hay ofertas con los parámetros utilizados"
+  "noMatchingOffers": "No hay ofertas con los parámetros utilizados",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "edit": "Editar",
+  "mes": "mes",
+  "meses": "meses",
+  "company": "Empresa",
+  "skillsName": "Habilidades",
+  "profile": {
+    "profileUpdateOK": "¡Perfil actualizado exitosamente!",
+    "profileUpdateKO": "No se pudo actualizar el perfil.",
+    "yourName": "Tu nombre",
+    "yourSurname": "Tus apellidos",
+    "uploadImage": "Subir imagen de usuario. Tamaño recomendado",
+    "uploadBg": "Subir imagen de fondo",
+    "email": "Email",
+    "position": "Puesto",
+    "phone": "Teléfono",
+    "lang": "Idiomas",
+    "experience": "Experiencia",
+    "certi": "Certificados",
+    "add": "Añadir",
+    "nameCerti": "Nombre de la titulación",
+    "locationCerti": "Lugar",
+    "startCerti": "Inicio del curso",
+    "endCerti": "Fin del curso",
+    "descriptionCerti": "Descripción del curso",
+    "nameExp": "Puesto de trabajo",
+    "locationExp": "Empresa",
+    "startExp": "Inicio del puesto",
+    "endExp": "Fin del puesto",
+    "descriptionExp": "Descripción del puesto",
+    "select": "Seleccionar",
+    "spanish": "Español",
+    "english": "Inglés",
+    "france": "Francés",
+    "italian": "Italiano",
+    "portu": "Portugués",
+    "level": "Nivel",
+    "offerCreated": "Oferta creada",
+    "offersCreated": "Ofertas creadas",
+    "numVisit": "Visitas al perfil",
+    "writeSkill": "Escribe una habilidad y presiona Enter"
+  },
+  "workPage": {
+    "powRemoveSuccess": "PoW eliminado correctamente",
+    "powRemoveFailed": "Fallo al eliminar PoW",
+    "powUploadSuccess": "PoW actualziado correctamente",
+    "failedToUploadFile": "Fallo al actualizar PoW",
+    "selectFileToUpload": "Seleccionar archivo para cargar"
+  }
 }

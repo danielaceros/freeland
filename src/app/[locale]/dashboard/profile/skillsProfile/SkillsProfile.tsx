@@ -10,6 +10,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
     inputValue,
     isEditing,
     skillsObj,
+    t,
     handleKeyDown,
     removeSkill,
     setInputValue,
@@ -26,7 +27,7 @@ const SkillsProfile = (props: SkillsProfileControllerProps) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Escribe una habilidad y presiona Enter"
+              placeholder={t('profile.writeSkill')}
               className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
             />
           </div>

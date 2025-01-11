@@ -32,7 +32,6 @@ import Select from 'react-select';
 import { toast } from 'react-toastify';
 
 import BarTop from '@/components/common/BarTop';
-import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { loadUser } from '@/utils/utils';
 
@@ -61,7 +60,7 @@ export default function Work() {
   const [maxDuration, setMaxDuration] = useState<number>(12);
   const offerSkillsOptions = [
     {
-      category: t('categories.technology'), // Translated category name
+      category: t('categories.technology'),
       skills: [
         { value: 'javascript', label: t('skills.javascript') },
         { value: 'react', label: t('skills.react') },
@@ -308,7 +307,7 @@ export default function Work() {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      toast.error(t('selectFileToUpload'));
+      toast.error(t('workPage.selectFileToUpload'));
       console.error('No file selected');
       return;
     }
@@ -339,12 +338,12 @@ export default function Work() {
 
       await setDoc(offerRef, { fileUrl: fileURL }, { merge: true });
 
-      toast.success(t('powUploadSuccess'));
+      toast.success(t('workPage.powUploadSuccess'));
       setUploadPow(fileURL);
       closeModal();
     } catch (error) {
       console.error('Error uploading file:', error);
-      toast.error(t('failedToUploadFile'));
+      toast.error(t('workPage.failedToUploadFile'));
     }
   };
 
@@ -391,13 +390,13 @@ export default function Work() {
         );
         await updateDoc(offerRef, { fileUrl: null });
 
-        toast.success(t('powRemoveSuccess'));
+        toast.success(t('workPage.powRemoveSuccess'));
         closeModal();
         router.push('/dashboard/work');
       }
     } catch (error) {
       console.error(t('errorRemovingFile'), error);
-      toast.error(t('failedToRemoveFile'));
+      toast.error(t('workPage.powRemoveFailed'));
     }
   };
 
@@ -414,8 +413,8 @@ export default function Work() {
 
   // Create options formatted with categories for select
   const groupedOptions = offerSkillsOptions.map((category) => ({
-    label: category.category, // Category as label
-    options: category.skills, // Skills as options under this category
+    label: category.category,
+    options: category.skills,
   }));
 
   const handleSkillSelect = (selectedOptions: any) => {
@@ -461,13 +460,9 @@ export default function Work() {
   return (
     <div className="flex max-h-screen overflow-y-hidden bg-gray-100">
       <Menu />
-      <PanelChat />
       <div className="min-h-screen flex-1 overflow-y-scroll">
         <main className="flex-1 px-6 pt-32">
           <BarTop />
-          {/* <div className="fixed bottom-0 right-0 z-40 flex rounded-md bg-white px-4 py-2 w-full h-14">
-            &nbsp;
-          </div> */}
           {loading ? (
             <LoadingSpinner />
           ) : (
@@ -587,13 +582,12 @@ export default function Work() {
                           </div>
                           <div className="pl-5 md:w-3/12">
                             <p className="mb-5 text-gray-700">
-                              {t('hire.postedOn')}{' '}
+                              {t('hire.postedOn')}
+                              {': '}
                               {selectedOffer.createdAt.toLocaleDateString()}
                             </p>
                             <p className="mb-5 text-gray-700">
-                              {t('hire.offerDuration')}:{' '}
-                              {selectedOffer.durationValue}{' '}
-                              {selectedOffer.duration}
+                              {`${t('hire.offerDuration')}: ${selectedOffer.durationValue} ${selectedOffer.durationValue === 1 ? t('mes') : t('meses')}`}
                             </p>
                             <button
                               type="button"
@@ -636,7 +630,7 @@ export default function Work() {
                         </div>
                         <div className="mt-5 w-full border-t-2 border-gray-200 pt-5">
                           <p className="text-md mb-5 font-bold">
-                            Habilidades requeridas
+                            {t('skillsRequired')}
                           </p>
                           {selectedOffer.skillsMin && (
                             <div className="mt-auto flex">

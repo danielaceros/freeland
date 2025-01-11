@@ -37,7 +37,7 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     onClick,
   } = props;
 
-  const t = useTranslations(); // Initialize translations
+  const t = useTranslations();
 
   const showCurrency = (currency: string) => {
     return currency;
@@ -48,7 +48,7 @@ const ViewCardHire = (props: ViewCardHireProps) => {
     <div
       key={offer.id}
       className={`${!showEdit && 'cursor-pointer'} flex flex-col md:w-6/12 lg:w-4/12`}
-      onClick={onClick} // Added onClick to handle the click action
+      onClick={onClick}
     >
       <div className="m-3 min-h-96 rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-xl ">
         <div className="">
@@ -125,7 +125,7 @@ const ViewCardHire = (props: ViewCardHireProps) => {
           </div>
           <div className="w-6/12 text-right">
             <p className="text-gray-700">
-              {t('hire.offerDuration')}: {offer.durationValue} {offer.duration}
+              {`${t('hire.offerDuration')}: ${offer.durationValue} ${offer.durationValue === 1 ? t('mes') : t('meses')}`}
             </p>
           </div>
         </div>

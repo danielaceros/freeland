@@ -5,10 +5,11 @@ import type { LangUserProps } from './LangProfile';
 export interface LangControllerProps {
   langUser: LangUserProps[];
   isEditing: boolean;
+  onChangeLang: (lang: any) => void;
 }
 
 const LangProfileController = (props: LangControllerProps) => {
-  const { isEditing, langUser } = props;
+  const { isEditing, langUser, onChangeLang } = props;
   const [langList, setLangList] = useState<LangUserProps[]>([]);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const LangProfileController = (props: LangControllerProps) => {
 
   const deleteLang = (langU: LangUserProps) => {
     const delLang = langUser.filter((lang) => lang.id !== langU.id);
+    onChangeLang(delLang);
     setLangList(delLang);
   };
 

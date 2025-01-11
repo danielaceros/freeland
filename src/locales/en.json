@@ -1,4 +1,5 @@
 {
+  "welcome": "Welcome",
   "resetPasswordPrompt": "Please enter your email address to reset your password.",
   "resetPasswordSuccess": "Password reset email sent! Check your inbox.",
   "resetPasswordError": "Failed to send password reset email.",
@@ -6,6 +7,12 @@
   "password": "Password",
   "forgotPassword": "Forgot your password?",
   "login": "Log in",
+  "loginPage": {
+    "ok": "Successfully logged in!",
+    "ko": "Login failed. Please check your credentials",
+    "accountOK": "Account created successfully!",
+    "accountKO": "Registration failed. Try again!"
+  },
   "register": "Register",
   "or": "or",
   "googleSignIn": "Sign in with Google",
@@ -98,12 +105,18 @@
       "fetchOffers": "Failed to fetch offers.",
       "fillFields": "Please complete all fields and upload a file.",
       "addOffer": "Failed to add the offer.",
-      "deleteOffer": "Failed to delete the offer."
+      "deleteOffer": "Failed to delete the offer.",
+      "match": "Failed to create a match",
+      "pass": "Failed to pass on this application."
     },
     "success": {
       "offerAdded": "Offer successfully added!",
-      "offerDeleted": "Offer successfully deleted!"
-    }
+      "offerDeleted": "Offer successfully deleted!",
+      "match": "Match successful! A chat has been created",
+      "pass": "You passed on this application."
+    },
+    "applicationsFor": "Applications For",
+    "viewPow": "View PoW"
   },
   "categories": {
     "technology": "Technology",
@@ -266,5 +279,55 @@
   "months": "months",
   "publishDate": "Published:",
   "chooseLanguage": "Choose Language",
-  "noMatchingOffers": "No offers match the parameters used"
+  "noMatchingOffers": "No offers match the parameters used",
+  "save": "Save",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "mes": "month",
+  "meses": "months",
+  "company": "company",
+  "skillsName": "Skills",
+  "profile": {
+    "profileUpdateOK": "Profile updated successfully!",
+    "profileUpdateKO": "Failed to update profile.",
+    "yourName": "Enter name",
+    "yourSurname": "Enter surname",
+    "uploadImage": "Submit user image. Recommended size",
+    "uploadBg": "Upload background image",
+    "email": "Email",
+    "position": "Puesto",
+    "phone": "Teléfono",
+    "lang": "Idiomas",
+    "experience": "Experiencia",
+    "certi": "Certificados",
+    "add": "Add",
+    "nameCerti": "Name of the degree",
+    "locationCerti": "Place",
+    "startCerti": "Start of the course",
+    "endCerti": "End of the course",
+    "descriptionCerti": "Course Description",
+    "nameExp": "Workstation",
+    "locationExp": "Company",
+    "startExp": "Start of the post",
+    "endExp": "End of the post",
+    "descriptionExp": "Job Description",
+    "select": "Select",
+    "spanish": "Spanish",
+    "english": "English",
+    "france": "French",
+    "italian": "Italian",
+    "portu": "Portuguese",
+    "level": "Level",
+    "offerCreated": "Offer created",
+    "offersCreated": "Offers created",
+    "numVisit": "Profile views",
+    "writeSkill": "Type a skill and press Enter"
+  },
+  "workPage": {
+    "powRemoveSuccess": "PoW successfully removed",
+    "powRemoveFailed": "Failed to remove PoW",
+    "powUploadSuccess": "PoW updated successfully",
+    "failedToUploadFile": "PoW update failed",
+    "selectFileToUpload": "Select file to upload"
+  }
 }

@@ -1,4 +1,5 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,6 +13,7 @@ interface FormEditCertiProps {
 }
 
 const FormEditCerti = (props: FormEditCertiProps) => {
+  const t = useTranslations();
   const { open, data, onChangeOpen, onChangeLang } = props;
   const [openPopup, setOpenPopup] = useState<boolean>(open);
   const [langData, setLangData] = useState<LangUserProps>(data);
@@ -51,16 +53,16 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       }
                       className="w-full rounded-md border-gray-300"
                     >
-                      <option value="">Seleccionar</option>
-                      <option value="es">Español</option>
-                      <option value="en">Inglés</option>
-                      <option value="fr">Francés</option>
-                      <option value="it">Italiano</option>
-                      <option value="pt">Portugués</option>
+                      <option value="">{t('profile.select')}</option>
+                      <option value="es">{t('profile.spanish')}</option>
+                      <option value="en">{t('profile.english')}</option>
+                      <option value="fr">{t('profile.france')}</option>
+                      <option value="it">{t('profile.italian')}</option>
+                      <option value="pt">{t('profile.portu')}</option>
                     </select>
                   </div>
                   <div className="w-6/12">
-                    <p className="mb-1 text-gray-600">Nivel:</p>
+                    <p className="mb-1 text-gray-600">{t('profile.level')}:</p>
                     <select
                       id="level"
                       value={langData.level}
@@ -69,7 +71,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       }
                       className="w-full rounded-md border-gray-300"
                     >
-                      <option value="">Seleccionar</option>
+                      <option value="">{t('profile.select')}</option>
                       <option value="A1">A1</option>
                       <option value="A2">A2</option>
                       <option value="B1">B1</option>

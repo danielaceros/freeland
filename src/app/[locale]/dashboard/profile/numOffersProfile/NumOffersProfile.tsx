@@ -40,10 +40,10 @@ const NumOffersProfile = () => {
         categories: docu.data().categories,
         skillsMin: docu.data().skillsMin,
         userId: uid,
-        createdAt: new Date(docu.data().createdAt.seconds * 1000), // Convert Firestore timestamp to Date
-        fileUrl: docu.data().fileUrl, // Get the file URL if exists
+        createdAt: new Date(docu.data().createdAt.seconds * 1000),
+        fileUrl: docu.data().fileUrl,
       }));
-      setNumOffer(offersData.length); // Update the offers state
+      setNumOffer(offersData.length);
     } catch (error) {
       toast.error(t('error.fetchOffers'));
     }
@@ -52,7 +52,7 @@ const NumOffersProfile = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        await fetchOffers(currentUser.uid); // Fetch offers for the logged-in user
+        await fetchOffers(currentUser.uid);
       }
     });
     return () => unsubscribe();
@@ -60,16 +60,16 @@ const NumOffersProfile = () => {
 
   return (
     <div className="w-full rounded-lg bg-white p-6 shadow-md">
-      <div className="relative flex h-40 items-end justify-center overflow-hidden">
+      <div className="relative flex h-40 items-end justify-center overflow-hidden rounded-b-xl p-2">
         <button
           type="button"
           className="text-left"
           onClick={() => router.push('/dashboard/hire')}
         >
           <Waves />
-          <div className="relative z-10 mb-5 text-5xl font-bold text-white">
-            {numOffer.toString()}
-            <p className="text-xl">{`${numOffer === 1 ? 'Oferta creada' : 'Ofertas creadas'}`}</p>
+          <div className="relative z-10 mb-5 text-5xl font-bold text-white ">
+            <span className="stroke-black">{numOffer.toString()}</span>
+            <p className="text-xl">{`${numOffer === 1 ? t('profile.offerCreated') : t('profile.offersCreated')}`}</p>
           </div>
         </button>
       </div>

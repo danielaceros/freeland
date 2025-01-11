@@ -1,29 +1,26 @@
 'use client';
 
-import { onAuthStateChanged } from 'firebase/auth'; // Firebase Auth function to track user state
+import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 
 import BarTop from '@/components/common/BarTop';
 import PanelChat from '@/components/common/chat/PanelChat';
 import ViewUsersChat from '@/components/common/chat/ViewUsersChat';
 import Menu from '@/components/common/Menu';
-import { auth } from '@/libs/firebase'; // Firebase configuration
+import { auth } from '@/libs/firebase';
 
 const InboxPage = () => {
-  const [userId, setUserId] = useState<string | null>(null); // State to store the user ID
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Fetch all chats for the current user
   useEffect(() => {
-    // Track the current user's authentication state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid); // Set the user ID if the user is logged in
+        setUserId(user.uid);
       } else {
-        setUserId(null); // Clear user ID if the user is logged out
+        setUserId(null);
       }
     });
-
-    return () => unsubscribe(); // Clean up the listener when component unmounts
+    return () => unsubscribe();
   }, []);
 
   if (!userId) {

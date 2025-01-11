@@ -8,29 +8,25 @@ import { openChat } from '@/store/chatStore';
 
 const ViewUsersChat = () => {
   const dispatch = useDispatch();
-
-  const [chats, setChats] = useState<any[]>([]); // State to store chat list
+  const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null); // State to store the user ID
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Fetch all chats for the current user
   useEffect(() => {
-    // Track the current user's authentication state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid); // Set the user ID if the user is logged in
+        setUserId(user.uid);
       } else {
-        setUserId(null); // Clear user ID if the user is logged out
+        setUserId(null);
       }
     });
 
-    return () => unsubscribe(); // Clean up the listener when component unmounts
+    return () => unsubscribe();
   }, []);
 
-  // Fetch chats if userId is available
   useEffect(() => {
     const fetchChats = async () => {
-      if (!userId) return; // Do nothing if userId is not available
+      if (!userId) return;
 
       try {
         const chatsRef = collection(db, 'chats');
@@ -43,7 +39,7 @@ const ViewUsersChat = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        setChats(chatsList); // Set the fetched chats
+        setChats(chatsList);
       } catch (error) {
         console.error('Error fetching chats:', error);
       } finally {
@@ -52,9 +48,8 @@ const ViewUsersChat = () => {
     };
 
     fetchChats();
-  }, [userId]); // Run fetchChats when userId changes
+  }, [userId]);
 
-  // Handle chat click
   const handleChatClick = (chatId: string) => {
     const data = { id: chatId, open: true };
     dispatch(openChat(data));
@@ -74,21 +69,16 @@ const ViewUsersChat = () => {
 
   return (
     <div className="mt-3 space-y-4 rounded-md bg-zinc-200 p-1">
-      {/* <div className="rounded-md bg-zinc-800 p-2 text-center font-bold">
-        <h2>Freelancers</h2>
-      </div> */}
       <div className="">
         {chats.length > 0 ? (
           chats.map((chat) => {
-            // Check if freelanceCreateOffer and freelancer exist before accessing them
             const userFreeland =
               chat?.freelanceCreateOffer?.id !== userId
                 ? chat?.freelanceCreateOffer
                 : chat?.freelancer;
 
-            // Check if userFreeland exists
             if (!userFreeland) {
-              return null; // Skip rendering if no userFreeland found
+              return null;
             }
 
             return (

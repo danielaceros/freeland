@@ -1,4 +1,5 @@
 {
+  "welcome": "Benvenuta",
   "resetPasswordPrompt": "Inserisci il tuo indirizzo email per reimpostare la tua password.",
   "resetPasswordSuccess": "Email per la reimpostazione della password inviata! Controlla la tua casella di posta.",
   "resetPasswordError": "Impossibile inviare l'email per la reimpostazione della password.",
@@ -6,6 +7,12 @@
   "password": "Password",
   "forgotPassword": "Hai dimenticato la password?",
   "login": "Accedi",
+  "loginPage": {
+    "ok": "Accesso effettuato con successo!",
+    "ko": "Accesso non riuscito. Controlla le tue credenziali",
+    "accountOK": "Account creato con successo!",
+    "accountKO": "Registrazione fallita. Riprova!"
+  },
   "register": "Registrati",
   "or": "oppure",
   "googleSignIn": "Accedi con Google",
@@ -98,12 +105,18 @@
       "fetchOffers": "Impossibile recuperare le offerte.",
       "fillFields": "Compila tutti i campi e carica un file.",
       "addOffer": "Impossibile aggiungere l'offerta.",
-      "deleteOffer": "Impossibile eliminare l'offerta."
+      "deleteOffer": "Impossibile eliminare l'offerta.",
+      "match": "Impossibile creare una corrispondenza",
+      "pass": "Impossibile inoltrare questa richiesta."
     },
     "success": {
       "offerAdded": "Offerta aggiunta con successo!",
-      "offerDeleted": "Offerta eliminata con successo!"
-    }
+      "offerDeleted": "Offerta eliminata con successo!",
+      "match": "Corrispondenza riuscita! È stata creata una chat",
+      "pass": "Hai inoltrato questa richiesta."
+    },
+    "applicationsFor": "Applicazioni per",
+    "viewPow": "Visualizza PoW"
   },
   "categories": {
     "technology": "Tecnologia",
@@ -266,5 +279,55 @@
   "months": "mesi",
   "publishDate": "Pubblicato:",
   "chooseLanguage": "Scegli la lingua",
-  "noMatchingOffers": "Nessuna offerta corrisponde ai parametri utilizzati"
+  "noMatchingOffers": "Nessuna offerta corrisponde ai parametri utilizzati",
+  "save": "Mantenere",
+  "cancel": "Cancellare",
+  "edit": "Modificare",
+  "mes": "mese",
+  "meses": "mesi",
+  "company": "Azienda",
+  "skillsName": "Competenze",
+  "profile": {
+    "profileUpdateOK": "Profilo aggiornato con successo!",
+    "profileUpdateKO": "Impossibile aggiornare il profilo.",
+    "yourName": "Inserisci il nome",
+    "yourSurname": "Inserisci il cognome",
+    "uploadImage": "Carica l'immagine dell'utente. Dimensioni consigliate",
+    "uploadBg": "Carica l'immagine di sfondo",
+    "email": "Email",
+    "position": "Posizione",
+    "phone": "Teléfono",
+    "lang": "Lingua",
+    "experience": "Esperienza",
+    "certi": "certificato",
+    "add": "Aggiungere",
+    "nameCerti": "Nome del titolo di studio",
+    "locationCerti": "Posto",
+    "startCerti": "Inizio del corso",
+    "endCerti": "Fine del corso",
+    "descriptionCerti": "Descrizione del corso",
+    "nameExp": "Postazione di lavoro",
+    "locationExp": "Azienda",
+    "startExp": "Inizio del post",
+    "endExp": "Fine del post",
+    "descriptionExp": "Descrizione del lavoro",
+    "select": "Selezionare",
+    "spanish": "Spagnolo",
+    "english": "Inglese",
+    "france": "Francese",
+    "italian": "Italiano",
+    "portu": "Portoghese",
+    "level": "Livello",
+    "offerCreated": "Offerta creata",
+    "offersCreated": "Offerte create",
+    "numVisit": "Visualizzazioni del profilo",
+    "writeSkill": "Digita un'abilità e premi Invio"
+  },
+  "workPage": {
+    "powRemoveSuccess": "PoW rimosso con successo",
+    "powRemoveFailed": "Impossibile rimuovere PoW",
+    "powUploadSuccess": "PoW aggiornato con successo",
+    "failedToUploadFile": "Aggiornamento PoW non riuscito",
+    "selectFileToUpload": "Seleziona il file da caricare"
+  }
 }

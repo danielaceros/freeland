@@ -62,7 +62,7 @@ const FormNewHire = (props: FormNewHireProps) => {
 
   const categoryofferSkillsOptions = [
     {
-      category: t('categories.technology'), // Translated category name
+      category: t('categories.technology'),
       subcategory: [
         { value: 'developing', label: t('skills.developing') },
         { value: 'hardware', label: t('skills.hardware') },
@@ -348,6 +348,7 @@ const FormNewHire = (props: FormNewHireProps) => {
     },
   ];
 
+  // Add offer
   const handleAddOffer = async () => {
     for (const field of validFields) {
       if (!field.value) {
@@ -365,7 +366,7 @@ const FormNewHire = (props: FormNewHireProps) => {
     }
 
     try {
-      const offerId = uuidv4(); // Generates a unique random ID for the offer
+      const offerId = uuidv4();
 
       let fileUrl;
       if (offerFile) {
@@ -444,6 +445,7 @@ const FormNewHire = (props: FormNewHireProps) => {
     options: category.subcategory,
   }));
 
+  // Select skills for the new offer
   const handleSkillSelect = (selectedOptionsSkill: any) => {
     setSelectedSkills(
       selectedOptionsSkill
@@ -452,6 +454,7 @@ const FormNewHire = (props: FormNewHireProps) => {
     );
   };
 
+  // Select category for the new offer
   const categoryhandleSkillSelect = (selectedOptionsSkill: any) => {
     setcategorySelectedSkills(
       selectedOptionsSkill

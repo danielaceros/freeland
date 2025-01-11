@@ -3,12 +3,12 @@
 import type { User } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'; // Import Firebase Storage functions
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'; // Import toast for notifications
 
 import BarTop from '@/components/common/BarTop';
-import PanelChat from '@/components/common/chat/PanelChat';
 import Menu from '@/components/common/Menu';
 import { changeUserData } from '@/store/userStore';
 import { loadDataUser, loadUser, sortedDates } from '@/utils/utils';
@@ -23,6 +23,7 @@ import HistoryProfile, {
 } from './historyProfile/HistoryProfile';
 import FormEditLang from './langProfile/formEditLang/FormEditLang';
 import LangProfile, { type LangUserProps } from './langProfile/LangProfile';
+import MainDataProfile from './mainDataProfile/MainDataProfile';
 import NumOffersProfile from './numOffersProfile/NumOffersProfile';
 import SkillsProfile from './skillsProfile/SkillsProfile';
 import VisitProfile from './visitProfile/VisitProfile';
@@ -79,6 +80,7 @@ const isEmpty = (obj: Record<string, any>): boolean => {
 
 export default function Profile(userId: any) {
   const dispatch = useDispatch();
+  const t = useTranslations();
   const userViewId = userId.userId;
   const [isLoadData, setIsLoadData] = useState<boolean>(false);
   const userData = useSelector((state: any) => state.user.data) || null;
@@ -223,16 +225,31 @@ export default function Profile(userId: any) {
             },
             { merge: true },
           );
+          setProfileData({
+            ...profileData,
+            profilePicture: downloadURL || profileData.profilePicture,
+            profilePictureBackground:
+              downloadURLB || profileData.profilePictureBackground,
+          });
+          dispatch(
+            changeUserData({
+              ...profileData,
+              profilePicture: downloadURL || profileData.profilePicture,
+              profilePictureBackground:
+                downloadURLB || profileData.profilePictureBackground,
+            }),
+          );
         } else {
           await setDoc(userDocRef, profileData, { merge: true });
         }
         dispatch(changeUserData(profileData));
         setOldProfileData(profileData);
-        toast.success('Profile updated successfully!'); // Notify on successful profile update
+
+        toast.success(t('profile.profileUpdateOK'));
         setIsEditing(false);
       } catch (error) {
         console.error('Error updating profile data:', error);
-        toast.error('Failed to update profile.'); // Notify on error
+        toast.error(t('profile.profileUpdateKO'));
       }
     }
   };
@@ -240,7 +257,7 @@ export default function Profile(userId: any) {
   if (!user || !hasLoaded) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="loader" /> {/* Add your loader here */}
+        <div className="loader" />
       </div>
     );
   }
@@ -327,10 +344,9 @@ export default function Profile(userId: any) {
   return (
     <div className="flex h-screen bg-gray-100">
       <Menu />
-      <PanelChat />
       <div className="max-h-screen flex-1 overflow-y-auto py-16">
         <BarTop />
-        <div className="fixed bottom-0 right-0 z-40 flex w-full justify-end rounded-md bg-white px-4 py-2">
+        <div className="fixed bottom-0 right-0 z-40 flex w-full justify-end rounded-md bg-white px-4 py-2 shadow-top">
           {isEditing ? (
             <>
               <button
@@ -338,14 +354,14 @@ export default function Profile(userId: any) {
                 onClick={handleSave}
                 className="ml-3 rounded bg-freeland px-4 py-2 font-bold text-white hover:bg-green-500"
               >
-                Guardar
+                {t('save')}
               </button>
               <button
                 type="button"
                 onClick={onCancel}
                 className="hover:bg-red-800' rounded bg-red-600  px-4 py-2 font-bold text-white"
               >
-                Cancelar
+                {t('cancel')}
               </button>
             </>
           ) : (
@@ -354,7 +370,7 @@ export default function Profile(userId: any) {
               onClick={() => setIsEditing(!isEditing)}
               className={`${isEditing ? 'bg-red-600 hover:bg-red-800' : 'bg-freeland hover:bg-green-500'} ${userViewId ? 'hidden' : 'block'} rounded  px-4 py-2 font-bold text-white `}
             >
-              {isEditing ? 'Cancelar' : 'Editar'}
+              {isEditing ? t('cancel') : t('edit')}
             </button>
           )}
         </div>
@@ -366,107 +382,12 @@ export default function Profile(userId: any) {
         </div>
         <main className="flex flex-wrap px-3 py-6 md:px-16">
           {isEditing && (
-            <>
-              <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
-                <div className="mb-4 flex w-full">
-                  <div className="w-full">
-                    <input
-                      type="text"
-                      value={profileData.name || ''}
-                      onChange={(e) =>
-                        handleInputChange('name', e.target.value)
-                      }
-                      className="rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:w-6/12"
-                      placeholder={`Enter ${'name'}`}
-                    />
-                    <input
-                      type="text"
-                      value={profileData.surname || ''}
-                      onChange={(e) =>
-                        handleInputChange('surname', e.target.value)
-                      }
-                      className="ml-1 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland md:w-6/12"
-                      placeholder={`Enter ${'surname'}`}
-                    />
-                    <div className="mt-5 w-full">
-                      <p className="block text-gray-700">
-                        Subir imagen de usuario. Tamaño recomendado: (300px X
-                        300px)
-                      </p>
-                      <input
-                        id="picture"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setProfilePicture(file);
-                          }
-                        }}
-                        className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      />
-                    </div>
-                    <div className="mt-5 w-full">
-                      <p className="block text-gray-700">
-                        Subir imagen de fondo
-                      </p>
-                      <input
-                        id="picture"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setProfilePictureBackground(file);
-                          }
-                        }}
-                        className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
-                <div className="flex w-full">
-                  <div className="mb-4 w-4/12">
-                    <p>Email: </p>
-                    <input
-                      type="text"
-                      value={profileData.email || ''}
-                      onChange={(e) =>
-                        handleInputChange('name', e.target.value)
-                      }
-                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      placeholder={`Enter ${'name'}`}
-                    />
-                  </div>
-                  <div className="mb-4 ml-5  w-4/12">
-                    <p>Puesto: </p>
-                    <input
-                      type="text"
-                      value={profileData.position || ''}
-                      onChange={(e) =>
-                        handleInputChange('position', e.target.value)
-                      }
-                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      placeholder={`Enter ${'position'}`}
-                    />
-                  </div>
-                  <div className="mb-4 ml-5  w-4/12">
-                    <p>Teléfono: </p>
-                    <input
-                      type="text"
-                      value={profileData.phone || ''}
-                      onChange={(e) =>
-                        handleInputChange('phone', e.target.value)
-                      }
-                      className="w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      placeholder={`Enter ${'phone'}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            </>
+            <MainDataProfile
+              profileData={profileData}
+              changeInput={handleInputChange}
+              changeProfileImage={setProfilePicture}
+              changeProfileImageBg={setProfilePictureBackground}
+            />
           )}
 
           <div className="w-full md:flex md:flex-wrap lg:flex-nowrap lg:space-x-5">
@@ -484,7 +405,9 @@ export default function Profile(userId: any) {
               <div className="w-full md:w-6/12">
                 <div className="mb-4 h-auto w-full rounded-lg bg-white p-6 shadow-md">
                   <div className="flex w-full items-center justify-between">
-                    <h2 className="mb-5 text-xl font-bold">Idiomas</h2>
+                    <h2 className="mb-5 text-xl font-bold">
+                      {t('profile.lang')}
+                    </h2>
                     {isEditing && (
                       <button
                         type="button"
@@ -505,13 +428,16 @@ export default function Profile(userId: any) {
                             d="M12 4.5v15m7.5-7.5h-15"
                           />
                         </svg>{' '}
-                        Idiomas
+                        {t('profile.lang')}
                       </button>
                     )}
                   </div>
                   <LangProfile
                     isEditing={isEditing}
                     langUser={profileData.lang}
+                    onChangeLang={(data: any) =>
+                      setProfileData({ ...profileData, lang: data })
+                    }
                   />
                 </div>
                 {newLang && (
@@ -536,14 +462,16 @@ export default function Profile(userId: any) {
           <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
             <div className="w-full">
               <div className="flex w-full justify-between">
-                <h2 className="mb-5 text-xl font-bold">Experiencia</h2>
+                <h2 className="mb-5 text-xl font-bold">
+                  {t('profile.experience')}
+                </h2>
                 {isEditing && (
                   <button
                     type="button"
                     onClick={() => setNewHistory(true)}
                     className="mb-8 mt-4 rounded bg-freeland px-4 py-2 text-white hover:bg-green-500"
                   >
-                    Añadir Experiencia
+                    {`${t('profile.add')} ${t('profile.experience')}`}
                   </button>
                 )}
               </div>
@@ -578,14 +506,14 @@ export default function Profile(userId: any) {
           <div className="my-3 w-full rounded-lg bg-white p-6 shadow-md">
             <div className="w-full">
               <div className="flex w-full justify-between">
-                <h2 className="mb-5 text-xl font-bold">Certificados</h2>
+                <h2 className="mb-5 text-xl font-bold">{t('profile.certi')}</h2>
                 {isEditing && (
                   <button
                     type="button"
                     onClick={() => setNewCerti(true)}
                     className="mb-8 mt-4 rounded bg-freeland px-4 py-2 text-white hover:bg-green-500"
                   >
-                    Añadir Certificados
+                    {`${t('profile.add')} ${t('profile.certi')}`}
                   </button>
                 )}
               </div>

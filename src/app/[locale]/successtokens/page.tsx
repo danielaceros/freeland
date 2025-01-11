@@ -5,44 +5,40 @@ import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { auth } from '@/libs/firebase'; // Your Firebase auth setup
+import { auth } from '@/libs/firebase';
 
-const db = getFirestore(); // Initialize Firestore
+const db = getFirestore();
 
 const SuccessPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<any>(null); // Store the user object
+  const [user, setUser] = useState<any>(null);
   const [tokensAdded, setTokensAdded] = useState<number>(0);
-  const [isClient, setIsClient] = useState(false); // State to track if we're in the client-side
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Set the isClient flag to true after the component mounts (client-side only)
     setIsClient(true);
 
-    // Listen for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // Set user when authenticated
+        setUser(currentUser);
       }
     });
 
-    return () => unsubscribe(); // Clean up the listener when the component is unmounted
+    return () => unsubscribe();
   }, [router]);
 
   const handleSuccess = async (tokens: number) => {
     if (user) {
       try {
-        // Get the user document in Firestore
         const userDoc = doc(db, 'users', user.uid);
         const userSnap = await getDoc(userDoc);
 
         if (userSnap.exists()) {
-          // If user exists, update their token count
           const newTokenCount = (userSnap.data().tokens || 0) + tokens;
           await updateDoc(userDoc, { tokens: newTokenCount });
 
-          setTokensAdded(tokens); // Set the tokens added to state
+          setTokensAdded(tokens);
         } else {
           console.error('User not found in Firestore');
         }
@@ -51,23 +47,20 @@ const SuccessPage = () => {
       }
     }
 
-    // After processing, stop loading and redirect
     setLoading(false);
     setTimeout(() => {
-      router.push('/'); // Redirect to home page after 300ms
+      router.push('/');
     }, 300);
   };
 
   useEffect(() => {
-    if (!isClient) return; // Ensure that window is accessed only on the client
+    if (!isClient) return;
 
-    // Safely access window and URLSearchParams
     const tokens = new URLSearchParams(window.location.search).get('tokens');
 
     if (tokens && user) {
-      handleSuccess(parseInt(tokens, 16)); // Proceed if tokens exist and user is authenticated //solved parteInt
+      handleSuccess(parseInt(tokens, 16));
     } else {
-      // Optionally handle the case when tokens or user are missing
       console.error('Tokens or user data is missing.');
     }
   }, [user, isClient, router]);

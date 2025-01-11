@@ -1,4 +1,5 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,6 +16,7 @@ interface FormEditHistoryProps {
 }
 
 const FormEditHistory = (props: FormEditHistoryProps) => {
+  const t = useTranslations();
   const { open, data, onChangeOpen, onChangeHistory } = props;
   const [openPopup, setOpenPopup] = useState<boolean>(open);
   const [historyData, setHistoryData] = useState<HistoryUserProps>(data);
@@ -76,8 +78,8 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                     id="rol"
                     value={historyData.rol}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Puesto de trabajo"
-                    placeholder="Puesto de trabajo"
+                    title={t('profile.nameExp')}
+                    placeholder={t('profile.nameExp')}
                     onChange={(e) =>
                       setHistoryData({ ...historyData, rol: e.target.value })
                     }
@@ -88,8 +90,8 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                     id="company"
                     value={historyData.company}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Empresa"
-                    placeholder="Empresa"
+                    title={t('profile.locationExp')}
+                    placeholder={t('profile.locationExp')}
                     onChange={(e) =>
                       setHistoryData({
                         ...historyData,
@@ -106,7 +108,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       onChange={(e) => handleInputChange(e, 'from')}
                       required
                       className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Inicio del puesto"
+                      title={t('profile.startExp')}
                     />
                     <input
                       type="date"
@@ -115,7 +117,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       onChange={(e) => handleInputChange(e, 'to')}
                       required
                       className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Fin del puesto"
+                      title={t('profile.endExp')}
                     />
                   </div>
 
@@ -131,8 +133,8 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                       })
                     }
                     required
-                    title="Descripción del puesto"
-                    placeholder="Descripción del puesto"
+                    title={t('profile.descriptionExp')}
+                    placeholder={t('profile.descriptionExp')}
                   />
                 </div>
               </div>
@@ -141,7 +143,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                   type="submit"
                   className="inline-flex w-full justify-center rounded-md bg-freeland px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-800 sm:ml-3 sm:w-auto"
                 >
-                  Guardar
+                  {t('save')}
                 </button>
                 <button
                   type="button"
@@ -149,7 +151,7 @@ const FormEditHistory = (props: FormEditHistoryProps) => {
                   onClick={() => setOpenPopup(false)}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  Cancelar
+                  {t('cancel')}
                 </button>
               </div>
             </form>

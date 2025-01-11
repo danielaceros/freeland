@@ -1,6 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,6 +18,7 @@ interface FormEditCertiProps {
 }
 
 const FormEditCerti = (props: FormEditCertiProps) => {
+  const t = useTranslations();
   const { open, data, onChangeOpen, onChangeHistory } = props;
   const [openPopup, setOpenPopup] = useState<boolean>(open);
   const [historyData, setHistoryData] = useState<CertiUserProps>(data);
@@ -76,8 +78,8 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                     id="certiTitle"
                     value={historyData.certiTitle}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Nombre de la titulación"
-                    placeholder="Nombre de la titulación"
+                    title={t('profile.nameCerti')}
+                    placeholder={t('profile.nameCerti')}
                     onChange={(e) =>
                       setHistoryData({
                         ...historyData,
@@ -91,8 +93,8 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                     id="company"
                     value={historyData.company}
                     className="mb-3 w-full rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                    title="Lugar"
-                    placeholder="Lugar"
+                    title={t('profile.locationCerti')}
+                    placeholder={t('profile.locationCerti')}
                     onChange={(e) =>
                       setHistoryData({
                         ...historyData,
@@ -109,7 +111,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       onChange={(e) => handleInputChange(e, 'from')}
                       required
                       className="w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Inicio del curso"
+                      title={t('profile.startCerti')}
                     />
                     <input
                       type="date"
@@ -118,7 +120,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       onChange={(e) => handleInputChange(e, 'to')}
                       required
                       className="ml-3 w-3/6 rounded border border-gray-300 p-2 focus:border-freeland focus:ring-freeland"
-                      title="Fin del curso"
+                      title={t('profile.endCerti')}
                     />
                   </div>
 
@@ -134,8 +136,8 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                       })
                     }
                     required
-                    title="Descripción del puesto"
-                    placeholder="Descripción del puesto"
+                    title={t('profile.descriptionCerti')}
+                    placeholder={t('profile.descriptionCerti')}
                   />
                 </div>
               </div>
@@ -144,7 +146,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                   type="submit"
                   className="inline-flex w-full justify-center rounded-md bg-freeland px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-800 sm:ml-3 sm:w-auto"
                 >
-                  Guardar
+                  {t('save')}
                 </button>
                 <button
                   type="button"
@@ -152,7 +154,7 @@ const FormEditCerti = (props: FormEditCertiProps) => {
                   onClick={() => setOpenPopup(false)}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  Cancelar
+                  {t('cancel')}
                 </button>
               </div>
             </form>

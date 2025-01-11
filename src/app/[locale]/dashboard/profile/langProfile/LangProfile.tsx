@@ -17,7 +17,7 @@ const LangProfile = (props: LangControllerProps) => {
     <div className="h-28">
       {langList ? (
         <div className="flex w-full">
-          <div className="flex w-full flex-wrap space-x-2 overflow-x-auto pt-3">
+          <div className="flex max-h-28 w-full flex-wrap space-x-2 overflow-x-auto pt-3">
             {langList &&
               langList.length > 0 &&
               langList.map((langU: LangUserProps, i: number) => (
@@ -39,9 +39,7 @@ const LangProfile = (props: LangControllerProps) => {
               ))}
           </div>
         </div>
-      ) : (
-        <p>Aun nada</p>
-      )}
+      ) : null}
     </div>
   );
 };
