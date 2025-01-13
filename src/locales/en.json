@@ -329,5 +329,6 @@
     "powUploadSuccess": "PoW updated successfully",
     "failedToUploadFile": "PoW update failed",
     "selectFileToUpload": "Select file to upload"
-  }
+  },
+  "freeland": "Freeland"
 }
