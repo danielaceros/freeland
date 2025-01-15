@@ -288,7 +288,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       {/* Modal for offer details */}
       {modalOpen && selectedOffer && (
         <div
-          className={`${viewoffers ? 'hidden' : 'flex'} inset-0 items-center  justify-center overflow-x-auto bg-black bg-opacity-50 py-5 sm:fixed `}
+          className={`${viewoffers ? 'hidden' : 'flex'} inset-0 z-50 items-center  justify-center overflow-x-auto bg-black bg-opacity-50 py-5 sm:fixed `}
         >
           <div className="w-11/12 max-w-5xl rounded-lg bg-white p-6 shadow-lg md:w-9/12">
             <div className="mb-5 flex w-full items-center justify-between border-b-2 border-gray-200 pb-5">
@@ -374,7 +374,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
       )}
 
       {modalOpen && selectedOffer && viewoffers && (
-        <div className="inset-0 flex items-center justify-center bg-black bg-opacity-50 py-5 sm:fixed ">
+        <div className="inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 py-5 sm:fixed ">
           <div className="w-11/12 max-w-5xl overflow-auto rounded-lg bg-white p-6 shadow-lg md:w-9/12">
             {loadingApplications ? (
               <div className="text-center text-xl">Loading applications...</div>
@@ -387,14 +387,9 @@ const ViewUserHire = (props: ViewUserHireProps) => {
                       className="flex flex-col border-b pb-4 md:flex-row"
                     >
                       <div className="mb-4 shrink-0 md:mb-0 md:mr-6">
-                        <img
-                          src={
-                            app.freelancer?.profilePicture ||
-                            '/default-profile.png'
-                          }
-                          alt={`${app.freelancer?.name}'s profile`}
-                          className="size-24 rounded-full border-2 border-gray-300 object-cover"
-                        />
+                        <div className="size-16 rounded-full border-4 border-gray-300 bg-gray-400 object-cover">
+                          &nbsp;
+                        </div>
                       </div>
 
                       <div className="grow">
@@ -503,7 +498,7 @@ const ViewUserHire = (props: ViewUserHireProps) => {
 
       {/* Confirmation Modal for Deletion */}
       {confirmDeleteOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
             <h2 className="mb-4 text-xl font-semibold">
               {t('hire.confirmDelete')}

@@ -54,12 +54,6 @@ const FormNewHire = (props: FormNewHireProps) => {
     setOffer({} as Offer);
   }, []);
 
-  useEffect(() => {
-    if (offerEdit) {
-      setOffer(offerEdit);
-    }
-  }, [offerEdit]);
-
   const categoryofferSkillsOptions = [
     {
       category: t('categories.technology'),
@@ -348,6 +342,17 @@ const FormNewHire = (props: FormNewHireProps) => {
     },
   ];
 
+  const categorygroupedOptions = categoryofferSkillsOptions.map((category) => ({
+    label: category.category,
+    options: category.subcategory,
+  }));
+
+  useEffect(() => {
+    if (offerEdit) {
+      setOffer(offerEdit);
+    }
+  }, [offerEdit, categorygroupedOptions]);
+
   // Add offer
   const handleAddOffer = async () => {
     for (const field of validFields) {
@@ -440,11 +445,6 @@ const FormNewHire = (props: FormNewHireProps) => {
     options: category.skills,
   }));
 
-  const categorygroupedOptions = categoryofferSkillsOptions.map((category) => ({
-    label: category.category,
-    options: category.subcategory,
-  }));
-
   // Select skills for the new offer
   const handleSkillSelect = (selectedOptionsSkill: any) => {
     setSelectedSkills(
@@ -463,6 +463,8 @@ const FormNewHire = (props: FormNewHireProps) => {
     );
   };
 
+  console.log('categorygroupedOptions', categorygroupedOptions);
+  // console.log('categorySelectedSkills', categorySelectedSkills)
   return (
     <div className="mb-6">
       <div className="flex flex-wrap">
@@ -534,6 +536,11 @@ const FormNewHire = (props: FormNewHireProps) => {
                   options={categorygroupedOptions}
                   onChange={categoryhandleSkillSelect}
                   getOptionLabel={(e) => `${e.label}`}
+                  defaultValue={categorygroupedOptions
+                    .flatMap((group) => group.options)
+                    .filter((option) =>
+                      offerEdit.categories?.includes(option.value),
+                    )}
                 />
               </div>
             </div>
@@ -550,6 +557,11 @@ const FormNewHire = (props: FormNewHireProps) => {
                   options={groupedOptions}
                   onChange={handleSkillSelect}
                   getOptionLabel={(e) => `${e.label}`}
+                  defaultValue={categorygroupedOptions
+                    .flatMap((group) => group.options)
+                    .filter((option) =>
+                      offerEdit.skillsMin?.includes(option.value),
+                    )}
                 />
               </div>
             </div>

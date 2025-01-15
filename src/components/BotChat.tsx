@@ -173,7 +173,7 @@ const BotChat = () => {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-16 right-6 flex w-80 flex-col overflow-hidden rounded-lg bg-white shadow-lg">
+        <div className="fixed bottom-16 right-6 z-30 flex w-80 flex-col overflow-hidden rounded-lg bg-white shadow-lg">
           <div className="flex items-center justify-between bg-green-600 p-4 text-lg font-semibold text-white">
             <button type="button" onClick={() => setIsOpen(false)}>
               X
